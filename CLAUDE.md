@@ -61,10 +61,15 @@ npm run build:artifact   # ทำชุดไฟล์สำหรับลิ�
 |---|---|
 | `data/schema.ts` | Page Schema จำลองตาม Blueprint D2/D3: ร้าน → token → Header/Footer (ใช้ร่วมทุกหน้า) → หน้า (ระดับล็อก L0–L3) → zone → section |
 | `data/store.ts` | store กลาง: ฉบับร่าง / ฉบับเผยแพร่ / undo-redo / ประวัติ / การแก้ทุกแบบ · เก็บใน localStorage ของแต่ละเบราว์เซอร์ |
-| `versions/registry.ts` | รายการเวอร์ชัน · หน้าจอ · รหัส mockup · หน้าที่ทำแล้ว (`READY`) · เมนู sidebar |
-| `components/shell/` | Sidebars (safe / bold), Dock, route |
+| `versions/registry.ts` | รายการเวอร์ชัน (หลัก/ย่อย · ต่อยอดจาก) · หน้าจอ · รหัส mockup · เมนู sidebar |
+| `versions/screens.tsx` | เวอร์ชันไหนใช้หน้าจอไหน (`SCREEN_MAP`) · เวอร์ชันย่อยรับหน้าจอจากแม่ |
+| `versions/v4/` | หน้าจอของ V4 (โคลนจาก V3) |
+| `components/shell/` | Sidebars (safe / bold), Dock = Master V, route |
 | `components/storefront/Canvas.tsx` | หน้าร้านจำลองจาก schema + กรอบเลือก / ลาก / วาง / แก้ข้อความในที่ |
 | `components/editor/` | ชิ้นร่วม: รายการ section, คลัง, คุณสมบัติ, ประวัติ, เผยแพร่, คีย์ลัด, การลาก |
 | `screens/entry.tsx` · `screens/page-editor.tsx` | หน้าเลือก (1d / 1e / 3f) · หน้าแต่ง (1b / 1c / 3a) |
 
-**เพิ่มเวอร์ชันใหม่:** เพิ่มใน `VERSIONS` / `REF` / `READY` ของ `versions/registry.ts` → ทำหน้าจอใน `screens/` → ต่อใน `Screen()` ของ `App.tsx` → ขึ้นใน Dock อัตโนมัติ
+**Master V (แถบล่างกลาง) · เพิ่มเวอร์ชัน:** เวอร์ชันเป็นต้นไม้ หลัก → ย่อย
+- **เวอร์ชันหลักใหม่** (ไอเดียทั้งชุด): เพิ่มใน `VERSIONS` ของ `versions/registry.ts` (ถ้าโคลนมาจากเวอร์ชันไหนใส่ `base`) → โคลนหน้าจอไปไว้ `versions/<id>/` → ใส่ใน `SCREEN_MAP` ของ `versions/screens.tsx`
+- **เวอร์ชันย่อย** (ลองไอเดียบนเวอร์ชันหลัก): เพิ่มใน `VERSIONS` โดยใส่ `parent` (id เช่น `v4-1`, label `V4.1`) → ใส่ใน `SCREEN_MAP` เฉพาะหน้าที่เปลี่ยน หน้าอื่นใช้ของเวอร์ชันแม่อัตโนมัติ
+- ห้ามแก้ไฟล์ของเวอร์ชันอื่นเพื่อทำไอเดียใหม่ · ขึ้นใน Master V และหน้ารวมเวอร์ชันเอง ไม่ต้องแก้ Dock

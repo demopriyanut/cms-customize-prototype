@@ -1,8 +1,10 @@
+/* V4 — cloned from V3 (MenuC in screens/menu.tsx) on 2026-09-24 so V4 can change without touching V3.
+   Only V4 uses this file. */
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { useStore } from '@/data/store'
 import { CATEGORIES, hasSub, HEADER_INHERIT, MENU_KIND_ICON, MENU_KIND_LABEL, MENU_LAYOUTS, MENU_MAX, MENU_TYPES, menuLabel, tokenByName, tokenHex, type Device, type MenuItem, type MenuLayout, type MenuLink } from '@/data/schema'
 import { MascotImg } from '@/components/editor/parts'
-import { Toggle, useUndoKeys, type Look } from './shared'
+import { useUndoKeys, type Look } from '@/screens/shared'
 
 /* =====================================================================
    Menu (แถบเมนูบน Header) — V1 = 1f · V2 = 1g · V3 = 3b · flow 3u
@@ -431,123 +433,8 @@ function DetailHead({ m, it, look }: { m: M; it: MenuItem; look: 'a' | 'c' }) {
   )
 }
 
-/* ---------- V1 · 1f — preview header ด้านบน · ต้นไม้ซ้าย / รายละเอียดขวา ---------- */
-export function MenuA(_: { collapsed?: boolean }) {
-  useUndoKeys()
-  const m = useMenu()
-  const it = m.sel
-  const sub: 'dropdown' | 'mega' | 'none' = it?.layout.startsWith('col') ? 'mega' : it?.layout === 'normal' && it.children.length ? 'dropdown' : 'none'
-  const [chosenDropdown, setChosenDropdown] = useState<string | null>(null)
-  const subShown = chosenDropdown === it?.id && sub === 'none' ? 'dropdown' : sub
-  const subLinks: { name: string; key: string }[] = !it ? [] : it.layout.startsWith('col') ? it.cols.slice(0, Number(it.layout.slice(3))).flatMap((c, ci) => c.links.map((l, li) => ({ name: l.name, key: `${ci}-${li}` }))) : it.children.map(c => ({ name: menuLabel(c), key: c.id }))
-  return (
-    <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-ink-50">
-      <div className="h-14 bg-white border-b border-ink-150 flex items-center px-6 gap-3 flex-none">
-        <span className="font-bold text-[15px]">Menu</span><span className="text-ink-400">/</span><span className="text-ink-600">Menu display · แถบเมนูบน Header</span>
-        <div className="flex-1" />
-        <Saved />
-        <button onClick={() => m.showToast('“จัดเรียงอัตโนมัติ” — mockup ยังไม่บอกว่าจัดตามเกณฑ์ไหน · ยังไม่ทำใน prototype')} className="h-9 border border-ink-200 rounded-lg bg-white px-3 flex items-center gap-2 font-semibold hover:border-ink-400"><i className="fas fa-magic text-red-600 text-[11px]" />จัดเรียงอัตโนมัติ</button>
-        <CreateMenu m={m} look="a" />
-      </div>
-      <div className="flex-1 overflow-auto px-6 pt-5 pb-28 flex flex-col gap-4">
-        <div className="bg-white border border-ink-150 rounded-xl px-3 py-2.5 flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-[12px] text-ink-500"><span className="font-semibold text-ink-700">พรีวิว</span>· แสดงผลจริงจาก Header ปัจจุบัน<span className="ml-auto"><DevSwitch m={m} look="a" /></span></div>
-          <MenuBar m={m} look="a" />
-        </div>
-        <div className="flex gap-4 items-start">
-          <div className="w-[420px] flex-none"><Tree m={m} look="a" /></div>
-          {it && (
-            <div className="flex-1 min-w-0 bg-white border border-ink-150 rounded-xl overflow-hidden">
-              <DetailHead m={m} it={it} look="a" />
-              <div className="p-[18px] grid grid-cols-2 gap-x-5 gap-y-4">
-                <div className="col-span-2"><div className="font-semibold mb-1.5">ชื่อเมนู <span className="text-ink-400 font-normal">· ทั้ง 4 ภาษา</span></div><Names m={m} it={it} /></div>
-                <div><div className="font-semibold mb-1.5">ลิงก์ไปที่</div><TargetPick m={m} it={it} /></div>
-                <div><div className="font-semibold mb-1.5">รูปแบบเมนูย่อย</div>
-                  <div role="radiogroup" className="flex gap-0.5 bg-ink-100 rounded-lg p-[3px] text-[12.5px] font-semibold">
-                    {([['dropdown', 'Dropdown'], ['mega', 'Mega menu'], ['none', 'ไม่มี']] as const).map(([k, l]) => (
-                      <button key={k} role="radio" aria-checked={subShown === k} onClick={() => {
-                        if (k === 'mega') m.api.setLayout(it.id, it.cols.length >= 3 ? 'col3' : `col${Math.max(1, it.cols.length)}` as MenuLayout)
-                        else if (k === 'dropdown') { setChosenDropdown(it.id); if (it.layout !== 'normal') m.api.setLayout(it.id, 'normal') }
-                        else { setChosenDropdown(null); m.api.setLayout(it.id, 'none') }
-                      }} disabled={!!it && !!find(m.menu, it.id)?.parent && k !== 'none'} className={`flex-1 py-1.5 rounded-md disabled:opacity-40 ${subShown === k ? 'bg-white shadow-xs' : 'text-ink-500'}`}>{l}</button>
-                    ))}
-                  </div>
-                </div>
-                <div className="col-span-2 flex flex-wrap gap-x-7 gap-y-2.5 py-3 border-y border-ink-100 text-[13px]">
-                  <Toggle label="แสดงบน Desktop" on={it.showOn.desktop} color="var(--red-600)" onChange={v => m.api.setShow(it.id, 'desktop', v)} />
-                  <Toggle label="Tablet" on={it.showOn.tablet} color="var(--red-600)" onChange={v => m.api.setShow(it.id, 'tablet', v)} />
-                  <Toggle label="Mobile" on={it.showOn.mobile} color="var(--red-600)" onChange={v => m.api.setShow(it.id, 'mobile', v)} />
-                  <Toggle label="เปิดในแท็บใหม่" on={!!it.newTab} color="var(--red-600)" onChange={v => m.api.setNewTab(it.id, v)} />
-                </div>
-                {subShown !== 'none' && (
-                  <div className="col-span-2">
-                    <div className="font-semibold mb-1.5 flex items-center gap-2">เมนูย่อย <span className="font-display text-ink-400 font-medium">{subLinks.length}</span>
-                      <span className="ml-auto">{subShown === 'mega' ? <PickLink label="เพิ่มจากหมวดหมู่" onPick={l => m.api.addLink(0, l)} /> : <PickLink label="เพิ่มจากหมวดหมู่" onPick={l => m.api.addChild(l)} />}</span></div>
-                    <div className="flex flex-wrap gap-2">
-                      {subLinks.map(s => <span key={s.key} className="border border-ink-200 rounded-lg px-2.5 py-1.5 text-[12.5px] flex gap-1.5 items-center"><i className="fas fa-grip-vertical text-ink-300 text-[10px]" />{s.name}</span>)}
-                      {!subLinks.length && <span className="text-[12.5px] text-ink-400">ยังไม่มีเมนูย่อย · ลากเมนูอื่นในต้นไม้มาวางกลางแถวนี้ หรือกด “เพิ่มจากหมวดหมู่”</span>}
-                    </div>
-                    {subShown === 'mega' && <div className="text-[12px] text-ink-500 mt-2">Mega menu {layoutName(it)} · แบ่งคอลัมน์/Banner ยังไม่มีใน mockup 1f (ดูแบบเต็มที่ V3)</div>}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ---------- V2 · 1g — แก้เมนูบน preview ตรงๆ · palette ประเภทเมนูลากเข้า · การ์ดแนะนำจากผู้ช่วย Ket ---------- */
-export function MenuB(_: { collapsed?: boolean }) {
-  useUndoKeys()
-  const m = useMenu()
-  const [dismiss, setDismiss] = useState(false)
-  const mobileN = m.menu.filter(x => x.showOn.mobile).length
-  const ai = m.menu.find(x => x.kind === 'system'), contact = m.menu.find(x => menuLabel(x) === 'CONTACT')
-  const suggest = !dismiss && ((ai && !ai.iconOnly) || contact?.showOn.mobile)
-  return (
-    <div className="flex-1 min-w-0 min-h-0 overflow-auto bg-cream px-7 pt-6 pb-28 flex flex-col gap-[18px]">
-      <div className="flex items-center gap-3">
-        <div><div className="font-bold text-[20px] leading-tight">Menu</div><div className="text-[12.5px] text-ink-500">ลากรายการบนแถบเมนูได้เลย · ดับเบิลคลิกเพื่อแก้ชื่อ · บันทึกอัตโนมัติ</div></div>
-        <div className="flex-1" />
-        <Saved />
-        <DevSwitch m={m} look="b" />
-        <span className="h-[38px] bg-white rounded-full px-3.5 flex items-center gap-2 font-semibold shadow-sm whitespace-nowrap"><i className="fas fa-external-link-alt text-[11px] text-ink-500" />ดูเว็บไซต์</span>
-        <CreateMenu m={m} look="b" />
-      </div>
-      <div className="bg-white rounded-[18px] shadow-lg border border-black/5">
-        <div className="bg-[#6b5343] text-white text-[11px] flex justify-between px-6 py-1.5 rounded-t-[18px]"><span>{m.draft.header.data.phone}</span><span>User Account ▾</span></div>
-        <V2Bar m={m} />
-      </div>
-      <div className="flex gap-[18px] items-start">
-        <div className="flex-1 min-w-0 flex flex-col gap-3">
-          <div className="font-bold flex items-center gap-2">เพิ่มเมนูใหม่ <span className="text-[12.5px] text-ink-500 font-normal">· ลากขึ้นไปวางบนแถบเมนู หรือคลิก</span><span className="ml-auto font-display text-[12.5px] text-ink-500 font-medium">{m.menu.length} / {MENU_MAX}</span></div>
-          <div className="grid grid-cols-5 gap-2.5">
-            {MENU_TYPES.map(t => (
-              <button key={t.key} draggable onDragStart={e => { dragging = { kind: t.key }; e.dataTransfer.setData('text/plain', t.key) }} onDragEnd={() => { dragging = null }} onClick={() => m.api.add(t.key)}
-                className="bg-white rounded-xl border border-black/5 shadow-xs p-3 flex gap-2.5 items-center text-left hover:border-ink-300 cursor-grab">
-                <span className="w-8 h-8 rounded-[9px] bg-ink-100 grid place-items-center text-ink-700 flex-none"><i className={t.icon} /></span>
-                <span className="min-w-0"><span className="block font-semibold text-[12.5px] truncate">{t.name}</span><span className="block text-[11px] text-ink-500 truncate">{t.desc}</span></span>
-              </button>
-            ))}
-          </div>
-        </div>
-        {suggest && (
-          <div className="w-[330px] flex-none bg-white rounded-2xl shadow-lg border border-black/5 p-4 flex flex-col gap-3">
-            <div className="flex gap-3 items-start"><img src="./img/mascot-idea.png" alt="" className="w-[52px] h-16 object-cover rounded-[10px]" style={{ objectPosition: 'center 15%' }} /><div><div className="font-bold">ผู้ช่วย Ket สังเกตว่า…</div><div className="text-[12.5px] text-ink-600 leading-normal mt-0.5">เมนูบนมือถือมี {mobileN} รายการ ยาวเกิน 1 จอ — ยุบ <b>AI SEARCH</b> เป็นไอคอน 🔍 และย้าย <b>CONTACT</b> ไป Footer ไหมครับ?</div></div></div>
-            <div className="flex gap-2"><button onClick={() => { m.api.aiMobile(); m.setDevice('mobile') }} className="flex-1 h-[34px] rounded-[9px] bg-ink-900 text-white font-semibold text-[12.5px]">ลองดูในฉบับร่าง</button><button onClick={() => setDismiss(true)} className="h-[34px] px-3 rounded-[9px] border border-ink-200 text-[12.5px]">ไม่เป็นไร</button></div>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-function V2Bar({ m }: { m: M }) { return <MenuBar m={m} look="b" /> }
-
-/* ---------- V3 · 3b — preview ลากได้จริง + ต้นไม้ซ้าย · panel ขวา: 1. Menu Type → 2. Menu Collection ---------- */
-export function MenuC(_: { collapsed?: boolean }) {
+/* ---------- V4 (โคลนจาก V3) · 3b — preview ลากได้จริง + ต้นไม้ซ้าย · panel ขวา: 1. Menu Type → 2. Menu Collection ---------- */
+export function MenuV4(_: { collapsed?: boolean }) {
   useUndoKeys()
   const m = useMenu()
   const it = m.sel

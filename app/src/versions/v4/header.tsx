@@ -1,10 +1,12 @@
+/* V4 — cloned from V3 (HeaderC in screens/header.tsx) on 2026-09-24 so V4 can change without touching V3.
+   Only V4 uses this file. */
 import { useState } from 'react'
 import { diffSites, useStore } from '@/data/store'
 import { HEADER_INHERIT, HEADER_PRESETS, MENU_FONTS, NAV_LAYOUTS, tokenHex, type ColorRef, type SiteDoc } from '@/data/schema'
-import { HeaderPreview, HZONE_LABEL, type HZone } from '@/components/storefront/Canvas'
+import { HeaderPreview, type HZone } from '@/components/storefront/Canvas'
 import { DeviceToggle, MascotImg } from '@/components/editor/parts'
 import { PublishDialog } from '@/components/editor/panels'
-import { ColorField, DraftState, Empty, PublishBtn, Toggle, useUndoKeys, useWidth, ViewSite, type Look } from './shared'
+import { ColorField, DraftState, Empty, PublishBtn, Toggle, useUndoKeys, useWidth, ViewSite, type Look } from '@/screens/shared'
 
 /* =====================================================================
    Header (ใช้ร่วมทุกหน้า) — V1 = 1h · V2 = 1i · V3 = 3c · flow 3v
@@ -193,87 +195,9 @@ function TrialBar({ hd }: { hd: H }) {
   )
 }
 
-/* ---------- V1 · 1h — preview + ป้ายโซน · tab ซ้าย / ฟอร์มขวา ---------- */
-const TABS_A: [string, string, string, string, HZone | null][] = [
-  ['layout', 'Layout', 'fas fa-columns', '', null], ['brand', 'โลโก้ & แบรนด์', 'far fa-image', 'Token', 'logo'], ['topbar', 'Top bar · ติดต่อ', 'fas fa-phone', '', 'topbar'],
-  ['nav', 'Navigation', 'fa fa-bars', '', 'nav'], ['actions', 'ค้นหา & ตะกร้า', 'fas fa-shopping-bag', '', 'actions'], ['behavior', 'พฤติกรรม · Sticky', 'fas fa-thumbtack', '', null], ['color', 'สี & ตัวอักษร', 'fas fa-palette', 'Token', null],
-]
-export function HeaderA(_: { collapsed?: boolean }) {
-  useUndoKeys()
-  const hd = useHeader()
-  const tab = useStore(s => s.panel['hdr-a'] ?? 'nav'); const setPanel = useStore(s => s.setPanel)
-  const cur = TABS_A.find(t => t[0] === tab)!
-  const fit = useWidth()
-  return (
-    <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-ink-50">
-      <div className="h-14 bg-white border-b border-ink-150 flex items-center px-6 gap-3 flex-none">
-        <span className="font-bold text-[15px]">Header</span><span className="text-ink-400">/</span><span className="text-ink-600">{tab === 'nav' ? 'Navigation Menu' : cur[1]}</span>
-        <div className="flex-1" />
-        <DraftState dirty={hd.dirty} suffix=" · ใช้กับทุกหน้า" />
-        <ViewSite /><PublishBtn look="a" />
-      </div>
-      <div className="flex-1 overflow-auto px-6 pt-5 pb-28 flex flex-col gap-4">
-        <div className="bg-white border border-ink-150 rounded-xl px-3 pt-2.5 pb-3 flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-[12px] text-ink-500"><span className="font-semibold text-ink-700">พรีวิว</span>· คลิกโซนเพื่อข้ามไปตั้งค่า<span className="ml-auto"><DeviceToggle variant="square" /></span></div>
-          <div ref={fit.ref} className="rounded-lg overflow-hidden border border-ink-150 bg-ink-50">
-            <HeaderPreview site={hd.shown} width={fit.w} hot={{ active: cur[4], color: 'var(--red-600)', look: 'a', onZone: z => setPanel('hdr-a', TABS_A.find(t => t[4] === z)![0]) }} />
-          </div>
-        </div>
-        <div className="flex gap-4 items-start">
-          <div role="tablist" aria-orientation="vertical" className="w-[220px] flex-none bg-white border border-ink-150 rounded-xl p-2 flex flex-col gap-0.5">
-            {TABS_A.map(([k, name, icon, hint]) => (
-              <button key={k} role="tab" aria-selected={tab === k} onClick={() => setPanel('hdr-a', k)} className={`flex items-center gap-2.5 px-2.5 py-2.5 rounded-lg text-left ${tab === k ? 'bg-red-50 text-red-700 font-semibold' : 'text-ink-800 hover:bg-ink-50'}`}>
-                <i className={`${icon} w-3.5 text-center text-[12px] opacity-85`} /><span className="flex-1">{name}</span><span className="text-[11px] text-ink-400">{hint}</span>
-              </button>
-            ))}
-          </div>
-          <div className="flex-1 min-w-0 bg-white border border-ink-150 rounded-xl px-6 py-5 flex flex-col">
-            {tab === 'nav' ? <NavigationForm look="a" hd={hd} /> : <Empty name={cur[1]} onBack={() => setPanel('hdr-a', 'nav')} backLabel="ไปที่ Navigation (ส่วนที่ mockup ออกแบบไว้)" />}
-          </div>
-        </div>
-      </div>
-      <PublishDialog />
-    </div>
-  )
-}
-
-/* ---------- V2 · 1i — preview ใหญ่เป็นพระเอก · panel ลอยขวา · ลองแบบอื่น ---------- */
-export function HeaderB(_: { collapsed?: boolean }) {
-  useUndoKeys()
-  const hd = useHeader()
-  const zone = useStore(s => s.panel['hdr-b'] ?? 'nav') as HZone | ''; const setPanel = useStore(s => s.setPanel)
-  const fit = useWidth()
-  return (
-    <div className="flex-1 min-w-0 min-h-0 overflow-auto bg-cream px-7 pt-6 pb-28 flex flex-col gap-[18px]">
-      <div className="flex items-center gap-3">
-        <div><div className="font-bold text-[20px] leading-tight">Header</div><div className="text-[12.5px] text-ink-500">ใช้กับทุกหน้า · คลิกส่วนใดบน preview เพื่อแก้</div></div>
-        <div className="flex-1" />
-        <DraftState dirty={hd.dirty} />
-        <DeviceToggle variant="pill" />
-        <ViewSite pill /><PublishBtn look="b" />
-      </div>
-      <div className="flex gap-[18px] items-start">
-        <div className="flex-1 min-w-0 flex flex-col gap-[18px]">
-          <div className="bg-white rounded-[18px] shadow-lg border border-black/5 overflow-hidden">
-            <div ref={fit.ref}><HeaderPreview site={hd.shown} width={fit.w} strip={120} hot={{ active: zone || null, color: 'var(--orange-600)', look: 'b', onZone: z => setPanel('hdr-b', z) }} /></div>
-          </div>
-          <Alternatives look="b" hd={hd} />
-        </div>
-        <div className="w-80 flex-none bg-white rounded-2xl shadow-lg border border-black/5 p-4 flex flex-col gap-3.5">
-          {zone ? <>
-            <div className="flex items-center gap-2"><span className="font-bold text-[15px]">{HZONE_LABEL[zone]}</span><span className="text-[11px] font-bold px-1.5 py-0.5 rounded-[5px] bg-orange-50 text-orange-700">กำลังแก้</span><button onClick={() => setPanel('hdr-b', '')} aria-label="ปิด" className="ml-auto w-7 h-7 grid place-items-center rounded-md text-ink-400 hover:bg-ink-50"><i className="fas fa-times" /></button></div>
-            {zone === 'nav' ? <NavigationForm look="b" hd={hd} /> : <Empty name={HZONE_LABEL[zone]} onBack={() => setPanel('hdr-b', 'nav')} backLabel="ไปที่ Navigation (ส่วนที่ mockup ออกแบบไว้)" />}
-          </> : <div className="text-center text-ink-500 py-10 text-[13.5px] leading-relaxed"><i className="fas fa-mouse-pointer text-ink-300 text-lg" /><br />คลิกส่วนใดบน preview เพื่อแก้<br /><button onClick={() => setPanel('hdr-b', 'nav')} className="mt-2 text-[12.5px] font-semibold text-orange-700">เปิด Navigation</button></div>}
-        </div>
-      </div>
-      <PublishDialog />
-    </div>
-  )
-}
-
-/* ---------- V3 · 3c — hot-zone + ลองแบบอื่น · ฟอร์มอยู่ panel ขวาตามโครงเดิม ---------- */
+/* ---------- V4 (โคลนจาก V3) · 3c — hot-zone + ลองแบบอื่น · ฟอร์มอยู่ panel ขวาตามโครงเดิม ---------- */
 const TABS_C: [string, string, HZone | null][] = [['layout', 'Layout', null], ['logo', 'โลโก้', 'logo'], ['topbar', 'Top bar', 'topbar'], ['nav', 'Navigation', 'nav'], ['color', 'สี', null]]
-export function HeaderC(_: { collapsed?: boolean }) {
+export function HeaderV4(_: { collapsed?: boolean }) {
   useUndoKeys()
   const hd = useHeader()
   const tab = useStore(s => s.panel['hdr-c'] ?? 'nav'); const setPanel = useStore(s => s.setPanel)

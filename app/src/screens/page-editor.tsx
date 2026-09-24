@@ -74,7 +74,7 @@ function AddButton({ className = '', children }: { className?: string; children:
 const pageCanInsert = (p: PageDoc) => (p.zones ?? []).some(z => z.insert)
 
 /* ---------- V1 · 1b ---------- */
-export function PageEditorA() {
+export function PageEditorA(_: { collapsed?: boolean }) {
   const { back, site, page, device, changes, canUndo, canRedo } = useEditor()
   const tab = usePanel('a', 'sections')
   const fit = useFitWidth(device)
@@ -204,7 +204,7 @@ export function PageEditorB({ collapsed }: { collapsed: boolean }) {
 }
 
 /* ---------- V3 · 3a ---------- */
-export function PageEditorC() {
+export function PageEditorC(_: { collapsed?: boolean }) {
   const { back, site, page, device, changes, canUndo, canRedo } = useEditor()
   const tab = usePanel('c', 'ai')
   const compare = useStore(s => s.compare); const setCompare = useStore(s => s.setCompare)

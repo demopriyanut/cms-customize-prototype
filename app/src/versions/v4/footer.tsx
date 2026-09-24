@@ -1,9 +1,11 @@
+/* V4 — cloned from V3 (FooterC in screens/footer.tsx) on 2026-09-24 so V4 can change without touching V3.
+   Only V4 uses this file. */
 import { useState } from 'react'
 import { diffSites, useStore, type Actor } from '@/data/store'
 import { colSummary, FOOTER_LANGS, FOOTER_TEXT, rowMeta, type Device, type FooterCol, type FooterRow } from '@/data/schema'
 import { FooterPreview } from '@/components/storefront/Canvas'
 import { PublishDialog } from '@/components/editor/panels'
-import { ColorField, PublishBtn, useUndoKeys, useWidth, type Look } from './shared'
+import { ColorField, PublishBtn, useUndoKeys, useWidth, type Look } from '@/screens/shared'
 
 /* =====================================================================
    Footer (ใช้ร่วมทุกหน้า) — V1 = 1j · V2 = 1k · V3 = 3d · flow 3w
@@ -210,30 +212,6 @@ function ColumnForm({ f, look }: { f: F; look: Look }) {
   )
 }
 
-/* ---------- row properties (1j panel) ---------- */
-function RowForm({ f }: { f: F }) {
-  const r = f.row; if (!r) return null
-  const DEV: [Device, string][] = [['desktop', 'fas fa-desktop'], ['tablet', 'fas fa-tablet-alt'], ['mobile', 'fas fa-mobile-alt']]
-  return (
-    <div className="flex flex-col gap-4">
-      <div><div className="font-semibold mb-2">คอลัมน์</div><ColCount f={f} /></div>
-      <div><div className="font-semibold mb-2">พื้นหลัง</div><ColorField look="a" site={f.draft} value={r.bg} inheritName="พื้นเข้ม (Footer)" title="พื้นหลังแถว" scope="แถวนี้" onChange={v => f.api.setBg(r.id, v)} /></div>
-      <div>
-        <label htmlFor="ftr-pad" className="font-semibold mb-2 flex justify-between">ระยะห่างบน–ล่าง<span className="font-display text-ink-500 font-medium">{r.padY} px</span></label>
-        <input id="ftr-pad" type="range" min={0} max={80} step={4} key={r.id + r.padY} defaultValue={r.padY} onPointerUp={e => f.api.setPad(r.id, Number((e.target as HTMLInputElement).value))} onKeyUp={e => f.api.setPad(r.id, Number((e.target as HTMLInputElement).value))} className="w-full accent-red-600" />
-      </div>
-      <div><div className="font-semibold mb-2">แสดงบน</div><div className="flex gap-1.5">{DEV.map(([d, ic]) => {
-        const on = !r.hideOn?.includes(d)
-        return <button key={d} aria-pressed={on} title={on ? 'แสดงอยู่ · กดเพื่อซ่อน' : 'ซ่อนอยู่ · กดเพื่อแสดง'} onClick={() => f.api.toggleDevice(r.id, d)} className={`flex-1 h-8 rounded-lg grid place-items-center text-[12px] ${on ? 'bg-ink-900 text-white' : 'border border-ink-200 text-ink-400'}`}><i className={ic} /></button>
-      })}</div></div>
-      <div className="border-t border-ink-100 pt-3 flex flex-col gap-1 text-[13px] text-ink-600">
-        <button onClick={() => f.api.dupRow(r.id)} className="text-left py-1 hover:text-ink-900"><i className="far fa-clone w-5" />คัดลอกแถว</button>
-        <button onClick={() => f.api.cloneFromTh()} className="text-left py-1 hover:text-ink-900"><i className="fas fa-language w-5" />คัดลอกไปภาษาอื่น</button>
-        <button onClick={() => f.api.deleteRow(r.id)} className="text-left py-1 text-red-600 hover:text-red-700"><i className="far fa-trash-alt w-5" />ลบแถว</button>
-      </div>
-    </div>
-  )
-}
 
 /* ---------- rows list (1j cards with mini preview · 3d compact) — drag to reorder ---------- */
 function RowList({ f, look }: { f: F; look: 'a' | 'c' }) {
@@ -318,72 +296,8 @@ function useHot(f: F, look: Look, color: string) {
   }
 }
 
-/* ---------- V1 · 1j — ภาษา segmented · การ์ดแถวพร้อม mini preview · คุณสมบัติแถวขวา ---------- */
-export function FooterA(_: { collapsed?: boolean }) {
-  useUndoKeys()
-  const f = useFooter()
-  return (
-    <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-ink-50">
-      <div className="h-14 bg-white border-b border-ink-150 flex items-center px-6 gap-3 flex-none">
-        <span className="font-bold text-[15px]">Footer</span>
-        <span className="ml-2"><LangSwitch f={f} /></span>
-        <div className="flex-1" />
-        <CloneBtn f={f} long /><AddRow f={f} /><PublishBtn look="a" />
-      </div>
-      <div className="flex-1 flex gap-4 min-h-0 px-6 pt-5 pb-6">
-        <div className="flex-1 min-w-0 overflow-auto flex flex-col gap-2.5 pb-24">
-          <div className="text-[12.5px] text-ink-500 flex gap-2 items-center"><i className="fas fa-info-circle" />ลากแถวเพื่อเรียงลำดับ · แถวเป็น Section ชนิดเดียวกับ Page Layout จึงใช้ Element เดิมได้ 17 แบบ</div>
-          {f.rows ? <RowList f={f} look="a" /> : <EmptyLang f={f} />}
-        </div>
-        <div className="w-80 flex-none bg-white border border-ink-150 rounded-xl flex flex-col self-start max-h-full overflow-auto">
-          {f.row ? <>
-            <div className="px-4 py-3.5 border-b border-ink-100 flex items-center gap-2"><span className="font-bold">แถว {f.rowIdx + 1}</span><span className="text-[12px] text-ink-500">· คุณสมบัติแถว</span></div>
-            <div className="p-4"><RowForm f={f} /></div>
-          </> : <div className="p-6 text-center text-ink-500 text-[13.5px]">ยังไม่มีแถวในภาษานี้</div>}
-        </div>
-      </div>
-      <PublishDialog />
-    </div>
-  )
-}
-
-/* ---------- V2 · 1k — footer จริงขนาดใหญ่ + เส้นกริด · แก้บน preview · สร้างจากข้อมูลร้าน ---------- */
-export function FooterB(_: { collapsed?: boolean }) {
-  useUndoKeys()
-  const f = useFooter()
-  const fit = useWidth()
-  const hot = { ...useHot(f, 'b', 'var(--orange-600)'), onResize: (row: string, w: number[]) => f.api.setWidths(row, w) }
-  const empty = FOOTER_LANGS.filter(l => l !== 'TH' && !f.has(l))
-  return (
-    <div className="flex-1 min-w-0 min-h-0 overflow-auto bg-cream px-7 pt-6 pb-28 flex flex-col gap-[18px]">
-      <div className="flex items-center gap-3">
-        <div><div className="font-bold text-[20px] leading-tight">Footer</div><div className="text-[12.5px] text-ink-500">{f.list.length} แถว · คลิกคอลัมน์เพื่อแก้ · ลากเส้นกริดเพื่อปรับความกว้าง</div></div>
-        <span className="ml-2"><LangSwitch f={f} pill /></span>
-        <div className="flex-1" />
-        <AddRow f={f} pill /><PublishBtn look="b" />
-      </div>
-      <div className="flex gap-[18px] items-start">
-        <div className="flex-1 min-w-0 flex flex-col gap-3.5">
-          {f.rows ? <div ref={fit.ref} className="bg-white rounded-[18px] shadow-lg border border-black/5 overflow-hidden"><FooterPreview site={f.draft} width={fit.w} lang={f.lang} strip={70} hot={hot} /></div> : <EmptyLang f={f} />}
-          <div className="flex gap-3.5">
-            <BuildCard f={f} look="b" />
-            {empty.length > 0 && <div className="w-[300px] bg-white rounded-[14px] shadow-sm border border-black/5 px-4 py-3.5 flex flex-col gap-2"><div className="font-bold text-[13px]">ภาษาอื่นยังว่าง</div><div className="text-[12.5px] text-ink-600">{empty.join(' · ')} ยังไม่มี Footer — โคลนจาก TH แล้วให้ผู้ช่วยแปลให้?</div><button onClick={() => f.api.cloneFromTh(empty)} className="self-start border border-ink-200 rounded-lg px-2.5 py-1 text-[12.5px] font-semibold hover:border-ink-900"><i className="far fa-clone" /> โคลน + แปล {empty.length} ภาษา</button></div>}
-          </div>
-        </div>
-        <div className="w-[300px] flex-none bg-white rounded-2xl shadow-lg border border-black/5 p-4 flex flex-col gap-3.5">
-          {f.col ? <>
-            <div className="flex items-center gap-2"><span className="font-bold text-[15px] truncate">คอลัมน์ · {colSummary(f.col)}</span><span className="text-[11px] font-bold px-1.5 py-0.5 rounded-[5px] bg-orange-50 text-orange-700 whitespace-nowrap">กำลังแก้</span><button onClick={() => useStore.getState().setPanel('ftr-sel', '')} aria-label="ปิด" className="ml-auto w-7 h-7 grid place-items-center rounded-md text-ink-400 hover:bg-ink-50"><i className="fas fa-times" /></button></div>
-            <ColumnForm f={f} look="b" />
-          </> : <div className="text-center text-ink-500 py-10 text-[13.5px] leading-relaxed"><i className="fas fa-mouse-pointer text-ink-300 text-lg" /><br />คลิกคอลัมน์บน footer เพื่อแก้</div>}
-        </div>
-      </div>
-      <PublishDialog />
-    </div>
-  )
-}
-
-/* ---------- V3 · 3d — footer จริง + กริดคอลัมน์ + รายการแถวแบบเดิม · panel ขวา = คุณสมบัติคอลัมน์ ---------- */
-export function FooterC(_: { collapsed?: boolean }) {
+/* ---------- V4 (โคลนจาก V3) · 3d — footer จริง + กริดคอลัมน์ + รายการแถวแบบเดิม · panel ขวา = คุณสมบัติคอลัมน์ ---------- */
+export function FooterV4(_: { collapsed?: boolean }) {
   useUndoKeys()
   const f = useFooter()
   const fit = useWidth()

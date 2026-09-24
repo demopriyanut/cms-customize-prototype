@@ -1,16 +1,28 @@
 /* 1 version = the whole back office (sidebar + every screen) in one concept.
-   V1 = แนว A ปลอดภัย · V2 = แนว B กล้า · V3 = แนว C ลูกผสม — from "Ketshopweb CMS Mockups.dc.html". */
+   V1 = แนว A ปลอดภัย · V2 = แนว B กล้า · V3 = แนว C ลูกผสม — from "Ketshopweb CMS Mockups.dc.html".
+   Versions form a tree for the designer tool "Master V" (the dock):
+   - main version (no parent) = a whole-system concept · base = the version it was cloned from (ต่อยอดจาก)
+   - sub version (parent set, e.g. id 'v3-1', label 'V3.1') = an idea tried on top of its parent;
+     it uses the parent's screens except the ones it overrides (see versions/screens.tsx) */
 
-export type VersionId = 'v1' | 'v2' | 'v3'
+export type VersionId = string
 export type ScreenId = 'entry' | 'page' | 'menu' | 'header' | 'footer' | 'system-design'
 
-export const VERSIONS: { id: VersionId; label: string; name: string; track: string; sidebar: 'safe' | 'bold'; sbName: string; desc: string }[] = [
+export interface VersionDef {
+  id: VersionId; label: string; name: string; track: string; sidebar: 'safe' | 'bold'; sbName: string; desc: string
+  parent?: VersionId   // sub version of …
+  base?: VersionId     // cloned from … (main versions)
+}
+
+export const VERSIONS: VersionDef[] = [
   { id: 'v1', label: 'V1', name: 'ปลอดภัย', track: 'แนว A', sidebar: 'safe', sbName: 'sidebar ดำจัดกลุ่ม 240px',
     desc: 'โครงหน้าจอเดิม · panel ขวา Sections / คุณสมบัติ / ประวัติ · ผู้ช่วย Ket เป็นช่องเล็กท้าย panel' },
   { id: 'v2', label: 'V2', name: 'กล้า', track: 'แนว B', sidebar: 'bold', sbName: 'sidebar ดำเดิม ย่อเป็นไอคอน 72px ได้',
     desc: 'พื้นครีม · panel ลอย · หน้าเลือกแบบ prompt ใหญ่กลางจอ · แชทผู้ช่วย Ket ขวาแบบ Lovable' },
   { id: 'v3', label: 'V3', name: 'ลูกผสม', track: 'แนว C', sidebar: 'safe', sbName: 'sidebar ดำจัดกลุ่ม 240px',
     desc: 'โครง 3 ช่องเดิม + ลูกเล่นจาก B · ผู้ช่วย Ket เป็น tab ใน panel ขวา · toolbar ลอยบน canvas' },
+  { id: 'v4', label: 'V4', name: 'ต่อยอด V3', track: 'จากแนว C', base: 'v3', sidebar: 'safe', sbName: 'sidebar ดำจัดกลุ่ม 240px',
+    desc: 'โคลนทั้งชุดจาก V3 · ไล่ปรับ UI/UX ระยะ ช่องไฟ ขนาดตัวอักษร โดยไม่กระทบ V3' },
 ]
 
 export const SCREENS: { id: ScreenId; short: string; name: string; sb: string; icon: string }[] = [
@@ -22,19 +34,27 @@ export const SCREENS: { id: ScreenId; short: string; name: string; sb: string; i
   { id: 'system-design', short: 'System Design', name: 'System Design · สี & ฟอนต์', sb: 'System Design', icon: 'fas fa-palette' },
 ]
 
-export const REF: Record<VersionId, Record<ScreenId, string>> = {
+export const byId = (id: VersionId | undefined | null) => VERSIONS.find(v => v.id === id) ?? null
+export const mainVersions = () => VERSIONS.filter(v => !v.parent)
+export const subsOf = (id: VersionId) => VERSIONS.filter(v => v.parent === id)
+export const rootOf = (id: VersionId): VersionDef | null => { const v = byId(id); return v?.parent ? rootOf(v.parent) : v }
+/* the order [ ] steps through: each main version followed by its sub versions */
+export const flatOrder = () => mainVersions().flatMap(m => [m, ...subsOf(m.id)])
+
+/* mockup frame per screen — versions without their own mockup show where they came from */
+export const REF: Record<VersionId, Partial<Record<ScreenId, string>>> = {
   v1: { entry: '1d', page: '1b', menu: '1f', header: '1h', footer: '1j', 'system-design': '1l' },
   v2: { entry: '1e', page: '1c', menu: '1g', header: '1i', footer: '1k', 'system-design': '1m' },
   v3: { entry: '3f', page: '3a', menu: '3b', header: '3c', footer: '3d', 'system-design': '3e' },
 }
 
-/* screens built so far (per version) */
-export const READY: Record<VersionId, ScreenId[]> = {
-  v1: ['entry', 'page', 'header', 'footer', 'menu'],
-  v2: ['entry', 'page', 'header', 'footer', 'menu'],
-  v3: ['entry', 'page', 'header', 'footer', 'menu'],
+export function refOf(v: VersionId, s: ScreenId): string {
+  const own = REF[v]?.[s]; if (own) return own
+  for (let d = byId(v), from = d?.parent ?? d?.base; from; d = byId(from), from = d?.parent ?? d?.base) {
+    const r = REF[from]?.[s]; if (r) return `จาก ${r}`
+  }
+  return '—'
 }
-export const isReady = (v: VersionId, s: ScreenId) => READY[v].includes(s)
 
 export const FRONT_GROUPS: { label: string; items: [string, string, string?][] }[] = [
   { label: 'ออกแบบ · Design', items: [['Page Layouts', 'fas fa-th-large'], ['Header', 'fas fa-heading'], ['Footer', 'fas fa-shoe-prints'], ['Menu', 'fas fa-stream'], ['System Design', 'fas fa-palette', 'ใหม่'], ['เทมเพลต', 'far fa-clone', 'ย้าย']] },
