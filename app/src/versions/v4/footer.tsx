@@ -110,7 +110,7 @@ function LangSwitch({ f, pill }: { f: F; pill?: boolean }) {
       {FOOTER_LANGS.map(l => {
         const on = f.lang === l
         return <button key={l} role="radio" aria-checked={on} title={f.has(l) ? `Footer ภาษา ${l}` : `ภาษา ${l} ยังไม่มี Footer`} onClick={() => f.api.setLang(l)}
-          className={`px-3 py-1 ${pill ? 'rounded-full' : 'rounded-md'} ${on ? 'bg-white shadow-xs text-ink-900' : f.has(l) ? 'text-ink-600' : 'text-ink-400'}`}>{l === 'TH' && !pill ? 'TH หลัก' : l}</button>
+          className={`px-3 py-1 ${pill ? 'rounded-full' : 'rounded-md'} ${on ? 'bg-white shadow-xs text-ink-900' : f.has(l) ? 'text-ink-600' : 'text-ink-500'}`}>{l === 'TH' && !pill ? 'TH หลัก' : l}</button>
       })}
     </span>
   )
@@ -122,7 +122,7 @@ function CloneBtn({ f, long }: { f: F; long?: boolean }) {
   return <button onClick={() => target ? setAsk(true) : f.api.cloneFromTh()} className="h-9 flex items-center gap-2 px-2 rounded-lg text-ink-600 text-body hover:bg-ink-50 whitespace-nowrap"><i className="far fa-clone" />{long ? 'โคลนจากภาษาหลัก (TH)' : 'โคลนจาก TH'}</button>
 }
 function AddRow({ f, pill }: { f: F; pill?: boolean }) {
-  return <button onClick={f.api.addRow} disabled={!f.rows} className={`flex items-center gap-2 font-semibold disabled:opacity-40 ${pill ? 'h-[38px] bg-white rounded-full px-3.5 shadow-sm' : 'h-9 border border-ink-200 rounded-lg bg-white px-3 hover:border-ink-400'}`}><i className="fas fa-plus text-[11px]" />เพิ่มแถว</button>
+  return <button onClick={f.api.addRow} disabled={!f.rows} className={`flex items-center gap-2 font-semibold disabled:opacity-40 ${pill ? 'h-[38px] bg-white rounded-full px-3.5 shadow-sm' : 'h-9 border border-ink-400 rounded-lg bg-white px-3 hover:border-ink-400'}`}><i className="fas fa-plus text-[11px]" />เพิ่มแถว</button>
 }
 function EmptyLang({ f }: { f: F }) {
   return (
@@ -141,7 +141,7 @@ function ColCount({ f, h = 40 }: { f: F; h?: number }) {
       {[1, 2, 3, 4].map(k => {
         const on = n === k
         return (
-          <button key={k} role="radio" aria-checked={on} title={`${k} คอลัมน์`} onClick={() => f.row && f.api.setCols(f.row.id, k)} className={`flex-1 rounded-lg flex items-center gap-0.5 px-2 ${on ? 'bg-red-50' : 'bg-white hover:border-ink-400'}`} style={{ height: h, border: on ? '2px solid var(--red-600)' : '1px solid var(--ink-200)' }}>
+          <button key={k} role="radio" aria-checked={on} title={`${k} คอลัมน์`} onClick={() => f.row && f.api.setCols(f.row.id, k)} className={`flex-1 rounded-lg flex items-center gap-0.5 px-2 ${on ? 'bg-red-50' : 'bg-white hover:border-ink-400'}`} style={{ height: h, border: on ? '2px solid var(--red-600)' : '1px solid var(--ink-400)' }}>
             {WIDTHS[k].map((w, i) => <span key={i} className="rounded-sm" style={{ flex: w, height: h > 36 ? 14 : 12, background: on ? 'var(--red-600)' : 'var(--ink-300)' }} />)}
           </button>
         )
@@ -164,8 +164,10 @@ function LinksEditor({ f }: { f: F }) {
           <i className="fas fa-grip-vertical text-ink-300 text-[11px] cursor-grab" title="ลากเพื่อเรียง" />
           <input key={l.label + i} defaultValue={l.label} aria-label="ชื่อลิงก์" onBlur={e => e.target.value !== l.label && f.api.editCol('แก้ชื่อลิงก์', c => { c.links![i].label = e.target.value })} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
             className="flex-1 min-w-0 bg-transparent h-7 outline-none focus:bg-ink-50 rounded px-1" />
-          <span className={`text-caption whitespace-nowrap ${l.href ? 'text-ink-400' : 'text-ink-300 italic'}`}>{l.href || 'ยังไม่ผูกลิงก์'}</span>
-          <button aria-label={`ลบลิงก์ ${l.label}`} onClick={() => f.api.editCol(`ลบลิงก์ ${l.label}`, c => { c.links!.splice(i, 1) })} className="w-6 h-6 rounded grid place-items-center text-ink-400 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:text-red-600"><i className="fas fa-times text-[11px]" /></button>
+          <span className={`text-caption whitespace-nowrap ${l.href ? 'text-ink-500' : 'text-ink-500 italic'}`}>{l.href || 'ยังไม่ผูกลิงก์'}</span>
+          <button aria-label={`ย้าย ${l.label} ขึ้น`} disabled={i === 0} onClick={() => f.api.editCol('เรียงลิงก์', c => { const [x] = c.links!.splice(i, 1); c.links!.splice(i - 1, 0, x) })} className="w-6 h-6 rounded grid place-items-center text-ink-500 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:hidden hover:text-ink-900"><i className="fas fa-arrow-up text-[10px]" /></button>
+          <button aria-label={`ย้าย ${l.label} ลง`} disabled={i === links.length - 1} onClick={() => f.api.editCol('เรียงลิงก์', c => { const [x] = c.links!.splice(i, 1); c.links!.splice(i + 1, 0, x) })} className="w-6 h-6 rounded grid place-items-center text-ink-500 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:hidden hover:text-ink-900"><i className="fas fa-arrow-down text-[10px]" /></button>
+          <button aria-label={`ลบลิงก์ ${l.label}`} onClick={() => f.api.editCol(`ลบลิงก์ ${l.label}`, c => { c.links!.splice(i, 1) })} className="w-6 h-6 rounded grid place-items-center text-ink-500 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:text-red-600"><i className="fas fa-times text-[11px]" /></button>
         </div>
       ))}
       <div className="relative">
@@ -173,7 +175,7 @@ function LinksEditor({ f }: { f: F }) {
         {pick && (
           <div className="absolute z-20 left-0 right-0 top-[calc(100%+4px)] bg-white border border-ink-150 rounded-xl shadow-xl p-2 flex flex-col">
             <div className="text-caption font-semibold text-ink-500 px-2 pt-1 pb-1.5">หน้าบนเมนูเว็บ · ไม่ต้องพิมพ์ URL</div>
-            {pages.map(p => <button key={p.id} onClick={() => { setPick(false); f.api.editCol(`เพิ่มลิงก์ ${p.name}`, c => { (c.links ??= []).push({ label: p.name, href: p.path }) }) }} className="flex justify-between items-center px-2 py-1.5 rounded-md hover:bg-ink-50 text-body"><span>{p.name}</span><span className="text-ink-400 text-caption">{p.path}</span></button>)}
+            {pages.map(p => <button key={p.id} onClick={() => { setPick(false); f.api.editCol(`เพิ่มลิงก์ ${p.name}`, c => { (c.links ??= []).push({ label: p.name, href: p.path }) }) }} className="flex justify-between items-center px-2 py-1.5 rounded-md hover:bg-ink-50 text-body"><span>{p.name}</span><span className="text-ink-500 text-caption">{p.path}</span></button>)}
             <button onClick={() => { setPick(false); f.api.editCol('เพิ่มลิงก์', c => { (c.links ??= []).push({ label: 'ลิงก์ใหม่', href: '' }) }) }} className="text-left px-2 py-1.5 mt-1 border-t border-ink-100 rounded-md hover:bg-ink-50 text-body text-ink-600"><i className="fas fa-link text-[11px] mr-1.5" />ลิงก์เอง (ใส่ URL ทีหลัง)</button>
           </div>
         )}
@@ -187,11 +189,11 @@ const LAB = 'text-caption font-semibold text-ink-500 tracking-[.04em] mb-1.5'
 function ColumnForm({ f, look }: { f: F; look: Look }) {
   const c = f.col; if (!c) return null
   const field = (label: string, v: string, key: 'title' | 'text', area?: boolean) => (
-    <div><div className={LAB}>{label}</div>
+    <label className="block"><span className={`block ${LAB}`}>{label}</span>
       {area
-        ? <textarea key={c.id + key + v} defaultValue={v} rows={3} onBlur={e => e.target.value !== v && f.api.editCol(`แก้${label}`, x => { x[key] = e.target.value })} className="w-full border border-ink-200 rounded-[9px] px-2.5 py-2 text-body leading-relaxed resize-none" />
-        : <input key={c.id + key + v} defaultValue={v} onBlur={e => e.target.value !== v && f.api.editCol(`แก้${label}`, x => { x[key] = e.target.value })} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} className="w-full h-9 border border-ink-200 rounded-[9px] px-2.5 text-body" />}
-    </div>
+        ? <textarea key={c.id + key + v} defaultValue={v} rows={3} onBlur={e => e.target.value !== v && f.api.editCol(`แก้${label}`, x => { x[key] = e.target.value })} className="w-full border border-ink-400 rounded-[9px] px-2.5 py-2 text-body leading-relaxed resize-none" />
+        : <input key={c.id + key + v} defaultValue={v} onBlur={e => e.target.value !== v && f.api.editCol(`แก้${label}`, x => { x[key] = e.target.value })} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} className="w-full h-9 border border-ink-400 rounded-[9px] px-2.5 text-body" />}
+    </label>
   )
   return (
     <div className="flex flex-col gap-3.5">
@@ -201,11 +203,11 @@ function ColumnForm({ f, look }: { f: F; look: Look }) {
       {c.kind === 'social' && <>{field('หัวข้อ', c.title, 'title')}<div><div className={LAB}>โซเชียล</div><div className="flex flex-col gap-1.5 text-body">{SOCIALS.map(([k, l]) => {
         const on = c.items?.includes(k)
         return <label key={k} className="flex items-center gap-2"><input type="checkbox" checked={!!on} onChange={() => f.api.editCol(`${on ? 'ซ่อน' : 'แสดง'} ${l}`, x => { x.items = on ? (x.items ?? []).filter(i => i !== k) : [...(x.items ?? []), k] })} /><i className={`fab fa-${k} w-4 text-center text-ink-600`} />{l}</label>
-      })}</div><div className="text-caption text-ink-400 mt-1.5">ลิงก์บัญชีมาจาก ตั้งค่า → ข้อมูลร้าน</div></div></>}
+      })}</div><div className="text-caption text-ink-500 mt-1.5">ลิงก์บัญชีมาจาก ตั้งค่า → ข้อมูลร้าน</div></div></>}
       {c.kind === 'payments' && <div className="rounded-lg bg-ink-50 border border-ink-150 p-2.5 text-meta text-ink-600 leading-relaxed"><b className="text-ink-900">{c.items?.join(' · ')}</b><br />ดึงจาก ตั้งค่า → ช่องทางชำระเงิน · แก้ที่นั่น</div>}
       {c.kind === 'empty' && <div><div className={LAB}>คอลัมน์ว่าง · ใส่อะไร</div><div className="grid grid-cols-2 gap-1.5 text-meta">
         {([['links', 'รายการลิงก์', 'fas fa-list'], ['social', 'โซเชียล', 'fas fa-share-alt'], ['payments', 'ช่องทางชำระเงิน', 'far fa-credit-card'], ['copyright', 'ข้อความสั้น', 'fas fa-font']] as const).map(([k, l, ic]) => (
-          <button key={k} onClick={() => f.api.editCol(`ใส่${l}`, x => { x.kind = k; x.title = ''; if (k === 'links') x.links = []; if (k === 'social') x.items = ['facebook', 'instagram', 'line']; if (k === 'payments') x.items = ['VISA', 'Mastercard', 'PromptPay', 'COD']; if (k === 'copyright') x.text = '[รอข้อมูล]' })} className="h-9 border border-ink-200 rounded-lg flex items-center gap-2 px-2.5 hover:border-ink-400"><i className={`${ic} text-ink-500 w-4`} />{l}</button>
+          <button key={k} onClick={() => f.api.editCol(`ใส่${l}`, x => { x.kind = k; x.title = ''; if (k === 'links') x.links = []; if (k === 'social') x.items = ['facebook', 'instagram', 'line']; if (k === 'payments') x.items = ['VISA', 'Mastercard', 'PromptPay', 'COD']; if (k === 'copyright') x.text = '[รอข้อมูล]' })} className="h-9 border border-ink-400 rounded-lg flex items-center gap-2 px-2.5 hover:border-ink-400"><i className={`${ic} text-ink-500 w-4`} />{l}</button>
         ))}</div></div>}
       {look === 'b' && <div><div className={LAB}>สีตัวอักษร</div><div className="border border-ink-150 rounded-[10px] px-3 py-2.5 flex items-center gap-2.5"><span className="w-6 h-6 rounded-md" style={{ background: FOOTER_TEXT }} /><div className="flex-1 text-body"><div className="font-semibold">{FOOTER_TEXT}</div><div className="text-caption text-info-700"><i className="fas fa-link text-[9px]" /> Token · On Dark</div></div></div></div>}
     </div>
@@ -223,7 +225,7 @@ function RowList({ f, look }: { f: F; look: 'a' | 'c' }) {
       {f.list.map((r, i) => {
         const sel = f.row?.id === r.id
         const icons = (
-          <span className="ml-auto flex gap-1 text-ink-400 relative">
+          <span className="ml-auto flex gap-1 text-ink-500 relative">
             <button aria-label={r.hidden ? 'แสดงแถว' : 'ซ่อนแถว'} title={r.hidden ? 'แสดงแถว' : 'ซ่อนแถว'} onClick={e => { e.stopPropagation(); f.api.toggleRow(r.id) }} className="w-7 h-7 rounded-md grid place-items-center hover:bg-ink-100 hover:text-ink-700"><i className={r.hidden ? 'far fa-eye-slash' : 'far fa-eye'} /></button>
             <button aria-label="คุณสมบัติแถว" title="คุณสมบัติแถว" onClick={e => { e.stopPropagation(); f.api.select(r.id) }} className="w-7 h-7 rounded-md grid place-items-center hover:bg-ink-100 hover:text-ink-700"><i className="fas fa-cog" /></button>
             {look === 'c' && <button aria-label="คัดลอกแถว" title="คัดลอกแถว" onClick={e => { e.stopPropagation(); f.api.dupRow(r.id) }} className="w-7 h-7 rounded-md grid place-items-center hover:bg-ink-100 hover:text-ink-700"><i className="far fa-clone" /></button>}
@@ -272,14 +274,14 @@ function BuildCard({ f, look }: { f: F; look: 'b' | 'c' }) {
         <img src="./img/mascot-box.png" alt="" className="w-10 h-[50px] object-cover rounded-lg" style={{ objectPosition: 'center 15%' }} />
         <div className="flex-1 text-meta leading-normal text-ink-700"><b>สร้าง Footer จากข้อมูลร้าน</b> — ดึงที่อยู่ เบอร์ โซเชียล ช่องทางชำระเงิน มาจัด 4 คอลัมน์ ครบ 4 ภาษา</div>
       </div>
-      <button onClick={f.api.buildFromShop} className="h-9 rounded-[9px] text-white font-semibold flex items-center justify-center gap-2" style={{ background: 'linear-gradient(135deg,var(--red-600),var(--orange-500))' }}><i className="fas fa-magic text-[11px]" />สร้างฉบับร่าง</button>
+      <button onClick={f.api.buildFromShop} className="h-9 rounded-[9px] text-white font-semibold flex items-center justify-center gap-2" style={{ backgroundColor: 'var(--red-600)', backgroundImage: 'var(--ket-grad)' }}><i className="fas fa-magic text-[11px]" />สร้างฉบับร่าง</button>
     </>
   )
   return (
     <div className="flex-1 bg-white rounded-[14px] shadow-sm border border-black/5 px-4 py-3.5 flex gap-3.5 items-center">
       <img src="./img/mascot-box.png" alt="" className="w-[54px] h-[68px] object-cover rounded-[10px]" style={{ objectPosition: 'center 15%' }} />
       <div className="flex-1"><div className="font-bold">สร้าง Footer จากข้อมูลร้านให้ไหมครับ?</div><div className="text-meta text-ink-600 leading-normal">ดึงที่อยู่ เบอร์ โซเชียล และช่องทางชำระเงินจาก <b>ตั้งค่า → ข้อมูลร้าน</b> มาจัดเป็น 4 คอลัมน์ พร้อมข้อความทั้ง 4 ภาษา</div></div>
-      <button onClick={f.api.buildFromShop} className="h-9 px-3.5 rounded-[10px] text-white font-semibold flex items-center gap-2 whitespace-nowrap" style={{ background: 'linear-gradient(135deg,var(--red-600),var(--orange-500))' }}><i className="fas fa-magic text-[11px]" />สร้างฉบับร่าง</button>
+      <button onClick={f.api.buildFromShop} className="h-9 px-3.5 rounded-[10px] text-white font-semibold flex items-center gap-2 whitespace-nowrap" style={{ backgroundColor: 'var(--red-600)', backgroundImage: 'var(--ket-grad)' }}><i className="fas fa-magic text-[11px]" />สร้างฉบับร่าง</button>
     </div>
   )
 }
@@ -305,13 +307,13 @@ export function FooterV4(_: { collapsed?: boolean }) {
   return (
     <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
       <div className="h-14 bg-white border-b border-ink-150 flex items-center px-6 gap-3 flex-none">
-        <span className="font-bold text-heading">Footer</span>
+        <h1 className="font-bold text-title">Footer</h1>
         <span className="ml-2"><LangSwitch f={f} /></span>
         <div className="flex-1" />
         <CloneBtn f={f} /><AddRow f={f} /><PublishBtn look="c" />
       </div>
       <div className="flex-1 flex min-h-0">
-        <div className="flex-1 min-w-0 overflow-auto px-6 pt-[22px] pb-28 flex flex-col gap-3.5">
+        <div tabIndex={0} aria-label="พื้นที่ preview Footer" className="outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600 flex-1 min-w-0 overflow-auto px-6 pt-[22px] pb-28 flex flex-col gap-3.5">
           {f.rows ? <>
             <div ref={fit.ref} className="bg-white rounded-[14px] shadow-md border border-black/5 overflow-hidden"><FooterPreview site={f.draft} width={fit.w} lang={f.lang} strip={44} hot={hot} /></div>
             <RowList f={f} look="c" />
@@ -319,7 +321,7 @@ export function FooterV4(_: { collapsed?: boolean }) {
         </div>
         <div className="w-[340px] bg-white border-l border-ink-150 flex-none flex flex-col min-h-0">
           <div className="px-4 py-3.5 border-b border-ink-150 flex items-center gap-2">
-            <span className="font-bold text-heading truncate">{f.col ? `คอลัมน์ · ${colSummary(f.col)}` : 'คอลัมน์'}</span>
+            <h2 className="font-bold text-heading truncate">{f.col ? `คอลัมน์ · ${colSummary(f.col)}` : 'คอลัมน์'}</h2>
             {f.col && <span className="text-caption font-bold px-1.5 py-0.5 rounded-[5px] bg-red-50 text-red-700 whitespace-nowrap">กำลังแก้</span>}
             {f.row && <span className="ml-auto text-caption text-ink-500 whitespace-nowrap">แถว {f.rowIdx + 1}</span>}
           </div>

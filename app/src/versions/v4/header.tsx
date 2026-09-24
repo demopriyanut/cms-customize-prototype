@@ -62,7 +62,7 @@ function LayoutPicker({ look, hd, accent }: { look: Look; hd: H; accent: string 
   if (look === 'b') return (
     <div>
       <div className="flex gap-1.5">{NAV_LAYOUTS.map(n => { const on = cur === n.key; return (
-        <button key={n.key} role="radio" aria-checked={on} onClick={() => pick(n.key, n.name)} className={`flex-1 h-10 rounded-[9px] text-meta ${on ? 'font-semibold' : 'border border-ink-200 text-ink-600 hover:border-ink-400'}`} style={on ? { border: `2px solid ${accent}` } : undefined}>{n.name}</button>
+        <button key={n.key} role="radio" aria-checked={on} onClick={() => pick(n.key, n.name)} className={`flex-1 h-10 rounded-[9px] text-meta ${on ? 'font-semibold' : 'border border-ink-400 text-ink-600 hover:border-ink-400'}`} style={on ? { border: `2px solid ${accent}` } : undefined}>{n.name}</button>
       ) })}</div>{note}
     </div>
   )
@@ -74,7 +74,7 @@ function LayoutPicker({ look, hd, accent }: { look: Look; hd: H; accent: string 
           const on = cur === n.key
           const bar = (w: number, h: number, c: string, order?: number, key?: number) => <span key={key} style={{ display: 'block', width: w, height: h, borderRadius: 2, background: c, order }} />
           return (
-            <button key={n.key} role="radio" aria-checked={on} onClick={() => pick(n.key, n.name)} className={`text-left ${big ? 'rounded-xl p-2.5' : 'flex-1 rounded-[10px] p-2'} ${on ? 'bg-red-50' : 'bg-white hover:border-ink-300'}`} style={{ border: `2px solid ${on ? 'var(--red-600)' : 'var(--ink-150)'}` }}>
+            <button key={n.key} role="radio" aria-checked={on} onClick={() => pick(n.key, n.name)} className={`text-left ${big ? 'rounded-xl p-2.5' : 'flex-1 rounded-[10px] p-2'} ${on ? 'bg-red-50' : 'bg-white hover:border-ink-400'}`} style={{ border: `2px solid ${on ? 'var(--red-600)' : 'var(--ink-400)'}` }}>
               <div className={`bg-white border border-ink-150 rounded-md flex items-center ${big ? 'h-16 px-2 gap-1.5' : 'h-[34px] px-1.5 gap-1'}`} style={{ justifyContent: n.justify }}>
                 {bar(big ? 38 : 22, big ? 10 : 7, 'var(--ink-800)', n.logoOrder)}
                 <span className={`flex order-2 ${big ? 'gap-1' : 'gap-0.5'}`}>{Array.from({ length: big ? 4 : 3 }, (_, i) => bar(big ? 14 : 8, big ? 6 : 4, 'var(--ink-300)', undefined, i))}</span>
@@ -98,7 +98,7 @@ function FontRow({ hd, withCase }: { hd: H; withCase?: boolean }) {
     <div className="flex gap-1.5">
       <label className="flex-1 relative">
         <span className="sr-only">ฟอนต์เมนู</span>
-        <select value={d.menuFont} onChange={e => hd.setData('menuFont', e.target.value, 'ฟอนต์เมนู ' + e.target.value)} className="w-full h-9 appearance-none border border-ink-200 rounded-[9px] pl-2.5 pr-7 bg-white text-body">
+        <select value={d.menuFont} onChange={e => hd.setData('menuFont', e.target.value, 'ฟอนต์เมนู ' + e.target.value)} className="w-full h-9 appearance-none border border-ink-400 rounded-[9px] pl-2.5 pr-7 bg-white text-body">
           {MENU_FONTS.map(f => <option key={f}>{f}</option>)}
         </select>
         <i className="fas fa-chevron-down text-[9px] text-ink-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -109,7 +109,7 @@ function FontRow({ hd, withCase }: { hd: H; withCase?: boolean }) {
         <button aria-label="ใหญ่ขึ้น" onClick={() => size < 16 && hd.setData('menuSize', String(size + 1), `ขนาดเมนู ${size + 1} px`)} className="w-6 h-full text-ink-500 hover:text-ink-900">+</button>
       </div>
       {withCase && <button aria-pressed={d.menuUpper !== 'no'} title="ตัวพิมพ์ใหญ่ทั้งหมด" onClick={() => hd.setData('menuUpper', d.menuUpper === 'no' ? 'yes' : 'no', d.menuUpper === 'no' ? 'เมนูตัวพิมพ์ใหญ่' : 'เมนูตัวพิมพ์ปกติ')}
-        className={`w-11 h-9 rounded-[9px] border text-body font-bold ${d.menuUpper !== 'no' ? 'border-ink-900 bg-ink-900 text-white' : 'border-ink-200 bg-white'}`}>Aa</button>}
+        className={`w-11 h-9 rounded-[9px] border text-body font-bold ${d.menuUpper !== 'no' ? 'border-ink-900 bg-ink-900 text-white' : 'border-ink-400 bg-white'}`}>Aa</button>}
     </div>
   )
 }
@@ -169,8 +169,8 @@ function Alternatives({ look, hd }: { look: 'b' | 'c'; hd: H }) {
               <div className="px-2.5 py-2 flex items-center gap-2 text-meta">
                 <div className="flex-1 min-w-0"><div className="font-semibold">{p.name}</div><div className="text-caption text-ink-500 leading-snug">{p.desc}</div></div>
                 {look === 'b'
-                  ? <button onClick={() => hd.applyPreset(p.key)} className="border border-ink-200 rounded-[7px] px-2.5 py-1 font-semibold text-caption whitespace-nowrap hover:border-ink-900">ใช้แบบนี้</button>
-                  : <button onClick={() => { hd.setPeek(false); hd.setTrial(trying ? null : p.key) }} aria-pressed={trying} className={`rounded-[7px] px-2.5 py-1 font-semibold text-caption whitespace-nowrap border ${trying ? 'bg-red-600 border-red-600 text-white' : 'border-ink-200 hover:border-ink-900'}`}>{trying ? 'กำลังลอง' : 'ลองดู'}</button>}
+                  ? <button onClick={() => hd.applyPreset(p.key)} className="border border-ink-400 rounded-[7px] px-2.5 py-1 font-semibold text-caption whitespace-nowrap hover:border-ink-900">ใช้แบบนี้</button>
+                  : <button onClick={() => { hd.setPeek(false); hd.setTrial(trying ? null : p.key) }} aria-pressed={trying} className={`rounded-[7px] px-2.5 py-1 font-semibold text-caption whitespace-nowrap border ${trying ? 'bg-red-600 border-red-600 text-white' : 'border-ink-400 hover:border-ink-900'}`}>{trying ? 'กำลังลอง' : 'ลองดู'}</button>}
               </div>
             </div>
           )
@@ -211,14 +211,14 @@ export function HeaderV4(_: { collapsed?: boolean }) {
   return (
     <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
       <div className="h-14 bg-white border-b border-ink-150 flex items-center px-6 gap-3 flex-none">
-        <span className="font-bold text-heading">Header</span><span className="text-ink-400">/</span><span className="text-ink-600">ใช้กับทุกหน้า</span>
+        <h1 className="font-bold text-title">Header</h1><span className="text-ink-500">/</span><span className="text-ink-600">ใช้กับทุกหน้า</span>
         <span className="ml-2"><DeviceToggle variant="square" /></span>
         <div className="flex-1" />
         <DraftState dirty={hd.dirty} />
         <ViewSite /><PublishBtn look="c" />
       </div>
       <div className="flex-1 flex min-h-0">
-        <div className="flex-1 min-w-0 overflow-auto px-6 pt-[22px] pb-28 flex flex-col gap-4">
+        <div tabIndex={0} aria-label="พื้นที่ preview Header" className="outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600 flex-1 min-w-0 overflow-auto px-6 pt-[22px] pb-28 flex flex-col gap-4">
           <div className="bg-white rounded-[14px] shadow-md border border-black/5 overflow-hidden">
             <div ref={fit.ref}><HeaderPreview site={hd.shown} width={fit.w} strip={90} hot={{ active: cur[2], color: 'var(--red-600)', look: 'c', onZone }} /></div>
           </div>

@@ -44,7 +44,7 @@ export function LayerList({ site, page, variant }: { site: SiteDoc; page: PageDo
         <span className="w-10 h-7 rounded flex-none border border-ink-150" style={{ background: THUMB[s.type] }} />
         <span className="flex-1 min-w-0"><span className="block font-semibold text-body truncate">{s.name}</span><span className="block text-meta text-ink-500 truncate">{s.meta}</span></span>
         <span className="text-caption font-semibold px-1.5 py-0.5 rounded-[5px] whitespace-nowrap" style={{ background: rs.bg, color: rs.fg }}>{locked ? (s.role === 'global' ? 'ทุกหน้า' : 'ระบบ') : s.origin ? 'AI' : `${page.lock} อิสระ`}</span>
-        {!locked && <button title={s.hidden ? 'แสดง' : 'ซ่อน'} onClick={e => { e.stopPropagation(); useStore.getState().toggleHidden(s.id) }} className="text-ink-400 hover:text-ink-900"><i className={s.hidden ? 'far fa-eye-slash' : 'far fa-eye'} /></button>}
+        {!locked && <button title={s.hidden ? 'แสดง' : 'ซ่อน'} onClick={e => { e.stopPropagation(); useStore.getState().toggleHidden(s.id) }} className="text-ink-500 hover:text-ink-900"><i className={s.hidden ? 'far fa-eye-slash' : 'far fa-eye'} /></button>}
       </div>
     )
   }
@@ -55,7 +55,7 @@ export function LayerList({ site, page, variant }: { site: SiteDoc; page: PageDo
     if (inZone.length === 0) {
       rows.push(z.insert
         ? <div key={'ze-' + z.id} data-block="" data-zone={z.id} data-index={0} data-empty="1" className="border border-dashed rounded-lg px-2 py-2 text-meta text-center" style={{ borderColor: ROLE_STYLE.slot.color, color: ROLE_STYLE.slot.fg }}>ว่าง · ลาก Section มาวาง หรือเพิ่มจากคลัง</div>
-        : <div key={'ze-' + z.id} data-block="" data-zone={z.id} data-closed="1" data-reason={`ช่องนี้${z.closedNote ?? 'ปิดอยู่'}`} className="border border-dashed border-ink-200 rounded-lg px-2 py-2 text-meta text-center text-ink-400"><i className="fas fa-lock" /> {z.closedNote ?? 'ปิดอยู่'}</div>)
+        : <div key={'ze-' + z.id} data-block="" data-zone={z.id} data-closed="1" data-reason={`ช่องนี้${z.closedNote ?? 'ปิดอยู่'}`} className="border border-dashed border-ink-200 rounded-lg px-2 py-2 text-meta text-center text-ink-500"><i className="fas fa-lock" /> {z.closedNote ?? 'ปิดอยู่'}</div>)
     }
     inZone.forEach((b, i) => rows.push(row(b.s, z.id, i)))
   }
@@ -91,7 +91,7 @@ export function LibraryPanel({ page, className = '' }: { page: PageDoc; classNam
         <div className="text-caption font-semibold tracking-[.06em] text-ink-500 uppercase font-display mt-1">คลัง Section</div>
         <div className="grid grid-cols-2 gap-2">
           {LIBRARY.sections.map(x => (
-            <button key={x.key} onClick={() => startPlacing({ kind: 'section', key: x.key, label: x.label, icon: x.icon })} className="text-left border border-ink-150 rounded-[10px] p-2.5 hover:border-ink-400 hover:bg-ink-50">
+            <button key={x.key} onClick={() => startPlacing({ kind: 'section', key: x.key, label: x.label, icon: x.icon })} className="text-left border border-ink-400 rounded-[10px] p-2.5 hover:border-ink-400 hover:bg-ink-50">
               <i className={`${x.icon} text-ink-500`} /><div className="font-semibold text-body mt-1">{x.label}</div><div className="text-meta text-ink-500 leading-tight">{x.desc}</div>
             </button>
           ))}
@@ -99,7 +99,7 @@ export function LibraryPanel({ page, className = '' }: { page: PageDoc; classNam
         <div className="text-caption font-semibold tracking-[.06em] text-ink-500 uppercase font-display mt-1">คลัง Element</div>
         <div className="grid grid-cols-3 gap-2">
           {LIBRARY.elements.map(x => (
-            <button key={x.key} onClick={() => startPlacing({ kind: 'element', key: x.key, label: x.label, icon: x.icon })} className="border border-ink-150 rounded-[10px] py-2.5 hover:border-ink-400 hover:bg-ink-50 text-body">
+            <button key={x.key} onClick={() => startPlacing({ kind: 'element', key: x.key, label: x.label, icon: x.icon })} className="border border-ink-400 rounded-[10px] py-2.5 hover:border-ink-400 hover:bg-ink-50 text-body">
               <i className={`${x.icon} text-ink-500 block mb-0.5`} />{x.label}
             </button>
           ))}
@@ -163,10 +163,10 @@ export function PropertiesPanel({ site, pageId }: { site: SiteDoc; pageId: strin
             <label key={k} className="flex flex-col gap-1">
               <span className="text-meta text-ink-500">{FIELD_LABEL[k]}</span>
               <input key={s.id + k + v} defaultValue={v} disabled={readOnly || (s.type === 'product-info' && k !== 'cta')} onBlur={e => st().setField(s.id, k, e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
-                className="h-9 border border-ink-200 rounded-lg px-3 bg-white disabled:bg-ink-50 disabled:text-ink-400" />
+                className="h-9 border border-ink-400 rounded-lg px-3 bg-white disabled:bg-ink-50 disabled:text-ink-400" />
             </label>
           ))}
-          <div className="text-meta text-ink-400">หรือดับเบิลคลิกข้อความบนหน้าเว็บเพื่อแก้ในที่</div>
+          <div className="text-meta text-ink-500">หรือดับเบิลคลิกข้อความบนหน้าเว็บเพื่อแก้ในที่</div>
         </Group>
       )}
       {(s.type === 'cart' || s.type === 'product-info') && (
@@ -195,9 +195,9 @@ export function PropertiesPanel({ site, pageId }: { site: SiteDoc; pageId: strin
           })}</div>
         </Group>
         <div className="flex gap-1.5">
-          <button disabled={readOnly} onClick={() => st().duplicate(s.id)} className="flex-1 h-8 rounded-lg border border-ink-200 hover:bg-ink-50"><i className="far fa-clone mr-1" />ทำซ้ำ</button>
-          <button disabled={readOnly} onClick={() => st().toggleHidden(s.id)} className="flex-1 h-8 rounded-lg border border-ink-200 hover:bg-ink-50"><i className={`far ${s.hidden ? 'fa-eye' : 'fa-eye-slash'} mr-1`} />{s.hidden ? 'แสดง' : 'ซ่อน'}</button>
-          <button disabled={readOnly} onClick={() => st().remove(s.id)} className="flex-1 h-8 rounded-lg border border-ink-200 hover:bg-red-50 hover:text-red-700"><i className="far fa-trash-alt mr-1" />ลบ</button>
+          <button disabled={readOnly} onClick={() => st().duplicate(s.id)} className="flex-1 h-8 rounded-lg border border-ink-400 hover:bg-ink-50"><i className="far fa-clone mr-1" />ทำซ้ำ</button>
+          <button disabled={readOnly} onClick={() => st().toggleHidden(s.id)} className="flex-1 h-8 rounded-lg border border-ink-400 hover:bg-ink-50"><i className={`far ${s.hidden ? 'fa-eye' : 'fa-eye-slash'} mr-1`} />{s.hidden ? 'แสดง' : 'ซ่อน'}</button>
+          <button disabled={readOnly} onClick={() => st().remove(s.id)} className="flex-1 h-8 rounded-lg border border-ink-400 hover:bg-red-50 hover:text-red-700"><i className="far fa-trash-alt mr-1" />ลบ</button>
         </div>
       </>}
       {readOnly && <div className="text-meta text-ink-500">กำลังดู “ก่อน” (ฉบับเผยแพร่) — สลับเป็น “หลัง” เพื่อแก้</div>}
@@ -225,15 +225,15 @@ function TokenRow({ label, site, bg, onChange, disabled, inheritText = 'สื�
         <span className="w-5 h-5 rounded border border-ink-200 flex-none" style={{ background: hex ?? 'repeating-linear-gradient(45deg,#fff 0 4px,#eef0f4 4px 8px)' }} />
         <span className="flex-1 min-w-0">
           <span className="flex items-center gap-1.5 text-body"><span className={`w-2 h-2 rounded-full ${state === 'inherit' ? 'bg-orange-500' : state === 'token' ? 'bg-info-500' : 'bg-red-600'}`} />{state === 'inherit' ? inheritText : state === 'token' ? `ใช้ Token · ${(bg as { token: string }).token}` : 'ตั้งทับเฉพาะจุดนี้ · สีดิบ'}</span>
-          <span className="block text-meta text-ink-400 font-display">{hex ?? '—'}</span>
+          <span className="block text-meta text-ink-500 font-display">{hex ?? '—'}</span>
         </span>
         {state !== 'inherit' && onChange && !disabled && <button onClick={() => onChange(undefined)} className="text-meta font-semibold text-ink-600 hover:text-ink-900">ใช้ค่ากลาง</button>}
       </div>
       {onChange && !disabled && (
         <div className="flex flex-wrap gap-1.5 items-center">
-          {site.tokens.map(t => <button key={t.name} title={`Token · ${t.name} ${t.hex}`} onClick={() => onChange({ token: t.name })} className={`w-6 h-6 rounded-md border ${bg && 'token' in bg && bg.token === t.name ? 'ring-2 ring-offset-1 ring-ink-900 border-white' : 'border-ink-200'}`} style={{ background: t.hex }} />)}
-          <label title="สีดิบ (ไม่แนะนำ — ด่านตรวจจะเตือน)" className="w-6 h-6 rounded-md border border-dashed border-ink-300 grid place-items-center text-ink-400 cursor-pointer relative overflow-hidden text-caption"><i className="fas fa-eye-dropper" /><input type="color" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => onChange({ hex: e.target.value.toUpperCase() })} /></label>
-          <span className="text-meta text-ink-400">จุดส้ม = สืบทอด · ฟ้า = Token · แดง = สีดิบ</span>
+          {site.tokens.map(t => <button key={t.name} title={`Token · ${t.name} ${t.hex}`} onClick={() => onChange({ token: t.name })} className={`w-6 h-6 rounded-md border ${bg && 'token' in bg && bg.token === t.name ? 'ring-2 ring-offset-1 ring-ink-900 border-white' : 'border-ink-400'}`} style={{ background: t.hex }} />)}
+          <label title="สีดิบ (ไม่แนะนำ — ด่านตรวจจะเตือน)" className="w-6 h-6 rounded-md border border-dashed border-ink-400 grid place-items-center text-ink-500 cursor-pointer relative overflow-hidden text-caption"><i className="fas fa-eye-dropper" /><input type="color" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => onChange({ hex: e.target.value.toUpperCase() })} /></label>
+          <span className="text-meta text-ink-500">จุดส้ม = สืบทอด · ฟ้า = Token · แดง = สีดิบ</span>
         </div>
       )}
     </Group>
@@ -247,12 +247,12 @@ export function HistoryPanel() {
   return (
     <div className="flex-1 overflow-auto p-4 flex flex-col gap-1.5 text-body">
       <div className="text-meta text-ink-500 px-1 pb-1">ทุกการแก้บันทึกลงฉบับร่าง · ย้อนกลับไปจุดไหนก็ได้ · เว็บจริงเปลี่ยนเมื่อกดเผยแพร่เท่านั้น</div>
-      {log.length === 0 && <div className="text-ink-400 text-center py-8">ยังไม่มีการแก้ในรอบนี้</div>}
+      {log.length === 0 && <div className="text-ink-500 text-center py-8">ยังไม่มีการแก้ในรอบนี้</div>}
       {log.map((e, i) => (
         <div key={e.id} className={`flex gap-2.5 items-start p-2 rounded-lg ${e.kind === 'publish' ? 'bg-success-50' : 'hover:bg-ink-50'}`}>
           <span className={`w-6 h-6 rounded-full grid place-items-center flex-none text-caption ${e.kind === 'publish' ? 'bg-success-600 text-white' : e.actor === 'ผู้ช่วย Ket' ? 'bg-orange-100 text-orange-700' : 'bg-ink-100 text-ink-600'}`}><i className={e.kind === 'publish' ? 'fas fa-paper-plane' : e.actor === 'ผู้ช่วย Ket' ? 'fas fa-magic' : 'fas fa-user'} /></span>
           <div className="flex-1 min-w-0"><div className="font-semibold truncate">{e.label}</div><div className="text-meta text-ink-500">{e.actor} · {fmt(e.at)}{i === 0 && e.kind !== 'publish' ? ' · ล่าสุด' : ''}</div></div>
-          {i > 0 && e.kind !== 'publish' && <button onClick={() => restore(e.id)} className="text-meta font-semibold border border-ink-200 rounded-md px-2 py-0.5 hover:bg-white whitespace-nowrap">ย้อนมาจุดนี้</button>}
+          {i > 0 && e.kind !== 'publish' && <button onClick={() => restore(e.id)} className="text-meta font-semibold border border-ink-400 rounded-md px-2 py-0.5 hover:bg-white whitespace-nowrap">ย้อนมาจุดนี้</button>}
         </div>
       ))}
     </div>
@@ -286,10 +286,10 @@ export function PublishDialog() {
   return (
     <div className="fixed inset-0 z-[120] bg-ink-900/40 grid place-items-center p-6" onClick={() => set(false)}>
       <div role="dialog" aria-modal="true" aria-label="เผยแพร่" onClick={e => e.stopPropagation()} className="bg-white rounded-2xl w-[520px] max-h-[85vh] overflow-auto shadow-2xl">
-        <div className="px-5 pt-5 pb-3 border-b border-ink-100"><div className="font-bold text-title">เผยแพร่ขึ้นเว็บจริง</div><div className="text-body text-ink-500">ตรวจสิ่งที่เปลี่ยนและผลด่านตรวจก่อน — คุณเป็นคนกดเสมอ</div></div>
+        <div className="px-5 pt-5 pb-3 border-b border-ink-100"><h2 className="font-bold text-title">เผยแพร่ขึ้นเว็บจริง</h2><div className="text-body text-ink-500">ตรวจสิ่งที่เปลี่ยนและผลด่านตรวจก่อน — คุณเป็นคนกดเสมอ</div></div>
         <div className="px-5 py-3">
           <div className="text-body font-semibold text-ink-600 mb-1.5">สิ่งที่เปลี่ยน · {changes.length} จุด</div>
-          {changes.length === 0 ? <div className="text-body text-ink-400 py-2">ฉบับร่างเหมือนเว็บจริงแล้ว ไม่มีอะไรให้เผยแพร่</div> : (
+          {changes.length === 0 ? <div className="text-body text-ink-500 py-2">ฉบับร่างเหมือนเว็บจริงแล้ว ไม่มีอะไรให้เผยแพร่</div> : (
             <div className="flex flex-col gap-1">{changes.map((c, i) => (
               <div key={i} className="flex items-center gap-2 text-body py-1"><span className={`w-5 h-5 rounded grid place-items-center text-caption ${c.kind === 'add' ? 'bg-success-100 text-success-700' : c.kind === 'remove' ? 'bg-red-100 text-red-700' : 'bg-info-100 text-info-700'}`}><i className={c.kind === 'add' ? 'fas fa-plus' : c.kind === 'remove' ? 'fas fa-minus' : c.kind === 'move' ? 'fas fa-arrows-alt-v' : 'fas fa-pen'} /></span><span className="text-ink-500">{c.pageName}</span><span className="font-medium">{c.label}</span></div>
             ))}</div>
@@ -300,10 +300,10 @@ export function PublishDialog() {
           {checks.map(c => (
             <div key={c.label} className="flex items-start gap-2 text-body py-1"><i className={`mt-0.5 ${c.ok ? 'fas fa-check-circle text-success-600' : 'fas fa-exclamation-circle text-red-600'}`} /><span className="flex-1"><b className="font-medium">{c.label}</b><span className="block text-body text-ink-500">{c.note}</span></span></div>
           ))}
-          {blocked && <button onClick={fixRaw} className="mt-1.5 h-8 px-3 rounded-lg border border-ink-200 text-body font-semibold hover:bg-ink-50"><i className="fas fa-magic mr-1" />แก้ตามที่แนะนำ · เปลี่ยนเป็น Token ที่ใกล้ที่สุด</button>}
+          {blocked && <button onClick={fixRaw} className="mt-1.5 h-8 px-3 rounded-lg border border-ink-400 text-body font-semibold hover:bg-ink-50"><i className="fas fa-magic mr-1" />แก้ตามที่แนะนำ · เปลี่ยนเป็น Token ที่ใกล้ที่สุด</button>}
         </div>
         <div className="px-5 py-4 border-t border-ink-100 flex gap-2 justify-end bg-ink-50 rounded-b-2xl">
-          <button onClick={() => set(false)} className="h-9 px-4 rounded-lg border border-ink-200 bg-white">ยกเลิก</button>
+          <button onClick={() => set(false)} className="h-9 px-4 rounded-lg border border-ink-400 bg-white">ยกเลิก</button>
           <button onClick={publish} disabled={changes.length === 0 || blocked} className="h-9 px-4 rounded-lg bg-red-600 text-white font-semibold disabled:opacity-40"><i className="fas fa-paper-plane text-[12px] mr-1.5" />ยืนยันเผยแพร่</button>
         </div>
       </div>

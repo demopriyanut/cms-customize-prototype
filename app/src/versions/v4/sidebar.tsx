@@ -28,7 +28,7 @@ export function SidebarV4() {
           <button role="tab" aria-selected={tab === 'front'} onClick={() => setTab('front')} className={`flex-1 py-[5px] rounded-md ${tg(tab === 'front')}`}>ปรับแต่ง</button>
         </div>
       </div>
-      <nav className="flex-1 overflow-auto px-2.5 py-1">
+      <nav aria-label="เมนูหลัก" className="flex-1 overflow-auto px-2.5 py-1">
         {groups.map((g, gi) => (
           <div key={g.label}>
             {/* group gap 12 (> row gap 0) so each group reads as one block · label 11px ink-400 = 5.9:1 on ink-900 */}
@@ -72,7 +72,7 @@ function Rail({ groups, tab, active, openItem, setTab, onExpand }: {
       <div className="h-14 w-full flex items-center justify-center flex-none border-b border-ink-800"><img src="./img/Logo-Circle-Light.svg" alt="Ketshopweb" className="w-8 h-8" /></div>
       <button onClick={onExpand} {...tipProps('ขยาย sidebar')} className="mt-2 w-10 h-8 rounded-lg grid place-items-center text-ink-400 hover:text-ink-100 hover:bg-white/5 flex-none"><i className="fas fa-angle-double-right text-body" /></button>
       <div role="tablist" className="mt-1.5 flex gap-0.5 bg-ink-800 rounded-lg p-[3px] flex-none">{mode('back', 'fas fa-store', 'จัดการ')}{mode('front', 'fas fa-paint-brush', 'ปรับแต่ง')}</div>
-      <nav className="flex-1 overflow-auto w-full px-3 py-2 flex flex-col items-center">
+      <nav aria-label="เมนูหลัก" className="flex-1 overflow-auto w-full px-3 py-2 flex flex-col items-center">
         {groups.map((g, gi) => (
           <div key={g.label} className="w-full flex flex-col items-center">
             {gi > 0 && <span className="w-8 h-px bg-ink-800 my-1.5" aria-hidden />}
@@ -90,7 +90,7 @@ function Rail({ groups, tab, active, openItem, setTab, onExpand }: {
         ))}
       </nav>
       <div className="w-full py-2.5 border-t border-ink-800 flex justify-center flex-none">
-        <div {...tipProps('ผู้ช่วย Ket · พร้อมช่วยเสมอ · ⌘K')} tabIndex={0} className="w-[30px] h-[30px] rounded-full bg-ink-0 overflow-hidden"><img src="./img/mascot-hello.png" alt="" className="w-full h-full object-cover object-[center_20%]" /></div>
+        <div onMouseEnter={tipProps('ผู้ช่วย Ket · พร้อมช่วยเสมอ · ⌘K').onMouseEnter} onMouseLeave={() => setTip(null)} className="w-[30px] h-[30px] rounded-full bg-ink-0 overflow-hidden"><img src="./img/mascot-hello.png" alt="" className="w-full h-full object-cover object-[center_20%]" /></div>
       </div>
       {tip && <div role="tooltip" className="fixed left-[80px] z-[150] -translate-y-1/2 bg-white text-ink-900 text-meta font-semibold rounded-md px-2.5 py-1 shadow-lg whitespace-nowrap pointer-events-none" style={{ top: tip.y }}>{tip.text}</div>}
     </aside>

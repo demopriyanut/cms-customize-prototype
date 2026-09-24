@@ -537,7 +537,7 @@ export function FooterPreview({ site, width, lang, hot, strip = 0 }: { site: Sit
   const zoom = width / real
   return (
     <div style={{ width }}>
-      {strip > 0 && <div style={{ height: strip, background: 'var(--ink-100)', display: 'grid', placeItems: 'center', color: 'var(--ink-400)', fontSize: 12 }}>… เนื้อหาหน้า …</div>}
+      {strip > 0 && <div style={{ height: strip, background: 'var(--ink-100)', display: 'grid', placeItems: 'center', color: 'var(--ink-500)', fontSize: 12 }}>… เนื้อหาหน้า …</div>}
       <div style={{ width: real, zoom, fontFamily: "'Prompt',sans-serif", position: 'relative' } as CSSProperties}>
         <FooterBody s={site.footer} site={site} device="desktop" zoom={zoom} lang={lang} hot={hot} />
       </div>
@@ -558,7 +558,7 @@ function SelFloat({ s, ctx }: { s: Section; ctx: Ctx }) {
   const top = s.type === 'header' ? 6 : -10
   const ib = (icon: string, title: string, onClick: () => void, grad?: boolean) => (
     <button key={title} title={title} aria-label={title} onClick={e => { e.stopPropagation(); onClick() }}
-      style={{ width: px(24, z), height: px(24, z), display: 'grid', placeItems: 'center', borderRadius: px(6, z), color: '#fff', background: grad ? 'linear-gradient(135deg,var(--red-600),var(--orange-500))' : undefined }}><i className={icon} style={{ fontSize: px(10, z) }} /></button>
+      style={{ width: px(24, z), height: px(24, z), display: 'grid', placeItems: 'center', borderRadius: px(6, z), color: '#fff', backgroundColor: grad ? 'var(--red-600)' : undefined, backgroundImage: grad ? 'var(--ket-grad)' : undefined }}><i className={icon} style={{ fontSize: px(10, z) }} /></button>
   )
   const item = (icon: string, label: string, onClick: () => void, danger?: boolean) => (
     <button key={label} onClick={e => { e.stopPropagation(); setMore(false); onClick() }} style={{ display: 'flex', gap: px(8, z), alignItems: 'center', width: '100%', padding: `${px(6, z)} ${px(10, z)}`, borderRadius: px(6, z), fontSize: px(12, z), color: danger ? 'var(--red-600)' : 'var(--ink-800)', textAlign: 'left' }}><i className={icon} style={{ width: px(14, z) }} />{label}</button>

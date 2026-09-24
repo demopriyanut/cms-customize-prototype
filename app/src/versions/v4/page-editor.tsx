@@ -43,15 +43,15 @@ function useEditor() {
 
 function PagePicker({ page, onClick, withPath, pill }: { page: PageDoc; onClick: () => void; withPath?: boolean; pill?: boolean }) {
   return (
-    <button onClick={onClick} title="เลือกหน้าอื่น" className={pill ? 'font-semibold flex items-center gap-2' : 'h-9 border border-ink-200 rounded-lg flex items-center px-3 gap-2 bg-white hover:border-ink-400'}>
-      <i className="far fa-window-restore text-ink-500" /><span className="font-semibold">{page.name}</span>{withPath && <span className="text-ink-400">{page.path}</span>}<LockPill lock={page.lock} /><i className="fas fa-chevron-down text-[11px] text-ink-400" />
+    <button onClick={onClick} title="เลือกหน้าอื่น" className={pill ? 'font-semibold flex items-center gap-2' : 'h-9 border border-ink-400 rounded-lg flex items-center px-3 gap-2 bg-white hover:border-ink-400'}>
+      <i className="far fa-window-restore text-ink-500" /><span className="font-semibold">{page.name}</span>{withPath && <span className="text-ink-500">{page.path}</span>}<LockPill lock={page.lock} /><i className="fas fa-chevron-down text-[11px] text-ink-400" />
     </button>
   )
 }
 function UndoRedo({ canUndo, canRedo, round }: { canUndo: boolean; canRedo: boolean; round?: boolean }) {
   const undo = useStore(s => s.undo); const redo = useStore(s => s.redo)
   const c = `w-[30px] h-[30px] grid place-items-center ${round ? 'rounded-full' : 'rounded-md'} hover:bg-ink-100`
-  return <><button onClick={undo} title="ย้อน (Ctrl+Z)" aria-label="ย้อน" className={`${c} ${canUndo ? '' : 'text-ink-300'}`}><i className="fas fa-undo" /></button><button onClick={redo} title="ทำซ้ำ (Ctrl+Shift+Z)" aria-label="ทำซ้ำ" className={`${c} ${canRedo ? '' : 'text-ink-300'}`}><i className="fas fa-redo" /></button></>
+  return <><button onClick={undo} title="ย้อน (Ctrl+Z)" aria-label="ย้อน" className={`${c} ${canUndo ? '' : 'text-ink-500'}`}><i className="fas fa-undo" /></button><button onClick={redo} title="ทำซ้ำ (Ctrl+Shift+Z)" aria-label="ทำซ้ำ" className={`${c} ${canRedo ? '' : 'text-ink-500'}`}><i className="fas fa-redo" /></button></>
 }
 function PreviewToggle({ pill }: { pill?: boolean }) {
   const preview = useStore(s => s.preview); const setPreview = useStore(s => s.setPreview)
@@ -85,6 +85,7 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
   return (
     <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
       <div className="h-14 bg-white border-b border-ink-150 flex items-center px-4 gap-2.5 flex-none">
+        <h1 className="sr-only">แต่งหน้าเว็บ · {page.name}</h1>
         <PagePicker page={page} onClick={back} />
         <div className="h-9 flex items-center px-2.5 gap-1.5 text-ink-700"><i className="fas fa-globe text-ink-500" />TH <i className="fas fa-chevron-down text-[11px] text-ink-400" /></div>
         <button onClick={() => useStore.getState().setPanel('c', 'history')} className="h-9 flex items-center px-2.5 gap-1.5 text-ink-700 hover:bg-ink-50 rounded-lg"><i className="fas fa-history text-ink-500" />ประวัติ</button>
@@ -95,7 +96,7 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
       </div>
       <div className="flex-1 flex min-h-0">
         <div className="flex-1 relative min-w-0 flex flex-col">
-          <div ref={fit.ref} className="flex-1 overflow-auto flex flex-col items-center px-8 pt-[84px] pb-28 canvas-dots-cream">
+          <div ref={fit.ref} tabIndex={0} role="region" aria-label="หน้าเว็บ (canvas) · เลือก Section จากรายการ Sections ได้ด้วยคีย์บอร์ด" className="flex-1 overflow-auto flex flex-col items-center px-8 pt-[84px] pb-28 canvas-dots-cream outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600">
             <PageRuleBanner page={page} className="mb-4 max-w-full" style={{ width: fit.w }} />
             <div className="rounded-[10px] bg-white overflow-hidden flex-none" style={{ boxShadow: '0 24px 60px -20px rgba(94,22,24,.25),var(--shadow-lg)' }}><Canvas site={site} page={page} device={device} previewWidth={fit.w} selBar="float" /></div>
           </div>
@@ -115,7 +116,7 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
           <LibraryPanel page={page} className="absolute left-4 top-4" />
         </div>
         <div className="w-[340px] bg-white border-l border-ink-150 flex-none flex flex-col min-h-0">
-          <PanelTabs id="c" def="ai" items={[['sections', <>Sections <span className="font-display text-ink-400">{(page.sections ?? []).length + 2}</span></>], ['props', 'คุณสมบัติ'], ['ai', <><MascotImg size={18} className="border border-ink-150" />ผู้ช่วย Ket</>]]} />
+          <PanelTabs id="c" def="ai" items={[['sections', <>Sections <span className="font-display text-ink-500">{(page.sections ?? []).length + 2}</span></>], ['props', 'คุณสมบัติ'], ['ai', <><MascotImg size={18} className="border border-ink-150" />ผู้ช่วย Ket</>]]} />
           {tab === 'ai' ? (
             <>
               <div className="flex-1 overflow-auto p-5 flex flex-col gap-4 text-body leading-[1.6]">
@@ -126,7 +127,7 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
               </div>
               <div className="px-5 pt-4 pb-5 border-t border-ink-150">
                 <TierChips labels={['T0 บล็อกเดิม', 'T1 HTML/CSS', 'T2']} />
-                <div className="border border-ink-200 rounded-xl px-3 py-2.5 flex items-center gap-2 text-ink-400">สั่งต่อ…<span className="ml-auto w-7 h-7 rounded-lg bg-red-600 text-white grid place-items-center"><i className="fas fa-arrow-up text-[11px]" /></span></div>
+                <div className="border border-ink-200 rounded-xl px-3 py-2.5 flex items-center gap-2 text-ink-500">สั่งต่อ…<span className="ml-auto w-7 h-7 rounded-lg bg-red-600 text-white grid place-items-center"><i className="fas fa-arrow-up text-[11px]" /></span></div>
               </div>
             </>
           ) : tab === 'sections' ? (

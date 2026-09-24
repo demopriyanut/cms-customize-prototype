@@ -77,20 +77,20 @@ export function ColorField({ look, site, value, inheritName, title, scope, onCha
   return (
     <div className="relative">
       <div className={`rounded-[10px] px-3 py-2.5 flex items-center gap-2.5 border ${value ? 'border-warning-500 bg-warning-50' : 'border-ink-150 bg-white'}`}>
-        <button onClick={() => setOpen(!open)} aria-label={`เลือกสี${title}`} className={`${sw} border border-ink-200 flex-none`} style={{ background: hex }} />
+        <button onClick={() => setOpen(!open)} aria-label={`เลือกสี${title}`} className={`${sw} border border-ink-500 flex-none`} style={{ background: hex }} />
         <div className="flex-1 min-w-0">
           <div className="font-semibold text-body">{title}</div>
           <div className={`text-meta flex gap-1.5 items-center ${value ? 'text-warning-700' : 'text-info-700'}`}><i className={`fas ${value ? 'fa-unlink' : 'fa-link'} text-[9px]`} /><span className="truncate">{sub}</span></div>
         </div>
         {value
-          ? <button onClick={() => set(undefined)} className="text-meta text-ink-700 border border-ink-200 bg-white rounded-md px-2 py-1 whitespace-nowrap hover:border-ink-400"><i className="fas fa-undo text-[9px]" /> {look === 'a' ? 'ใช้ Token' : 'Token'}</button>
-          : look !== 'b' && <button onClick={() => setOpen(!open)} aria-expanded={open} className="text-meta text-ink-600 border border-ink-200 rounded-md px-2 py-1 whitespace-nowrap hover:border-ink-400">ตั้งทับ</button>}
+          ? <button onClick={() => set(undefined)} className="text-meta text-ink-700 border border-ink-500 bg-white rounded-md px-2 py-1 whitespace-nowrap hover:border-ink-500"><i className="fas fa-undo text-[9px]" /> {look === 'a' ? 'ใช้ Token' : 'Token'}</button>
+          : look !== 'b' && <button onClick={() => setOpen(!open)} aria-expanded={open} className="text-meta text-ink-600 border border-ink-500 rounded-md px-2 py-1 whitespace-nowrap hover:border-ink-500">ตั้งทับ</button>}
       </div>
       {open && (
         <div className="absolute z-20 left-0 right-0 top-[calc(100%+6px)] bg-white border border-ink-150 rounded-xl shadow-xl p-3 flex flex-col gap-2.5 min-w-[240px]">
           <div className="text-meta font-semibold text-ink-600">ตั้งทับเฉพาะ{scope} — เลือก Token หรือสีเอง</div>
           <div className="flex flex-wrap gap-1.5">{site.tokens.map(t => (
-            <button key={t.name} onClick={() => set({ token: t.name })} title={`Token · ${t.name} ${t.hex}`} className="flex items-center gap-1.5 border border-ink-150 rounded-md pl-1 pr-2 py-1 text-meta hover:border-ink-400"><span className="w-4 h-4 rounded border border-ink-200" style={{ background: t.hex }} />{t.name}</button>
+            <button key={t.name} onClick={() => set({ token: t.name })} title={`Token · ${t.name} ${t.hex}`} className="flex items-center gap-1.5 border border-ink-500 rounded-md pl-1 pr-2 py-1 text-meta hover:border-ink-500"><span className="w-4 h-4 rounded border border-ink-200" style={{ background: t.hex }} />{t.name}</button>
           ))}</div>
           <label className="flex items-center gap-2 text-body text-ink-600 cursor-pointer"><span className="w-6 h-6 rounded-md border border-dashed border-ink-300 grid place-items-center relative overflow-hidden"><i className="fas fa-eye-dropper text-[11px]" /><input type="color" defaultValue={hex} className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => set({ hex: e.target.value.toUpperCase() })} /></span>สีเอง (ไม่ผูกกับ Token)</label>
           <div className="flex justify-between items-center border-t border-ink-100 pt-2">
@@ -107,7 +107,7 @@ export function Empty({ name, onBack, backLabel }: { name: string; onBack?: () =
   return (
     <div className="flex-1 grid place-items-center text-center text-ink-500 py-10 px-4 text-body leading-relaxed">
       <div><i className="far fa-lightbulb text-xl text-ink-300" /><br /><b className="text-ink-900">{name}</b><br />ยังไม่มีใน mockup — พื้นที่ว่างสำหรับลอง idea<br />
-        {onBack && <button onClick={onBack} className="mt-3 h-8 px-3 rounded-lg border border-ink-200 text-ink-700 font-semibold text-body hover:bg-ink-50">{backLabel}</button>}</div>
+        {onBack && <button onClick={onBack} className="mt-3 h-8 px-3 rounded-lg border border-ink-400 text-ink-700 font-semibold text-body hover:bg-ink-50">{backLabel}</button>}</div>
     </div>
   )
 }

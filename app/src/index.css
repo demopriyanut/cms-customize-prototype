@@ -55,7 +55,12 @@ button { cursor: pointer; }
 /* no visible scrollbars anywhere (areas still scroll with wheel / trackpad / touch) */
 * { scrollbar-width: none; }
 *::-webkit-scrollbar { display: none; width: 0; height: 0; }
-:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 2px; }
+/* focus ring = CI orange: 4.3:1 on white, 4.2:1 on the dark sidebar (≥ 3:1) */
+:focus-visible { outline: 2px solid var(--orange-600); outline-offset: 2px; }
+::placeholder { color: var(--ink-500); opacity: 1; }
+/* CI red → orange, kept in the red half so white text stays ≥ 4.5:1 (#B12629 6.6 · #D73226 4.8) */
+:root { --ket-grad: linear-gradient(135deg, var(--red-600), #D73226); }
+.sr-only-focusable:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 .narrow-note { display: none; }
 @media (max-width: 999px) {

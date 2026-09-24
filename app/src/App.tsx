@@ -6,6 +6,7 @@ import { isReady, screenOf, sidebarOf } from '@/versions/screens'
 import { SidebarBoldNarrow, SidebarBoldWide, SidebarSafe } from '@/components/shell/Sidebars'
 import { Dock } from '@/components/shell/Dock'
 import { useGo, useRoute, useUi } from '@/components/shell/nav'
+import { useStore } from '@/data/store'
 
 /* hash routes when run locally; in-memory routes inside the Artifact frame (it only passes plain #anchors) */
 const Router = import.meta.env.VITE_ROUTER === 'memory' ? MemoryRouter : HashRouter
@@ -48,7 +49,20 @@ function VersionShell() {
   else if (screen && !isReady(version.id, screen.id)) body = <Placeholder title={`${version.label} · ${screen.name}`} line={`มี mockup แล้ว (${refOf(version.id, screen.id)}) — ทำเป็น prototype ในรอบถัดไป`} />
   else body = <Screen v={version.id} s={screen!.id} collapsed={collapsed} />
 
-  return <div className="flex h-screen">{sidebar}<main className="flex-1 min-w-0 h-screen relative flex flex-col">{body}</main></div>
+  return (
+    <div className="flex h-screen">
+      <a href="#cms-main" onClick={e => { e.preventDefault(); document.getElementById('cms-main')?.focus() }} className="sr-only-focusable fixed left-3 top-3 z-[200] bg-ink-900 text-white rounded-lg px-3 py-2 text-body font-semibold">ข้ามไปเนื้อหา</a>
+      {sidebar}
+      <main id="cms-main" tabIndex={-1} className="flex-1 min-w-0 h-screen relative flex flex-col outline-none">{body}</main>
+      <LiveStatus />
+    </div>
+  )
+}
+
+/* screen readers hear every toast: the region exists all the time, only its text changes (WCAG 4.1.3) */
+function LiveStatus() {
+  const toast = useStore(s => s.toast)
+  return <div role="status" aria-live="polite" className="sr-only">{toast ?? ''}</div>
 }
 
 function Screen({ v, s, collapsed }: { v: VersionId; s: ScreenId; collapsed: boolean }) {

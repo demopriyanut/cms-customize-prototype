@@ -231,8 +231,8 @@ function MenuBar({ m, look }: { m: M; look: Look }) {
             })}
             <span className="relative">
               <button onClick={() => setAddOpen(!addOpen)} aria-label="สร้างเมนู" title="สร้างเมนู / วางเมนูใหม่ที่นี่" onDragOver={e => { if (dragging?.kind) e.preventDefault() }} onDrop={e => { e.preventDefault(); if (dragging?.kind) m.api.add(dragging.kind); dragging = null }}
-                className="w-[34px] h-[34px] rounded-[10px] border-[1.5px] border-dashed border-ink-400 grid place-items-center text-ink-500 hover:border-ink-900 hover:text-ink-900"><i className="fas fa-plus text-[10px]" /></button>
-              {addOpen && <div className="absolute right-0 top-10 z-30 w-[260px] bg-white border border-ink-150 rounded-xl shadow-xl p-1.5 flex flex-col">{MENU_TYPES.map(t => <button key={t.key} onClick={() => { setAddOpen(false); m.api.add(t.key) }} className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-ink-50 text-meta text-left"><i className={`${t.icon} w-4 text-ink-500`} />{t.name}<span className="ml-auto text-caption text-ink-400">{t.desc}</span></button>)}</div>}
+                className="w-[34px] h-[34px] rounded-[10px] border-[1.5px] border-dashed border-ink-500 grid place-items-center text-ink-600 hover:border-ink-900 hover:text-ink-900"><i className="fas fa-plus text-[10px]" /></button>
+              {addOpen && <div className="absolute right-0 top-10 z-30 w-[260px] bg-white border border-ink-150 rounded-xl shadow-xl p-1.5 flex flex-col">{MENU_TYPES.map(t => <button key={t.key} onClick={() => { setAddOpen(false); m.api.add(t.key) }} className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-ink-50 text-meta text-left"><i className={`${t.icon} w-4 text-ink-500`} />{t.name}<span className="ml-auto text-caption text-ink-500">{t.desc}</span></button>)}</div>}
             </span>
           </div>
         )}
@@ -259,7 +259,7 @@ function SubPanel({ m, item, editable }: { m: M; item: MenuItem; editable: boole
     <div className="w-[520px] bg-white border border-ink-150 shadow-xl rounded-b-[14px] px-4 pt-3.5 pb-3 grid gap-3.5 text-meta" style={{ gridTemplateColumns: MENU_LAYOUTS.find(l => l.key === item.layout)!.cols.map(c => `${c}fr`).join(' ') }}>
       {item.cols.slice(0, n).map((c, ci) => (
         <div key={ci} className="min-w-0">
-          {inline(`h${ci}`, c.head, v => m.api.setHead(ci, v), 'block font-bold mb-1.5 text-caption text-ink-400 tracking-[.06em] uppercase')}
+          {inline(`h${ci}`, c.head, v => m.api.setHead(ci, v), 'block font-bold mb-1.5 text-caption text-ink-500 tracking-[.06em] uppercase')}
           <div className="flex flex-col gap-1">
             {c.links.map((l, li) => <div key={li} className="truncate">{inline(`l${ci}-${li}`, l.name, v => m.api.editLink(ci, li, { name: v }), 'block truncate')}</div>)}
             {editable && <button onClick={() => { m.api.addLink(ci, { name: 'ลิงก์ใหม่', url: '' }); setEdit(`l${ci}-${c.links.length}`) }} className="text-left text-red-600"><i className="fas fa-plus text-[9px]" /> เพิ่ม</button>}
@@ -305,14 +305,15 @@ function Tree({ m, look }: { m: M; look: 'a' | 'c' }) {
     return (
       <div key={x.id}>
         <div {...dnd.props(x, depth)} onClick={() => m.api.select(x.id)} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && m.api.select(x.id)} aria-current={on}
-          className={`flex items-center gap-2 px-2.5 rounded-[9px] border cursor-pointer ${look === 'a' ? 'py-2' : 'py-[7px]'} ${on ? 'bg-red-50 border-red-300' : 'border-transparent hover:bg-ink-50'} ${off ? 'opacity-50' : ''} ${m.flash === x.id ? 'animate-pulse' : ''}`}
+          className={`group flex items-center gap-2 px-2.5 rounded-[9px] border cursor-pointer ${look === 'a' ? 'py-2' : 'py-[7px]'} ${on ? 'bg-red-50 border-red-300' : 'border-transparent hover:bg-ink-50'} ${off ? 'opacity-50' : ''} ${m.flash === x.id ? 'animate-pulse' : ''}`}
           style={{ marginLeft: depth * 26, ...dnd.mark(x.id) }}>
           <i className="fas fa-grip-vertical text-ink-300 text-[11px] cursor-grab" />
           <i className={`${x.layout.startsWith('col') ? 'fas fa-columns' : MENU_KIND_ICON[x.kind] ?? 'fas fa-link'} w-3.5 text-center text-ink-500 text-[11px]`} />
           <span className="flex-1 font-semibold text-body truncate">{menuLabel(x)}</span>
           <span className="text-caption px-1.5 py-0.5 rounded-[5px] bg-ink-100 text-ink-600 whitespace-nowrap">{badge(x)}</span>
           {look === 'a' && <span className="flex gap-1 text-caption" title="แสดงบน Desktop / Mobile"><i className="fas fa-desktop" style={{ color: x.showOn.desktop ? 'var(--ink-400)' : 'var(--ink-200)' }} /><i className="fas fa-mobile-alt" style={{ color: x.showOn.mobile ? 'var(--ink-400)' : 'var(--ink-200)' }} /></span>}
-          <button onClick={e => { e.stopPropagation(); m.api.toggleAll(x.id) }} aria-label={off ? 'แสดงเมนู' : 'ซ่อนเมนู'} title={off ? 'แสดงเมนู' : 'ซ่อนเมนูทุกจอ'} className="w-6 h-6 grid place-items-center rounded text-ink-400 hover:text-ink-800"><i className={off ? 'far fa-eye-slash' : 'far fa-eye'} /></button>
+          <MoveBtns m={m} x={x} />
+          <button onClick={e => { e.stopPropagation(); m.api.toggleAll(x.id) }} aria-label={off ? 'แสดงเมนู' : 'ซ่อนเมนู'} title={off ? 'แสดงเมนู' : 'ซ่อนเมนูทุกจอ'} className="w-6 h-6 grid place-items-center rounded text-ink-500 hover:text-ink-800"><i className={off ? 'far fa-eye-slash' : 'far fa-eye'} /></button>
         </div>
         {x.children.map(c => row(c, depth + 1))}
       </div>
@@ -322,11 +323,29 @@ function Tree({ m, look }: { m: M; look: 'a' | 'c' }) {
     <div className="bg-white border border-ink-150 rounded-xl flex flex-col overflow-hidden">
       <div className="px-3.5 py-2.5 border-b border-ink-100 flex items-center gap-2 text-meta text-ink-500">
         {look === 'a' ? <><i className="fas fa-info-circle" />ลาก <i className="fas fa-grip-vertical" /> เพื่อย้าย · ลากเข้ากลางแถวเพื่อทำเมนูย่อย</>
-          : <><i className="fas fa-stream" /><span className="whitespace-nowrap">โครงสร้างเมนู</span> <span className="text-caption text-ink-400 truncate">· Column menu ไม่มีลูก — รายการอยู่ใน Menu Collection ขวา</span></>}
+          : <><i className="fas fa-stream" /><span className="whitespace-nowrap">โครงสร้างเมนู</span> <span className="text-caption text-ink-500 truncate">· Column menu ไม่มีลูก — รายการอยู่ใน Menu Collection ขวา</span></>}
         <span className="ml-auto font-display whitespace-nowrap">{m.menu.length} / {MENU_MAX}</span>
       </div>
       <div className="p-2 flex flex-col gap-[3px]">{m.menu.map(x => row(x, 0))}</div>
     </div>
+  )
+}
+
+/* no-drag alternative for the tree (WCAG 2.5.7): ↑ ↓ reorder · → make it a submenu of the item above · ← back to the top level */
+function MoveBtns({ m, x }: { m: M; x: MenuItem }) {
+  const f = find(m.menu, x.id); if (!f) return null
+  const prev = f.arr[f.index - 1], next = f.arr[f.index + 1]
+  const b = (icon: string, label: string, on: boolean, run: () => void) => (
+    <button aria-label={`${label} · ${menuLabel(x)}`} title={label} disabled={!on} onClick={e => { e.stopPropagation(); run() }}
+      className="w-6 h-6 grid place-items-center rounded text-ink-500 hover:text-ink-900 hover:bg-ink-100 disabled:hidden"><i className={`${icon} text-[10px]`} /></button>
+  )
+  return (
+    <span className="flex opacity-0 group-hover:opacity-100 focus-within:opacity-100">
+      {b('fas fa-arrow-up', 'ย้ายขึ้น', !!prev, () => m.api.move(x.id, prev.id, 'before'))}
+      {b('fas fa-arrow-down', 'ย้ายลง', !!next, () => m.api.move(x.id, next.id, 'after'))}
+      {b('fas fa-level-down-alt', 'เป็นเมนูย่อยของตัวบน', !f.parent && !!prev && !prev.layout.startsWith('col') && !x.children.length, () => m.api.move(x.id, prev.id, 'into'))}
+      {b('fas fa-level-up-alt', 'ออกจากเมนูย่อย', !!f.parent, () => m.api.move(x.id, f.parent!.id, 'after'))}
+    </span>
   )
 }
 
@@ -336,8 +355,8 @@ function Names({ m, it }: { m: M; it: MenuItem }) {
   return (
     <div className="grid grid-cols-4 gap-2">
       {LANGS.map(l => (
-        <label key={l} className="border border-ink-200 rounded-lg px-2.5 flex gap-2 items-center focus-within:border-red-300 focus-within:ring-2 focus-within:ring-red-100 bg-white">
-          <span className="text-caption font-bold text-ink-400">{l}</span>
+        <label key={l} className="border border-ink-400 rounded-lg px-2.5 flex gap-2 items-center focus-within:border-red-300 focus-within:ring-2 focus-within:ring-red-100 bg-white">
+          <span className="text-caption font-bold text-ink-500">{l}</span>
           <input key={it.id + l + (it.i18n[l] ?? '')} defaultValue={it.i18n[l] ?? ''} placeholder="—" aria-label={`ชื่อเมนู ${l}`} onBlur={e => m.api.rename(it.id, l, e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} className="flex-1 min-w-0 h-9 bg-transparent outline-none text-body" />
         </label>
       ))}
@@ -352,7 +371,7 @@ function TargetPick({ m, it }: { m: M; it: MenuItem }) {
     <label className="relative block">
       <span className="sr-only">ลิงก์ไปที่</span>
       <i className={`${MENU_KIND_ICON[it.kind] ?? 'fas fa-link'} absolute left-3 top-1/2 -translate-y-1/2 text-ink-500 text-[11px] pointer-events-none`} />
-      <select value={it.target} onChange={e => m.api.setTarget(it.id, e.target.value)} className="w-full h-9 appearance-none border border-ink-200 rounded-lg pl-8 pr-7 bg-white text-body">{opts.map(o => <option key={o}>{o}</option>)}</select>
+      <select value={it.target} onChange={e => m.api.setTarget(it.id, e.target.value)} className="w-full h-9 appearance-none border border-ink-400 rounded-lg pl-8 pr-7 bg-white text-body">{opts.map(o => <option key={o}>{o}</option>)}</select>
       <i className="fas fa-chevron-down text-[10px] text-ink-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
     </label>
   )
@@ -365,7 +384,7 @@ function PickLink({ label, onPick, cats }: { label: string; onPick: (l: MenuLink
       {open && (
         <div className="absolute right-0 top-6 z-30 w-[240px] bg-white border border-ink-150 rounded-xl shadow-xl p-1.5 flex flex-col">
           {cats !== false && <div className="text-caption font-semibold text-ink-500 px-2 pt-1 pb-1">หมวดหมู่สินค้า</div>}
-          {CATEGORIES.map(c => <button key={c.url} onClick={() => { setOpen(false); onPick(c) }} className="flex justify-between px-2 py-1.5 rounded-md hover:bg-ink-50 text-meta"><span>{c.name}</span><span className="text-ink-400 text-caption">{c.url}</span></button>)}
+          {CATEGORIES.map(c => <button key={c.url} onClick={() => { setOpen(false); onPick(c) }} className="flex justify-between px-2 py-1.5 rounded-md hover:bg-ink-50 text-meta"><span>{c.name}</span><span className="text-ink-500 text-caption">{c.url}</span></button>)}
           <button onClick={() => { setOpen(false); onPick({ name: 'ลิงก์ใหม่', url: '' }) }} className="text-left px-2 py-1.5 mt-1 border-t border-ink-100 rounded-md hover:bg-ink-50 text-meta text-ink-600"><i className="fas fa-link text-[11px] mr-1.5" />ลิงก์เอง (ใส่ URL ทีหลัง)</button>
         </div>
       )}
@@ -391,8 +410,10 @@ function Collection({ m, it }: { m: M; it: MenuItem }) {
               className="group bg-white border border-ink-150 rounded-md px-1.5 py-1 flex flex-col text-caption cursor-grab">
               <input key={l.name + li} defaultValue={l.name} aria-label="ชื่อลิงก์" onBlur={e => m.api.editLink(ci, li, { name: e.target.value })} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} className="font-semibold bg-transparent outline-none min-w-0 focus:bg-ink-50 rounded px-0.5" />
               <span className="flex items-center gap-1">
-                <input key={l.url + li} defaultValue={l.url} placeholder="URL" aria-label="URL" onBlur={e => m.api.editLink(ci, li, { url: e.target.value })} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} className="flex-1 text-caption text-ink-400 bg-transparent outline-none min-w-0 focus:bg-ink-50 rounded px-0.5" />
-                <button aria-label="ลบลิงก์" onClick={() => m.api.removeLink(ci, li)} className="text-ink-300 hover:text-red-600 opacity-0 group-hover:opacity-100 focus:opacity-100"><i className="fas fa-times text-[10px]" /></button>
+                <input key={l.url + li} defaultValue={l.url} placeholder="URL" aria-label="URL" onBlur={e => m.api.editLink(ci, li, { url: e.target.value })} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} className="flex-1 text-caption text-ink-500 bg-transparent outline-none min-w-0 focus:bg-ink-50 rounded px-0.5" />
+                <button aria-label={`ย้าย ${l.name} ขึ้น`} disabled={li === 0} onClick={() => m.api.moveLink(ci, li, ci, li - 1)} className="text-ink-500 hover:text-ink-900 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:hidden"><i className="fas fa-arrow-up text-[10px]" /></button>
+                <button aria-label={`ย้าย ${l.name} ลง`} disabled={li === c.links.length - 1} onClick={() => m.api.moveLink(ci, li, ci, li + 1)} className="text-ink-500 hover:text-ink-900 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:hidden"><i className="fas fa-arrow-down text-[10px]" /></button>
+                <button aria-label="ลบลิงก์" onClick={() => m.api.removeLink(ci, li)} className="text-ink-500 hover:text-red-600 opacity-0 group-hover:opacity-100 focus:opacity-100"><i className="fas fa-times text-[10px]" /></button>
               </span>
             </div>
           ))}
@@ -404,7 +425,7 @@ function Collection({ m, it }: { m: M; it: MenuItem }) {
         <div className="flex-1 min-h-[64px] rounded-md relative" style={{ background: 'linear-gradient(160deg,#d9b493,#5e3b28)' }}>
           <button onClick={() => m.showToast('อัปโหลดรูป Banner ยังไม่รองรับใน prototype (ยังไม่มีคลังรูป)')} className="absolute right-1.5 bottom-1.5 bg-white rounded-[5px] px-1.5 py-0.5 text-caption font-semibold"><i className="far fa-image text-[9px]" /> เปลี่ยนรูป</button>
         </div>
-        <label className="bg-white border border-ink-150 rounded-md px-1.5 py-1 text-caption text-ink-500 flex gap-1.5 items-center"><i className="fas fa-link text-[9px]" /><input key={it.banner?.url} defaultValue={it.banner?.url ?? ''} placeholder="ลิงก์ของ Banner" aria-label="ลิงก์ของ Banner" onBlur={e => m.api.setBanner(e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} className="flex-1 min-w-0 bg-transparent outline-none" /></label>
+        <label className="bg-white border border-ink-400 rounded-md px-1.5 py-1 text-caption text-ink-500 flex gap-1.5 items-center"><i className="fas fa-link text-[9px]" /><input key={it.banner?.url} defaultValue={it.banner?.url ?? ''} placeholder="ลิงก์ของ Banner" aria-label="ลิงก์ของ Banner" onBlur={e => m.api.setBanner(e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} className="flex-1 min-w-0 bg-transparent outline-none" /></label>
       </div>
     </div>
   )
@@ -413,9 +434,9 @@ function PickLinkSlot({ onPick }: { onPick: (l: MenuLink) => void }) {
   const [open, setOpen] = useState(false)
   return (
     <div className="relative">
-      <button onClick={() => setOpen(!open)} className="w-full border border-dashed border-ink-300 rounded-md py-1 text-center text-caption text-ink-500 hover:border-ink-500"><i className="fas fa-plus text-[9px]" /> เพิ่มลิงก์</button>
+      <button onClick={() => setOpen(!open)} className="w-full border border-dashed border-ink-500 rounded-md py-1 text-center text-caption text-ink-500 hover:border-ink-500"><i className="fas fa-plus text-[9px]" /> เพิ่มลิงก์</button>
       {open && <div className="absolute left-0 top-8 z-30 w-[220px] bg-white border border-ink-150 rounded-xl shadow-xl p-1.5 flex flex-col">
-        {CATEGORIES.map(c => <button key={c.url} onClick={() => { setOpen(false); onPick(c) }} className="flex justify-between px-2 py-1.5 rounded-md hover:bg-ink-50 text-meta"><span>{c.name}</span><span className="text-ink-400 text-caption">{c.url}</span></button>)}
+        {CATEGORIES.map(c => <button key={c.url} onClick={() => { setOpen(false); onPick(c) }} className="flex justify-between px-2 py-1.5 rounded-md hover:bg-ink-50 text-meta"><span>{c.name}</span><span className="text-ink-500 text-caption">{c.url}</span></button>)}
         <button onClick={() => { setOpen(false); onPick({ name: 'ลิงก์ใหม่', url: '' }) }} className="text-left px-2 py-1.5 mt-1 border-t border-ink-100 rounded-md hover:bg-ink-50 text-meta text-ink-600"><i className="fas fa-link text-[11px] mr-1.5" />ลิงก์เอง</button>
       </div>}
     </div>
@@ -426,7 +447,7 @@ function DetailHead({ m, it, look }: { m: M; it: MenuItem; look: 'a' | 'c' }) {
   return (
     <div className={`px-[18px] border-b border-ink-100 flex items-center gap-2.5 ${look === 'a' ? 'py-3.5' : 'py-3'}`}>
       <i className={`${MENU_KIND_ICON[it.kind] ?? 'fas fa-link'} text-ink-500`} />
-      <span className="font-bold text-heading uppercase truncate">{menuLabel(it)}</span>
+      <h2 className="font-bold text-heading uppercase truncate">{menuLabel(it)}</h2>
       <span className="text-caption px-1.5 py-0.5 rounded-[5px] bg-ink-100 text-ink-600 whitespace-nowrap">{look === 'c' ? (layoutName(it) ? `Menu Type · ${layoutName(it)}` : MENU_KIND_LABEL[it.kind]) : MENU_KIND_LABEL[it.kind]}</span>
       <button onClick={() => m.api.remove(it.id)} className="ml-auto text-red-600 text-meta flex gap-1.5 items-center whitespace-nowrap hover:text-red-700"><i className="far fa-trash-alt" />{look === 'a' ? 'ลบเมนู' : 'ลบ'}</button>
     </div>
@@ -444,13 +465,13 @@ export function MenuV4(_: { collapsed?: boolean }) {
   return (
     <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
       <div className="h-14 bg-white border-b border-ink-150 flex items-center px-6 gap-3 flex-none">
-        <span className="font-bold text-heading">Menu</span><span className="text-ink-400">/</span><span className="text-ink-600">Menu display · แถบเมนูบน Header</span>
+        <h1 className="font-bold text-title">Menu</h1><span className="text-ink-500">/</span><span className="text-ink-600">Menu display · แถบเมนูบน Header</span>
         <div className="flex-1" />
         <Saved />
         <DevSwitch m={m} look="c" labels />
         <CreateMenu m={m} look="c" />
       </div>
-      <div className="flex-1 overflow-auto px-6 pt-5 pb-28 flex flex-col gap-4">
+      <div tabIndex={0} aria-label="พื้นที่ Menu" className="outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600 flex-1 overflow-auto px-6 pt-5 pb-28 flex flex-col gap-4">
         <div className="bg-white rounded-[14px] shadow-md border border-black/5">
           <div className="flex items-center gap-2 text-caption text-ink-500 px-3 py-2 border-b border-ink-100"><span className="font-semibold text-ink-700">พรีวิว Header จริง</span>· ลากชิปเพื่อเรียง · ลากซ้อนบนชิปอื่น = ทำเมนูย่อย · คลิกเพื่อแก้<span className="ml-auto flex gap-1.5 items-center text-ink-600"><i className="fas fa-magic text-red-600" />วางเมนูใหม่ที่ปุ่ม +</span></div>
           <div className="rounded-b-[14px] overflow-visible"><MenuBar m={m} look="c" /></div>
@@ -461,7 +482,7 @@ export function MenuV4(_: { collapsed?: boolean }) {
             <div className="flex-1 min-w-0 bg-white border border-ink-150 rounded-xl overflow-hidden">
               <DetailHead m={m} it={it} look="c" />
               <div className="px-[18px] py-3.5 flex flex-col gap-3.5">
-                <div><div className="font-semibold mb-1.5">ชื่อเมนู <span className="text-ink-400 font-normal">· 4 ภาษา</span></div><Names m={m} it={it} /></div>
+                <div><div className="font-semibold mb-1.5">ชื่อเมนู <span className="text-ink-500 font-normal">· 4 ภาษา</span></div><Names m={m} it={it} /></div>
                 <div className="max-w-[50%]"><div className="font-semibold mb-1.5">ลิงก์ไปที่</div><TargetPick m={m} it={it} /></div>
                 {isChild ? <div className="text-meta text-ink-500 rounded-lg bg-ink-50 border border-ink-150 p-2.5">เมนูย่อย — Menu Type ตั้งได้ที่เมนูแม่</div> : <>
                   <div>
@@ -470,7 +491,7 @@ export function MenuV4(_: { collapsed?: boolean }) {
                       {MENU_LAYOUTS.map(t => {
                         const on = it.layout === t.key
                         return (
-                          <button key={t.key} role="radio" aria-checked={on} onClick={() => m.api.setLayout(it.id, t.key)} className={`flex-1 rounded-[10px] p-2 text-center ${on ? 'bg-red-50' : 'bg-white hover:border-ink-300'}`} style={{ border: `2px solid ${on ? 'var(--red-600)' : 'var(--ink-150)'}` }}>
+                          <button key={t.key} role="radio" aria-checked={on} onClick={() => m.api.setLayout(it.id, t.key)} className={`flex-1 rounded-[10px] p-2 text-center ${on ? 'bg-red-50' : 'bg-white hover:border-ink-400'}`} style={{ border: `2px solid ${on ? 'var(--red-600)' : 'var(--ink-400)'}` }}>
                             <div className="h-8 bg-white border border-ink-150 rounded-[5px] p-1 grid gap-[3px]" style={{ gridTemplateColumns: t.cols.map(c => `${c}fr`).join(' ') }}>{t.cols.map((_, i) => <span key={i} className="rounded-sm" style={{ background: t.key !== 'normal' && i === t.cols.length - 1 ? 'var(--orange-100)' : 'var(--ink-200)' }} />)}</div>
                             <div className="text-caption font-semibold mt-1.5">{t.name}</div><div className="text-caption text-ink-500">{t.desc}</div>
                           </button>
@@ -483,8 +504,8 @@ export function MenuV4(_: { collapsed?: boolean }) {
                     <div className="font-semibold mb-1.5 flex items-center gap-2">2. Menu Collection <span className="text-caption font-normal text-ink-500 truncate">· {n ? `ช่องตาม layout Column ${n} — คลิกช่องเพื่อใส่ URL / Banner` : 'Normal = รายการ dropdown'}</span>{n > 0 && <span className="ml-auto text-caption text-ink-600 whitespace-nowrap"><i className="fas fa-eye text-[10px]" /> ตรงกับ preview ด้านบน</span>}</div>
                     {n ? <Collection m={m} it={it} /> : it.layout === 'normal' ? (
                       <div className="flex flex-wrap gap-2 items-center">
-                        {it.children.map(c => <button key={c.id} onClick={() => m.api.select(c.id)} className="border border-ink-200 rounded-lg px-2.5 py-1.5 text-meta hover:border-ink-400">{menuLabel(c)}</button>)}
-                        {!it.children.length && <span className="text-meta text-ink-400">ยังไม่มีรายการ · ลากเมนูอื่นมาวางกลางชิปนี้</span>}
+                        {it.children.map(c => <button key={c.id} onClick={() => m.api.select(c.id)} className="border border-ink-400 rounded-lg px-2.5 py-1.5 text-meta hover:border-ink-400">{menuLabel(c)}</button>)}
+                        {!it.children.length && <span className="text-meta text-ink-500">ยังไม่มีรายการ · ลากเมนูอื่นมาวางกลางชิปนี้</span>}
                         <PickLink label="เพิ่มรายการ" onPick={l => m.api.addChild(l)} />
                       </div>
                     ) : null}

@@ -34,6 +34,7 @@
 | `app/src/App.tsx` (รอบ Master V) | `Screen()` อ่านจาก `SCREEN_MAP` · หน้ารวมเวอร์ชันแสดงเวอร์ชันย่อย / ต่อยอดจาก |
 | `app/src/components/storefront/Canvas.tsx` (รอบ V4) | prop ใหม่ `selBar="float"` = toolbar ไอคอนเล็กมุมขวาบนของ Section ตาม 3a (ค่าเดิม `bar` ของ V1–V3 ไม่เปลี่ยน) |
 | `app/src/versions/screens.tsx` + `App.tsx` (รอบ V4) | เวอร์ชันมี sidebar ของตัวเองได้ (`SIDEBAR_MAP`) |
+| `app/src/App.tsx` · `Dock.tsx` · `index.css` · `Canvas.tsx` (รอบ WCAG) | skip link · `<main id=cms-main>` · กล่อง `role=status` ถาวร (toast ใน Dock เป็น aria-hidden) · `--ket-grad` · วงโฟกัส orange-600 · placeholder ink-500 · ✦ ใน toolbar ลอย / แถบ "เนื้อหาหน้า" |
 | `app/src/index.css` (รอบมาตรฐานตัวอักษร) | token ตัวอักษร 6 ขั้น `text-display/title/heading/body/meta/caption` (ใช้ได้ทุกเวอร์ชัน แต่ตอนนี้ใช้แค่ V4) |
 | `app/src/components/shell/nav.ts` + `App.tsx` | สถานะ `rail` (sidebar ของเวอร์ชันย่อเหลือไอคอน · จำไว้ในเบราว์เซอร์) · ความกว้าง 72/240 |
 | `app/src/index.css` | สี `warning-50` / `info-50` · สไตล์ hover ของ hot-zone |
@@ -42,7 +43,8 @@
 
 | วันที่ | ทำอะไร | commit | ค้าง / ส่งต่อ |
 |---|---|---|---|
-| 2026-09-24 | V4 โคลนแผงขวาและชิ้นร่วมมาเป็นของตัวเอง (`versions/v4/panels.tsx` · `parts.tsx` · `shared.tsx`) แล้วใช้มาตรฐานตัวอักษร — ทั้ง V4 ใช้ 6 ขั้นแล้ว | (commit นี้) | ปรับโครงสร้างโดยรวม → Page Layouts |
+| 2026-09-24 | V4 แก้ WCAG ตามผลตรวจ skill wcag-check: ข้อความรอง ink-500 · ขอบช่อง/ปุ่ม ≥ 3:1 · ปุ่มไล่สี #B12629→#D73226 · h1/h2 ทุกหน้า · skip link + ชื่อ nav · กล่องแจ้งสถานะอยู่ตลอด · ป้าย "ฉบับร่าง" แทนจุดสี · canvas/พื้นที่เลื่อนโฟกัสได้ · ปุ่ม ↑↓ / เมนูย่อย แทนการลาก (Menu, Footer, Menu Collection) · label ช่องกรอก Footer · วงโฟกัสสีส้ม CI · วัดซ้ำ: เหลือแต่ข้อที่เครื่องแจ้งผิด + สีหน้าร้านตัวอย่าง | (commit นี้) | เสนอสีตาม CI |
+| 2026-09-24 | V4 โคลนแผงขวาและชิ้นร่วมมาเป็นของตัวเอง (`versions/v4/panels.tsx` · `parts.tsx` · `shared.tsx`) แล้วใช้มาตรฐานตัวอักษร — ทั้ง V4 ใช้ 6 ขั้นแล้ว | 0699471 | — |
 | 2026-09-24 | V4: มาตรฐานตัวอักษร 6 ขั้น (ไม่มีครึ่ง px) ใช้ทั้งชุด · sidebar เว้นก่อนหัวกลุ่ม 12px หัวกลุ่ม 11px สีอ่านง่ายขึ้น · sidebar ย่อเหลือไอคอน 72px ได้ (« / ») ชื่อขึ้นเมื่อชี้ จำสถานะไว้ | f0dd19f | — |
 | 2026-09-24 | V4 ปรับระยะ/ตัวอักษรกลับไปตามตัวเลขใน mockup แนว C + Design System 0a (gridgeist): สเกลตัวอักษรลด 0.5–1px ทั้งชุด · ฐาน 13px · sidebar แถว 30px · หน้าเลือกแถวตาม 3f · หน้าแต่ง: toolbar ลอยเล็ก · คำอธิบายสีเป็นแคปซูลมุมซ้ายล่าง · panel 340 · canvas กว้างไม่เกิน 680 | d341ce3 | รายงานจุดที่ V1–V3 ไม่ตรง mockup ให้ผู้ใช้ (ส่งแล้ว) |
 | 2026-09-24 | Master V รองรับเวอร์ชันหลัก/ย่อย · โคลน V3 ทั้งชุดเป็น V4 (`versions/v4/`) | 9bb00f9 | — |

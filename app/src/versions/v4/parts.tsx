@@ -70,14 +70,14 @@ export function DiffCard({ accept = 'var(--ink-900)', compact = false }: { accep
               ? <span className="w-9 h-[26px] rounded flex-none" style={{ background: 'linear-gradient(160deg,#d9b493,#5e3b28)' }} />
               : <span className="w-9 h-[26px] rounded flex-none bg-success-50 border border-dashed border-success-500 grid place-items-center text-success-600"><i className="fas fa-plus text-[9px]" /></span>}
             <div className="flex-1 min-w-0"><div className={`font-semibold ${st === 'no' ? 'line-through' : ''}`}>{it.title}</div><div className="text-meta text-ink-500">{compact ? it.short : it.id === 'hero' ? <><span className="line-through">#dfe7f3</span> → #B07A55 · หัวข้อ "AUTUMN EDIT 2026"</> : it.detail}</div></div>
-            <button onClick={() => resolve(it.id, 'ok')} title="ยอมรับ" aria-pressed={st === 'ok'} className={`w-[26px] h-[26px] rounded-[7px] grid place-items-center border ${st === 'ok' ? 'bg-success-600 border-success-600 text-white' : 'bg-success-50 border-success-100 text-success-600'}`}><i className="fas fa-check text-[11px]" /></button>
-            <button onClick={() => resolve(it.id, 'no')} title="ไม่รับ" aria-pressed={st === 'no'} className={`w-[26px] h-[26px] rounded-[7px] grid place-items-center border border-ink-150 text-ink-500 ${st === 'no' ? 'bg-ink-100' : ''}`}><i className="fas fa-times text-[11px]" /></button>
+            <button onClick={() => resolve(it.id, 'ok')} title="ยอมรับ" aria-pressed={st === 'ok'} className={`w-[26px] h-[26px] rounded-[7px] grid place-items-center border ${st === 'ok' ? 'bg-success-600 border-success-600 text-white' : 'bg-success-50 border-success-600 text-success-600'}`}><i className="fas fa-check text-[11px]" /></button>
+            <button onClick={() => resolve(it.id, 'no')} title="ไม่รับ" aria-pressed={st === 'no'} className={`w-[26px] h-[26px] rounded-[7px] grid place-items-center border border-ink-400 text-ink-500 ${st === 'no' ? 'bg-ink-100' : ''}`}><i className="fas fa-times text-[11px]" /></button>
           </div>
         )
       })}
       <div className="flex gap-2 p-2.5 bg-ink-50">
         <button onClick={acceptAll} className="flex-1 h-8 rounded-lg text-white font-semibold text-body" style={{ background: accept }}>ยอมรับทั้งหมด</button>
-        <button onClick={() => setCompare(compare === 'after' ? 'before' : 'after')} className="h-8 px-3 rounded-lg border border-ink-200 text-body bg-white">{compare === 'after' ? (compact ? 'ก่อน/หลัง' : 'ดูก่อน/หลัง') : 'ดูฉบับร่าง'}</button>
+        <button onClick={() => setCompare(compare === 'after' ? 'before' : 'after')} aria-pressed={compare === 'before'} className="h-8 px-3 rounded-lg border border-ink-500 text-body bg-white">{compare === 'after' ? (compact ? 'ก่อน/หลัง' : 'ดูก่อน/หลัง') : 'ดูฉบับร่าง'}</button>
       </div>
     </div>
   )
@@ -88,7 +88,7 @@ export function TierChips({ labels }: { labels: [string, string, string] }) {
     <div className="flex gap-1.5 mb-2 text-meta font-semibold">
       <span className="rounded-full px-2.5 py-[3px] bg-ink-900 text-white">{labels[0]}</span>
       <span className="rounded-full px-2.5 py-[3px] border border-ink-200 text-ink-600">{labels[1]}</span>
-      <span className="rounded-full px-2.5 py-[3px] border border-ink-200 text-ink-400">{labels[2]} <i className="fas fa-lock text-[9px]" /></span>
+      <span className="rounded-full px-2.5 py-[3px] border border-ink-200 text-ink-500">{labels[2]} <i className="fas fa-lock text-[9px]" /></span>
     </div>
   )
 }

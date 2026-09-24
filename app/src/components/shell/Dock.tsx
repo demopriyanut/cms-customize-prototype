@@ -54,7 +54,7 @@ export function Dock() {
 
   return (
     <div className="fixed bottom-3.5 z-[100] -translate-x-1/2" style={{ left: 'calc(var(--sbw,0px) + (100vw - var(--sbw,0px)) / 2)' }}>
-      {toast && <div role="status" className="absolute left-1/2 -translate-x-1/2 bottom-[calc(100%+10px)] whitespace-nowrap bg-white text-ink-900 border border-ink-150 shadow-xl rounded-[10px] px-3.5 py-2 text-[13.5px]">{toast}</div>}
+      {toast && <div aria-hidden className="absolute left-1/2 -translate-x-1/2 bottom-[calc(100%+10px)] whitespace-nowrap bg-white text-ink-900 border border-ink-150 shadow-xl rounded-[10px] px-3.5 py-2 text-[13.5px]">{toast}</div>}
       {dockPop && (
         <div role="dialog" aria-label="Master V · เลือกเวอร์ชัน" className="absolute left-1/2 -translate-x-1/2 bottom-[calc(100%+10px)] w-[440px] bg-white rounded-2xl border border-ink-150 p-2 flex flex-col max-h-[70vh]" style={{ boxShadow: 'var(--shadow-3xl)' }}>
           <div className="flex items-center justify-between px-2.5 pt-2 pb-2.5 border-b border-ink-100 mb-1.5 flex-none">
