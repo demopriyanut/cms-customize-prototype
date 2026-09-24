@@ -83,3 +83,9 @@ body.dock-on .fb { bottom: 66px !important; }
 /* V2 (1i): only the zone being edited is marked — the others show their outline and tag on hover */
 [data-hz-look="b"]:not([data-hz-on]):not(:hover) { outline-color: transparent !important; }
 [data-hz-look="b"]:not([data-hz-on]):not(:hover) > .hz-tag { opacity: 0; }
+
+/* the sidebar menu list shows a thin scrollbar (everything else hides it) so a list longer than the screen is visible as such */
+.nav-scroll { scrollbar-width: thin; scrollbar-color: var(--ink-700) transparent; }
+.nav-scroll::-webkit-scrollbar { display: block; width: 6px; }
+.nav-scroll::-webkit-scrollbar-thumb { background: var(--ink-700); border-radius: 3px; }
+.nav-scroll::-webkit-scrollbar-track { background: transparent; }

@@ -128,7 +128,7 @@ function EmptyLang({ f }: { f: F }) {
   return (
     <div className="bg-white border border-dashed border-ink-300 rounded-xl p-8 text-center text-ink-600 leading-relaxed">
       <i className="fas fa-language text-2xl text-ink-300" /><br /><b className="text-ink-900">ภาษา {f.lang} ยังไม่มี Footer</b><br />หน้าเว็บภาษานี้จะแสดง Footer ภาษา TH แทนจนกว่าจะสร้าง
-      <div className="mt-3"><button onClick={() => f.api.cloneFromTh()} className="h-9 px-3.5 rounded-lg bg-ink-900 text-white font-semibold"><i className="far fa-clone mr-1.5" />โคลนจาก TH มาแก้ต่อ</button></div>
+      <div className="mt-3"><button onClick={() => f.api.cloneFromTh()} className="h-9 px-3.5 rounded-lg border border-ink-400 bg-white text-ink-900 hover:bg-ink-50 font-semibold"><i className="far fa-clone mr-1.5" />โคลนจาก TH มาแก้ต่อ</button></div>
     </div>
   )
 }

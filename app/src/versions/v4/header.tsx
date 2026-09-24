@@ -109,7 +109,7 @@ function FontRow({ hd, withCase }: { hd: H; withCase?: boolean }) {
         <button aria-label="ใหญ่ขึ้น" onClick={() => size < 16 && hd.setData('menuSize', String(size + 1), `ขนาดเมนู ${size + 1} px`)} className="w-6 h-full text-ink-500 hover:text-ink-900">+</button>
       </div>
       {withCase && <button aria-pressed={d.menuUpper !== 'no'} title="ตัวพิมพ์ใหญ่ทั้งหมด" onClick={() => hd.setData('menuUpper', d.menuUpper === 'no' ? 'yes' : 'no', d.menuUpper === 'no' ? 'เมนูตัวพิมพ์ใหญ่' : 'เมนูตัวพิมพ์ปกติ')}
-        className={`w-11 h-9 rounded-[9px] border text-body font-bold ${d.menuUpper !== 'no' ? 'border-ink-900 bg-ink-900 text-white' : 'border-ink-400 bg-white'}`}>Aa</button>}
+        className={`w-11 h-9 rounded-[9px] border text-body font-bold ${d.menuUpper !== 'no' ? 'border-orange-600 bg-orange-50 text-orange-700' : 'border-ink-400 bg-white'}`}>Aa</button>}
     </div>
   )
 }
@@ -183,14 +183,14 @@ function Alternatives({ look, hd }: { look: 'b' | 'c'; hd: H }) {
 function TrialBar({ hd }: { hd: H }) {
   if (!hd.preset) return null
   return (
-    <div role="status" className="flex items-center gap-2.5 bg-ink-900 text-white rounded-xl px-3.5 py-2.5 text-body">
+    <div role="status" className="flex items-center gap-2.5 bg-orange-50 border border-orange-600 text-ink-900 rounded-xl px-3.5 py-2.5 text-body">
       <i className="fas fa-magic text-ai" aria-hidden />
       <span className="flex-1 min-w-0">กำลังลองแบบ <b>{hd.preset.name}</b> · ชั่วคราว ยังไม่ลงฉบับร่าง</span>
-      <span className="flex gap-0.5 bg-white/10 rounded-full p-[3px] text-caption font-semibold">
-        {([[true, 'แบบเดิม'], [false, 'แบบที่ลอง']] as const).map(([v, l]) => <button key={l} aria-pressed={hd.peek === v} onClick={() => hd.setPeek(v)} className={`px-2.5 py-1 rounded-full ${hd.peek === v ? 'bg-white text-ink-900' : 'text-white/70'}`}>{l}</button>)}
+      <span className="flex gap-0.5 bg-white border border-ink-400 rounded-full p-[3px] text-caption font-semibold">
+        {([[true, 'แบบเดิม'], [false, 'แบบที่ลอง']] as const).map(([v, l]) => <button key={l} aria-pressed={hd.peek === v} onClick={() => hd.setPeek(v)} className={`px-2.5 py-1 rounded-full ${hd.peek === v ? 'bg-orange-50 text-orange-700' : 'text-ink-600'}`}>{l}</button>)}
       </span>
-      <button onClick={() => hd.applyPreset(hd.preset!.key)} className="h-8 px-3 rounded-lg bg-white text-ink-900 font-semibold">ใช้แบบนี้</button>
-      <button onClick={() => hd.setTrial(null)} className="h-8 px-2.5 rounded-lg text-white/75 hover:text-white">ยกเลิก</button>
+      <button onClick={() => hd.applyPreset(hd.preset!.key)} className="h-8 px-3 rounded-lg text-white font-semibold" style={{ backgroundColor: 'var(--red-600)', backgroundImage: 'var(--ket-grad)' }}>ใช้แบบนี้</button>
+      <button onClick={() => hd.setTrial(null)} className="h-8 px-2.5 rounded-lg border border-ink-400 bg-white text-ink-900 hover:bg-ink-50">ยกเลิก</button>
     </div>
   )
 }

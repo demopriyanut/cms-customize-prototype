@@ -20,7 +20,7 @@ export function DeviceToggle({ variant }: { variant: 'square' | 'pill' }) {
   )
   return (
     <span role="radiogroup" aria-label="ขนาดจอ" className="flex gap-0.5 bg-ink-100 rounded-full p-[3px] text-ink-500">
-      {DEVICES.map(([k, ic, l]) => <button key={k} role="radio" aria-checked={device === k} title={l} onClick={() => setDevice(k)} className={`w-[30px] h-[26px] grid place-items-center rounded-full ${device === k ? 'bg-ink-900 text-white' : 'hover:text-ink-900'}`}><i className={`${ic} text-[12px]`} /></button>)}
+      {DEVICES.map(([k, ic, l]) => <button key={k} role="radio" aria-checked={device === k} title={l} onClick={() => setDevice(k)} className={`w-[30px] h-[26px] grid place-items-center rounded-full ${device === k ? 'bg-white text-ink-900 shadow-xs' : 'hover:text-ink-900'}`}><i className={`${ic} text-[12px]`} /></button>)}
     </span>
   )
 }
@@ -56,7 +56,7 @@ export const SECTION_ICON: Record<Section['type'], string> = {
 }
 
 /* assistant diff card — ✓ / ✕ really edit the draft */
-export function DiffCard({ accept = 'var(--ink-900)', compact = false }: { accept?: string; compact?: boolean }) {
+export function DiffCard({ accept = 'var(--ket-grad)', compact = false }: { accept?: string; compact?: boolean }) {
   const diff = useStore(s => s.diff); const resolve = useStore(s => s.resolveDiff); const acceptAll = useStore(s => s.acceptAll)
   const compare = useStore(s => s.compare); const setCompare = useStore(s => s.setCompare)
   return (
@@ -76,7 +76,7 @@ export function DiffCard({ accept = 'var(--ink-900)', compact = false }: { accep
         )
       })}
       <div className="flex gap-2 p-2.5 bg-ink-50">
-        <button onClick={acceptAll} className="flex-1 h-8 rounded-lg text-white font-semibold text-body" style={{ background: accept }}>ยอมรับทั้งหมด</button>
+        <button onClick={acceptAll} className="flex-1 h-8 rounded-lg text-white font-semibold text-body" style={{ backgroundColor: 'var(--red-600)', backgroundImage: accept }}>ยอมรับทั้งหมด</button>
         <button onClick={() => setCompare(compare === 'after' ? 'before' : 'after')} aria-pressed={compare === 'before'} className="h-8 px-3 rounded-lg border border-ink-500 text-body bg-white">{compare === 'after' ? (compact ? 'ก่อน/หลัง' : 'ดูก่อน/หลัง') : 'ดูฉบับร่าง'}</button>
       </div>
     </div>
@@ -86,7 +86,7 @@ export function DiffCard({ accept = 'var(--ink-900)', compact = false }: { accep
 export function TierChips({ labels }: { labels: [string, string, string] }) {
   return (
     <div className="flex gap-1.5 mb-2 text-meta font-semibold">
-      <span className="rounded-full px-2.5 py-[3px] bg-ink-900 text-white">{labels[0]}</span>
+      <span className="rounded-full px-2.5 py-[3px] bg-orange-50 text-orange-700 border border-orange-600">{labels[0]}</span>
       <span className="rounded-full px-2.5 py-[3px] border border-ink-200 text-ink-600">{labels[1]}</span>
       <span className="rounded-full px-2.5 py-[3px] border border-ink-200 text-ink-500">{labels[2]} <i className="fas fa-lock text-[9px]" /></span>
     </div>

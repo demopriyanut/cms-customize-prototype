@@ -55,7 +55,7 @@ function UndoRedo({ canUndo, canRedo, round }: { canUndo: boolean; canRedo: bool
 }
 function PreviewToggle({ pill }: { pill?: boolean }) {
   const preview = useStore(s => s.preview); const setPreview = useStore(s => s.setPreview)
-  return <button onClick={() => setPreview(!preview)} aria-pressed={preview} title="พรีวิว — ซ่อนกรอบและป้ายเพื่อดูหน้าจริง" className={`h-[30px] px-2.5 flex items-center gap-1.5 text-body font-semibold whitespace-nowrap ${pill ? 'rounded-full' : 'rounded-md'} ${preview ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}><i className={preview ? 'fas fa-eye' : 'far fa-eye'} />พรีวิว</button>
+  return <button onClick={() => setPreview(!preview)} aria-pressed={preview} title="พรีวิว — ซ่อนกรอบและป้ายเพื่อดูหน้าจริง" className={`h-[30px] px-2.5 flex items-center gap-1.5 text-body font-semibold whitespace-nowrap ${pill ? 'rounded-full' : 'rounded-md'} ${preview ? 'bg-orange-50 text-orange-700' : 'text-ink-600 hover:bg-ink-100'}`}><i className={preview ? 'fas fa-eye' : 'far fa-eye'} />พรีวิว</button>
 }
 function Publish({ variant }: { variant: 'split' | 'pill' }) {
   const open = useStore(s => s.setPublishOpen)
@@ -121,8 +121,8 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
             <>
               <div tabIndex={0} aria-label="บทสนทนากับผู้ช่วย Ket" className="flex-1 overflow-auto p-5 flex flex-col gap-4 text-body leading-[1.6] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600">
                 {isHome ? <>
-                  <div className="self-end max-w-[88%] bg-ink-900 text-white rounded-[16px_16px_4px_16px] px-3.5 py-2.5">เปลี่ยนแบนเนอร์เป็นโทน Autumn แล้วเพิ่มบล็อกสินค้าแนะนำใต้แบนเนอร์</div>
-                  <div className="flex flex-col gap-2"><div>ผมเตรียมให้ 2 จุด — ไม่แตะ Header/Footer (ใช้ร่วมทุกหน้า) กดยอมรับทีละจุดได้ครับ</div><DiffCard accept="var(--ink-900)" compact /></div>
+                  <div className="self-end max-w-[88%] bg-ink-100 text-ink-900 rounded-[16px_16px_4px_16px] px-3.5 py-2.5">เปลี่ยนแบนเนอร์เป็นโทน Autumn แล้วเพิ่มบล็อกสินค้าแนะนำใต้แบนเนอร์</div>
+                  <div className="flex flex-col gap-2"><div>ผมเตรียมให้ 2 จุด — ไม่แตะ Header/Footer (ใช้ร่วมทุกหน้า) กดยอมรับทีละจุดได้ครับ</div><DiffCard accept="var(--ket-grad)" compact /></div>
                 </> : <AssistantNote page={page} />}
               </div>
               <div className="px-5 pt-4 pb-5 border-t border-ink-150">

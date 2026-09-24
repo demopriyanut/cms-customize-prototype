@@ -147,7 +147,7 @@ export function PropertiesPanel({ site, pageId }: { site: SiteDoc; pageId: strin
     <div tabIndex={0} aria-label="แผงคุณสมบัติ" className="flex-1 overflow-auto outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600 p-5 flex flex-col gap-4 text-body">
       <Head s={s} />
       <div className="rounded-xl bg-ink-50 border border-ink-150 p-3 leading-relaxed"><i className="fas fa-lock text-ink-500 mr-1" /><b>{s.name} ใช้ร่วมทุกหน้า</b><br />แก้ที่หน้า {s.name} เพื่อให้ทุกหน้าเปลี่ยนพร้อมกัน — ในหน้านี้ย้ายหรือลบไม่ได้</div>
-      {version && <button onClick={() => go.to(version.id, s.type === 'header' ? 'header' : 'footer')} className="h-9 rounded-lg bg-ink-900 text-white font-semibold"><i className="fas fa-external-link-alt text-[12px] mr-1.5" />ไปแก้ที่ {s.name}</button>}
+      {version && <button onClick={() => go.to(version.id, s.type === 'header' ? 'header' : 'footer')} className="h-9 rounded-lg border border-ink-400 bg-white text-ink-900 hover:bg-ink-50 font-semibold"><i className="fas fa-external-link-alt text-[12px] mr-1.5" />ไปแก้ที่ {s.name}</button>}
       <TokenRow label="สีพื้นหลัง" site={site} bg={s.style?.bg} disabled />
     </div>
   )

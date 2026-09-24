@@ -224,7 +224,7 @@ function MenuBar({ m, look }: { m: M; look: Look }) {
                 <span key={x.id} data-mchip={x.id} {...dnd.props(x, 0)} onClick={() => m.api.select(x.id)} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && m.api.select(x.id)}
                   title={dim ? 'ซ่อนบน Desktop' : 'ลากเพื่อเรียง · ลากซ้อนกลางชิปอื่น = เมนูย่อย'}
                   className={`inline-flex items-center gap-1.5 px-3 py-[7px] rounded-[10px] text-caption font-semibold uppercase tracking-[.02em] cursor-grab select-none ${m.flash === x.id ? 'animate-pulse' : ''} ${dim ? 'opacity-45' : ''}`}
-                  style={{ background: on ? 'var(--ink-900)' : 'rgba(255,255,255,.7)', color: on ? '#fff' : '#222', border: `1.5px solid ${on ? 'var(--ink-900)' : m.flash === x.id ? 'var(--orange-600)' : 'transparent'}`, ...dnd.mark(x.id) }}>
+                  style={{ background: on ? 'var(--orange-50)' : 'rgba(255,255,255,.7)', color: on ? 'var(--orange-700)' : '#222', border: `1.5px solid ${on ? 'var(--orange-600)' : m.flash === x.id ? 'var(--orange-600)' : 'transparent'}`, ...dnd.mark(x.id) }}>
                   <i className="fas fa-grip-vertical text-[9px] opacity-50" />{x.iconOnly ? <i className="fas fa-search" /> : menuLabel(x)}{hasSub(x) && <i className="fas fa-caret-down text-[10px] opacity-60" />}
                 </span>
               )
@@ -248,7 +248,7 @@ function SubPanel({ m, item, editable }: { m: M; item: MenuItem; editable: boole
   const n = item.layout.startsWith('col') ? Number(item.layout.slice(3)) : 0
   if (!n) return (
     <div className="w-[220px] bg-white border border-ink-150 shadow-xl rounded-b-xl p-2.5 flex flex-col gap-1 text-meta">
-      {item.children.map(c => <button key={c.id} onClick={() => m.api.select(c.id)} className={`text-left px-2 py-1 rounded-md ${m.sel?.id === c.id ? 'bg-ink-900 text-white' : 'hover:bg-ink-50'}`}>{menuLabel(c)}</button>)}
+      {item.children.map(c => <button key={c.id} onClick={() => m.api.select(c.id)} className={`text-left px-2 py-1 rounded-md ${m.sel?.id === c.id ? 'bg-orange-50 text-orange-700 font-semibold' : 'hover:bg-ink-50'}`}>{menuLabel(c)}</button>)}
       <div className="text-caption text-ink-500 border-t border-ink-100 pt-1.5 mt-0.5"><i className="fas fa-caret-down text-ink-500 mr-1" aria-hidden />Dropdown · {menuLabel(item)}</div>
     </div>
   )
@@ -284,10 +284,10 @@ function MobileMenu({ m, bg }: { m: M; bg: string }) {
         <div className="px-2 py-2 flex flex-col gap-0.5 text-body max-h-[300px] overflow-auto">
           {items.map(x => (
             <div key={x.id}>
-              <div {...dnd.props(x, 0)} onClick={() => m.api.select(x.id)} className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-grab font-semibold uppercase ${m.sel?.id === x.id ? 'bg-ink-900 text-white' : 'hover:bg-ink-50'}`} style={dnd.mark(x.id)}>
+              <div {...dnd.props(x, 0)} onClick={() => m.api.select(x.id)} className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-grab font-semibold uppercase ${m.sel?.id === x.id ? 'bg-orange-50 text-orange-700' : 'hover:bg-ink-50'}`} style={dnd.mark(x.id)}>
                 <i className="fas fa-grip-vertical text-[10px] opacity-40" />{x.iconOnly ? <><i className="fas fa-search" /> <span className="normal-case font-normal opacity-60">(ไอคอน)</span></> : menuLabel(x)}{hasSub(x) && <i className="fas fa-chevron-down ml-auto text-[10px] opacity-60" />}
               </div>
-              {x.children.filter(c => c.showOn.mobile).map(c => <div key={c.id} onClick={() => m.api.select(c.id)} className={`ml-7 px-3 py-1.5 rounded-lg cursor-pointer ${m.sel?.id === c.id ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-50'}`}>{menuLabel(c)}</div>)}
+              {x.children.filter(c => c.showOn.mobile).map(c => <div key={c.id} onClick={() => m.api.select(c.id)} className={`ml-7 px-3 py-1.5 rounded-lg cursor-pointer ${m.sel?.id === c.id ? 'bg-orange-50 text-orange-700 font-semibold' : 'text-ink-600 hover:bg-ink-50'}`}>{menuLabel(c)}</div>)}
             </div>
           ))}
         </div>
@@ -514,7 +514,7 @@ export function MenuV4(_: { collapsed?: boolean }) {
                     <div className="bg-ink-50 border border-ink-150 rounded-xl px-3 py-2.5 flex gap-3 items-center">
                       <MascotImg src="mascot-idea.png" size={40} pos="center 15%" className="rounded-lg" />
                       <div className="flex-1 text-meta leading-normal text-ink-700"><b>ผู้ช่วย Ket:</b> ช่อง {it.cols[thin].head} ยังมีลิงก์เดียว — ดึงหมวด “ลดราคา” 3 หมวดมาเติมให้ไหมครับ?</div>
-                      <button onClick={() => m.api.aiFill(thin)} className="h-[30px] px-3 rounded-lg bg-ink-900 text-white font-semibold text-meta whitespace-nowrap">ลองในฉบับร่าง</button>
+                      <button onClick={() => m.api.aiFill(thin)} className="h-[30px] px-3 rounded-lg text-white font-semibold text-meta whitespace-nowrap" style={{ backgroundColor: 'var(--red-600)', backgroundImage: 'var(--ket-grad)' }}>ลองในฉบับร่าง</button>
                     </div>
                   )}
                 </>}

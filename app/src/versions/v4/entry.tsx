@@ -76,7 +76,7 @@ export function EntryV4(_: { collapsed?: boolean }) {
       <Topbar>
         <span className="flex items-center gap-1.5 text-meta text-ink-500"><span className="w-2 h-2 rounded-full bg-warning-500" />2 หน้ามีฉบับร่างรอเผยแพร่</span>
         <ViewSite />
-        <NewPageBtn className="h-9 rounded-lg bg-ink-900 text-white flex items-center px-3 gap-2 font-semibold" />
+        <NewPageBtn className="h-9 rounded-lg bg-red-600 hover:bg-red-700 text-white flex items-center px-3.5 gap-2 font-semibold" />
       </Topbar>
       <div tabIndex={0} aria-label="เนื้อหาหน้าเลือก" className="flex-1 overflow-auto px-6 pt-[22px] pb-24 flex flex-col gap-[18px] outline-none focus-visible:ring-2 focus-visible:ring-orange-600">
         <div className="rounded-[18px] shadow-md border border-black/5 px-[22px] py-[18px] flex items-center gap-5" style={{ background: '#fff radial-gradient(ellipse 40% 80% at 100% 50%,rgba(230,52,34,.08),transparent 70%)' }}>
