@@ -10,7 +10,7 @@ V1 ปลอดภัย · V2 กล้า · V3 ลูกผสม — อิ�
 ต้องมี [Node.js](https://nodejs.org) 20+ และ Git
 
 ```
-git clone <ลิงก์ repo>
+git clone https://github.com/AchirawichSanjaikla/cms-customize-prototype.git
 cd cms-customize-prototype/app
 npm install
 npm run dev
