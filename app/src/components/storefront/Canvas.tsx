@@ -16,9 +16,10 @@ import { useDrag, type Gap } from '@/components/editor/drag'
 
 export const REAL_W: Record<Device, number> = { desktop: 1240, tablet: 820, mobile: 390 }
 
-interface Props { site: SiteDoc; page: PageDoc; device: Device; previewWidth: number; accent?: string }
+/* selBar: 'bar' = full-width bar with drag handle + labelled actions (V1–V3) · 'float' = chip + small dark icon toolbar at the top-right (mockup 3a · V4) */
+interface Props { site: SiteDoc; page: PageDoc; device: Device; previewWidth: number; accent?: string; selBar?: 'bar' | 'float' }
 
-export function Canvas({ site, page, device, previewWidth, accent = 'var(--red-600)' }: Props) {
+export function Canvas({ site, page, device, previewWidth, accent = 'var(--red-600)', selBar = 'bar' }: Props) {
   const zoom = previewWidth / REAL_W[device]
   const preview = useStore(s => s.preview)
   const placing = useStore(s => s.placing)
@@ -26,7 +27,7 @@ export function Canvas({ site, page, device, previewWidth, accent = 'var(--red-6
   const rootRef = useRef<HTMLDivElement>(null)
   const drag = useDrag(rootRef, '[data-block]')
   const overlays = !preview
-  const ctx: Ctx = { site, device, zoom, accent, overlays, drag }
+  const ctx: Ctx = { site, device, zoom, accent, overlays, drag, selBar }
 
   /* build the render list: blocks + empty-zone placeholders + placement slots */
   const items: ReactNode[] = []
@@ -65,7 +66,7 @@ export function Canvas({ site, page, device, previewWidth, accent = 'var(--red-6
   )
 }
 
-interface Ctx { site: SiteDoc; device: Device; zoom: number; accent: string; overlays: boolean; drag: ReturnType<typeof useDrag> }
+interface Ctx { site: SiteDoc; device: Device; zoom: number; accent: string; overlays: boolean; drag: ReturnType<typeof useDrag>; selBar: 'bar' | 'float' }
 const px = (n: number, z: number) => `${n / z}px`
 
 function ZoneTag({ zone, zoom }: { zone: Zone; zoom: number }) {
@@ -139,7 +140,7 @@ function Block({ s, zone, index, ctx }: { s: Section; zone: Zone | null; index: 
       data-reason={s.role === 'global' ? `${s.name} ใช้ร่วมทุกหน้า แก้ที่ตั้งค่ากลาง` : s.role === 'system' ? 'บล็อกหลักของระบบ ย้าย/แทรกทับไม่ได้' : ''}
       onClick={e => { e.stopPropagation(); if (!placing) select(s.id) }}
       style={{ position: s.type === 'header' && s.data.sticky === 'yes' && !ctx.overlays ? 'sticky' : 'relative', top: 0, zIndex: s.type === 'header' && !ctx.overlays ? 10 : undefined, outline, outlineOffset: px(-2, z), cursor: placing ? 'default' : 'pointer', opacity: hiddenHere && ctx.overlays ? 0.35 : 1, background: s.origin === 'ai' && ctx.overlays ? 'var(--orange-50)' : undefined, filter: hiddenHere && ctx.overlays ? 'grayscale(1)' : undefined }}>
-      {ctx.overlays && (sel ? <SelBar s={s} ctx={ctx} /> : s.type !== 'marquee' || s.role !== 'free' ? <Chip s={s} z={z} /> : null)}
+      {ctx.overlays && (sel ? (ctx.selBar === 'float' ? <SelFloat s={s} ctx={ctx} /> : <SelBar s={s} ctx={ctx} />) : s.type !== 'marquee' || s.role !== 'free' ? <Chip s={s} z={z} /> : null)}
       {hiddenHere && ctx.overlays && <span style={{ position: 'absolute', right: px(8, z), top: px(6, z), zIndex: 5, fontSize: px(11, z), fontFamily: 'var(--font-heading)', background: 'var(--ink-900)', color: '#fff', borderRadius: px(5, z), padding: `${px(2, z)} ${px(6, z)}` }}><i className="far fa-eye-slash" /> {s.hidden ? 'ซ่อนอยู่' : 'ซ่อนบนจอนี้'}</span>}
       <Body s={s} ctx={ctx} bg={bg} pad={pad} />
     </div>
@@ -541,5 +542,51 @@ export function FooterPreview({ site, width, lang, hot, strip = 0 }: { site: Sit
         <FooterBody s={site.footer} site={site} device="desktop" zoom={zoom} lang={lang} hot={hot} />
       </div>
     </div>
+  )
+}
+
+/* mockup 3a: selected block = its chip (drag here) + a small dark icon toolbar at the top-right (✦ ⚙ ⧉ ↑ ↓ ⋯) */
+function SelFloat({ s, ctx }: { s: Section; ctx: Ctx }) {
+  const z = ctx.zoom
+  const st = useStore.getState
+  const { version } = useRoute(); const go = useGo()
+  const [more, setMore] = useState(false)
+  const free = s.role === 'free'
+  const role = s.origin === 'ai' ? 'ai' : s.role
+  const rs = ROLE_STYLE[role]
+  const color = free ? (s.origin ? ROLE_STYLE.ai.color : ctx.accent) : rs.color
+  const top = s.type === 'header' ? 6 : -10
+  const ib = (icon: string, title: string, onClick: () => void, grad?: boolean) => (
+    <button key={title} title={title} aria-label={title} onClick={e => { e.stopPropagation(); onClick() }}
+      style={{ width: px(24, z), height: px(24, z), display: 'grid', placeItems: 'center', borderRadius: px(6, z), color: '#fff', background: grad ? 'linear-gradient(135deg,var(--red-600),var(--orange-500))' : undefined }}><i className={icon} style={{ fontSize: px(10, z) }} /></button>
+  )
+  const item = (icon: string, label: string, onClick: () => void, danger?: boolean) => (
+    <button key={label} onClick={e => { e.stopPropagation(); setMore(false); onClick() }} style={{ display: 'flex', gap: px(8, z), alignItems: 'center', width: '100%', padding: `${px(6, z)} ${px(10, z)}`, borderRadius: px(6, z), fontSize: px(12, z), color: danger ? 'var(--red-600)' : 'var(--ink-800)', textAlign: 'left' }}><i className={icon} style={{ width: px(14, z) }} />{label}</button>
+  )
+  return (
+    <>
+      <div style={{ position: 'absolute', left: px(8, z), top: px(top, z), zIndex: 6, display: 'flex', gap: px(4, z), alignItems: 'center', fontSize: px(11, z), fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
+        <span title={free ? 'ลากเพื่อย้าย' : undefined} onPointerDown={free ? e => ctx.drag.start(e, s.id, s.name) : undefined}
+          style={{ background: color, color: '#fff', padding: `${px(2, z)} ${px(7, z)}`, borderRadius: px(5, z), cursor: free ? 'grab' : 'default', touchAction: 'none', display: 'inline-flex', gap: px(5, z), alignItems: 'center' }}>
+          {free ? <i className="fas fa-grip-vertical" style={{ fontSize: px(9, z), opacity: .7 }} /> : <i className="fas fa-lock" style={{ fontSize: px(8, z) }} />}{s.origin === 'ai' ? `+ ${s.name}` : s.name}
+        </span>
+        <span style={{ background: rs.bg, color: rs.fg, padding: `${px(2, z)} ${px(6, z)}`, borderRadius: px(5, z) }}>{s.origin === 'ai' ? 'ฉบับร่าง · T0' : rs.label}</span>
+      </div>
+      <div style={{ position: 'absolute', right: px(10, z), top: px(s.type === 'header' ? 6 : -14, z), zIndex: 7, display: 'flex', gap: px(2, z), background: 'var(--ink-900)', borderRadius: px(8, z), padding: px(3, z), boxShadow: 'var(--shadow-lg)', fontFamily: 'var(--font-heading)' }}>
+        {free && ib('fas fa-magic', 'ปรับด้วยผู้ช่วย', () => { st().setPanel('ai', 'open'); st().setPanel('c', 'ai'); st().showToast('ส่ง “' + s.name + '” ให้ผู้ช่วย Ket เป็นบริบทแล้ว') }, true)}
+        {s.role !== 'global' && ib('fas fa-cog', 'แก้ไข · คุณสมบัติ', () => { st().setPanel('c', 'props') })}
+        {free && ib('far fa-clone', 'ทำซ้ำ', () => st().duplicate(s.id))}
+        {free && ib('fas fa-arrow-up', 'ย้ายขึ้น (Alt+↑)', () => st().nudge(s.id, -1))}
+        {free && ib('fas fa-arrow-down', 'ย้ายลง (Alt+↓)', () => st().nudge(s.id, 1))}
+        {s.role === 'global' && version && ib('fas fa-external-link-alt', `ไปแก้ที่ ${s.name}`, () => go.to(version.id, s.type === 'header' ? 'header' : 'footer'))}
+        {free && ib('fas fa-ellipsis-h', 'เพิ่มเติม', () => setMore(!more))}
+        {more && (
+          <div onClick={e => e.stopPropagation()} style={{ position: 'absolute', right: 0, top: `calc(100% + ${px(4, z)})`, width: px(150, z), background: '#fff', border: `${px(1, z)} solid var(--ink-150)`, borderRadius: px(8, z), boxShadow: 'var(--shadow-xl)', padding: px(4, z) }}>
+            {item(s.hidden ? 'far fa-eye' : 'far fa-eye-slash', s.hidden ? 'แสดง' : 'ซ่อน', () => st().toggleHidden(s.id))}
+            {item('far fa-trash-alt', 'ลบ', () => st().remove(s.id), true)}
+          </div>
+        )}
+      </div>
+    </>
   )
 }

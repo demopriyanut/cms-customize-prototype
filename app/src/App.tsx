@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { HashRouter, MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 
 import { SCREENS, byId, mainVersions, refOf, subsOf, type ScreenId, type VersionId } from '@/versions/registry'
-import { isReady, screenOf } from '@/versions/screens'
+import { isReady, screenOf, sidebarOf } from '@/versions/screens'
 import { SidebarBoldNarrow, SidebarBoldWide, SidebarSafe } from '@/components/shell/Sidebars'
 import { Dock } from '@/components/shell/Dock'
 import { useGo, useRoute, useUi } from '@/components/shell/nav'
@@ -37,7 +37,8 @@ function VersionShell() {
   useEffect(() => { document.body.style.setProperty('--sbw', sbw + 'px') }, [sbw])
 
   if (!version) return <IndexPage />
-  const sidebar = version.sidebar === 'safe' ? <SidebarSafe />
+  const OwnSidebar = sidebarOf(version.id)
+  const sidebar = OwnSidebar ? <OwnSidebar /> : version.sidebar === 'safe' ? <SidebarSafe />
     : collapsed ? <SidebarBoldNarrow onExpand={() => set({ v2Collapsed: false })} /> : <SidebarBoldWide onCollapse={() => set({ v2Collapsed: true })} />
 
   let body

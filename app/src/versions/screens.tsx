@@ -10,6 +10,7 @@ import { PageEditorV4 } from './v4/page-editor'
 import { HeaderV4 } from './v4/header'
 import { FooterV4 } from './v4/footer'
 import { MenuV4 } from './v4/menu'
+import { SidebarV4 } from './v4/sidebar'
 
 /* which component each version shows per screen.
    A sub version lists only the screens it changes — the rest come from its parent. */
@@ -29,3 +30,9 @@ export function screenOf(v: VersionId, s: ScreenId): ComponentType<ScreenProps> 
   return parent ? screenOf(parent, s) : null
 }
 export const isReady = (v: VersionId, s: ScreenId) => !!screenOf(v, s)
+
+/* a version may bring its own sidebar (otherwise App picks by VersionDef.sidebar); sub versions inherit the parent's */
+export const SIDEBAR_MAP: Record<VersionId, ComponentType> = { v4: SidebarV4 }
+export function sidebarOf(v: VersionId): ComponentType | null {
+  return SIDEBAR_MAP[v] ?? (byId(v)?.parent ? sidebarOf(byId(v)!.parent!) : null)
+}

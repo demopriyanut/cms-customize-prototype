@@ -5,7 +5,7 @@ import { useChanges, usePage, useStore, type Device } from '@/data/store'
 import { LOCK_TEXT, type PageDoc } from '@/data/schema'
 import { Canvas } from '@/components/storefront/Canvas'
 import { useGo, useRoute } from '@/components/shell/nav'
-import { Avatar, DeviceToggle, DiffCard, Legend, LockPill, MascotImg, Tabs, TierChips, usePanel } from '@/components/editor/parts'
+import { Avatar, DeviceToggle, DiffCard, Legend, LockPill, MascotImg, TierChips, usePanel } from '@/components/editor/parts'
 import { HistoryPanel, LayerList, LibraryPanel, PageRuleBanner, PlacingBar, PropertiesPanel, PublishDialog, useEditorKeys } from '@/components/editor/panels'
 
 /* =====================================================================
@@ -27,7 +27,7 @@ function useFitWidth(device: Device) {
     const ro = new ResizeObserver(measure); ro.observe(el)
     return () => ro.disconnect()
   }, [])
-  const w = device === 'desktop' ? Math.max(560, Math.min(960, avail)) : device === 'tablet' ? Math.min(640, Math.max(480, avail)) : 390
+  const w = device === 'desktop' ? Math.max(560, Math.min(680, avail)) : device === 'tablet' ? Math.min(640, Math.max(480, avail)) : 390
   return { ref, w }
 }
 
@@ -55,20 +55,20 @@ function UndoRedo({ canUndo, canRedo, round }: { canUndo: boolean; canRedo: bool
 }
 function PreviewToggle({ pill }: { pill?: boolean }) {
   const preview = useStore(s => s.preview); const setPreview = useStore(s => s.setPreview)
-  return <button onClick={() => setPreview(!preview)} aria-pressed={preview} title="พรีวิว — ซ่อนกรอบและป้ายเพื่อดูหน้าจริง" className={`h-[30px] px-2.5 flex items-center gap-1.5 text-[13px] font-semibold whitespace-nowrap ${pill ? 'rounded-full' : 'rounded-md'} ${preview ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}><i className={preview ? 'fas fa-eye' : 'far fa-eye'} />พรีวิว</button>
+  return <button onClick={() => setPreview(!preview)} aria-pressed={preview} title="พรีวิว — ซ่อนกรอบและป้ายเพื่อดูหน้าจริง" className={`h-[30px] px-2.5 flex items-center gap-1.5 text-[12.5px] font-semibold whitespace-nowrap ${pill ? 'rounded-full' : 'rounded-md'} ${preview ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}><i className={preview ? 'fas fa-eye' : 'far fa-eye'} />พรีวิว</button>
 }
 function Publish({ variant }: { variant: 'split' | 'pill' }) {
   const open = useStore(s => s.setPublishOpen)
-  if (variant === 'pill') return <button onClick={() => open(true)} className="h-[38px] bg-ink-900 text-white rounded-full px-4.5 flex items-center gap-2 font-semibold shadow-md"><i className="fas fa-paper-plane text-[12px]" />เผยแพร่</button>
+  if (variant === 'pill') return <button onClick={() => open(true)} className="h-[38px] bg-ink-900 text-white rounded-full px-4.5 flex items-center gap-2 font-semibold shadow-md"><i className="fas fa-paper-plane text-[11px]" />เผยแพร่</button>
   return (
     <div className="h-9 flex rounded-lg overflow-hidden text-white font-semibold">
-      <button onClick={() => open(true)} className="bg-red-600 hover:bg-red-700 px-4 flex items-center gap-2"><i className="fas fa-paper-plane text-[12px]" />เผยแพร่</button>
+      <button onClick={() => open(true)} className="bg-red-600 hover:bg-red-700 px-4 flex items-center gap-2"><i className="fas fa-paper-plane text-[11px]" />เผยแพร่</button>
       <span className="bg-red-700 w-[30px] grid place-items-center"><i className="fas fa-chevron-down text-[11px]" /></span>
     </div>
   )
 }
-const ViewSite = () => <div className="h-9 border border-ink-200 rounded-lg flex items-center px-3.5 gap-2 bg-white font-medium"><i className="fas fa-external-link-alt text-[12px] text-ink-500" />ดูเว็บไซต์</div>
-const DraftDot = ({ n, suffix = '' }: { n: number; suffix?: string }) => <div className="flex items-center gap-1.5 text-[13px] text-ink-500"><span className={`w-2 h-2 rounded-full ${n ? 'bg-warning-500' : 'bg-success-500'}`} />{n ? `ฉบับร่าง · ${n} การเปลี่ยนแปลง${suffix}` : 'ฉบับร่างตรงกับเว็บจริง'}</div>
+const ViewSite = () => <div className="h-9 border border-ink-200 rounded-lg flex items-center px-3.5 gap-2 bg-white font-medium"><i className="fas fa-external-link-alt text-[11px] text-ink-500" />ดูเว็บไซต์</div>
+const DraftDot = ({ n, suffix = '' }: { n: number; suffix?: string }) => <div className="flex items-center gap-1.5 text-[12.5px] text-ink-500"><span className={`w-2 h-2 rounded-full ${n ? 'bg-warning-500' : 'bg-success-500'}`} />{n ? `ฉบับร่าง · ${n} การเปลี่ยนแปลง${suffix}` : 'ฉบับร่างตรงกับเว็บจริง'}</div>
 function AddButton({ className = '', children }: { className?: string; children: React.ReactNode }) {
   const setLibrary = useStore(s => s.setLibrary); const open = useStore(s => s.libraryOpen)
   return <button onClick={() => setLibrary(!open)} aria-expanded={open} className={className}>{children}</button>
@@ -83,8 +83,8 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
   const isHome = page.id === 'home'
   const fit = useFitWidth(device)
   return (
-    <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
-      <div className="h-[60px] bg-white border-b border-ink-150 flex items-center px-5 gap-3 flex-none">
+    <div className="text-[13px] flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
+      <div className="h-14 bg-white border-b border-ink-150 flex items-center px-4 gap-2.5 flex-none">
         <PagePicker page={page} onClick={back} />
         <div className="h-9 flex items-center px-2.5 gap-1.5 text-ink-700"><i className="fas fa-globe text-ink-500" />TH <i className="fas fa-chevron-down text-[11px] text-ink-400" /></div>
         <button onClick={() => useStore.getState().setPanel('c', 'history')} className="h-9 flex items-center px-2.5 gap-1.5 text-ink-700 hover:bg-ink-50 rounded-lg"><i className="fas fa-history text-ink-500" />ประวัติ</button>
@@ -97,28 +97,28 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
         <div className="flex-1 relative min-w-0 flex flex-col">
           <div ref={fit.ref} className="flex-1 overflow-auto flex flex-col items-center px-8 pt-[84px] pb-28 canvas-dots-cream">
             <PageRuleBanner page={page} className="mb-4 max-w-full" style={{ width: fit.w }} />
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-ink-600 mb-3 max-w-full" style={{ width: fit.w }}><Legend all /></div>
-            <div className="rounded-[10px] bg-white overflow-hidden flex-none" style={{ boxShadow: '0 24px 60px -20px rgba(94,22,24,.25),var(--shadow-lg)' }}><Canvas site={site} page={page} device={device} previewWidth={fit.w} /></div>
+            <div className="rounded-[10px] bg-white overflow-hidden flex-none" style={{ boxShadow: '0 24px 60px -20px rgba(94,22,24,.25),var(--shadow-lg)' }}><Canvas site={site} page={page} device={device} previewWidth={fit.w} selBar="float" /></div>
           </div>
           <div className="absolute left-1/2 top-4 -translate-x-1/2 flex items-center gap-1 bg-white rounded-full p-[5px] shadow-lg border border-black/5">
             <DeviceToggle variant="pill" />
-            <span className="font-display text-[13px] text-ink-500 px-2">100%</span>
+            <span className="font-display text-[12.5px] text-ink-500 px-2">100%</span>
             <span className="w-px h-5 bg-ink-150" />
             <span className="flex gap-0.5 text-ink-600"><UndoRedo canUndo={canUndo} canRedo={canRedo} round /></span>
             <span className="w-px h-5 bg-ink-150" />
-            <span className="flex gap-0.5 bg-ink-100 rounded-full p-[3px] text-[12px] font-semibold">
+            <span className="flex gap-0.5 bg-ink-100 rounded-full p-[3px] text-[11px] font-semibold">
               {([['before', 'ก่อน'], ['after', 'หลัง']] as const).map(([k, l]) => <button key={k} onClick={() => setCompare(k)} aria-pressed={compare === k} className={`px-2.5 py-1 rounded-full ${compare === k ? 'bg-white shadow-xs' : 'text-ink-500'}`}>{l}</button>)}
             </span>
             <PreviewToggle pill />
           </div>
+          <div className="fb absolute left-4 bottom-4 flex gap-2.5 text-[11px] text-ink-600 bg-white rounded-full px-3 py-1.5 shadow-sm"><Legend all /></div>
           <PlacingBar className="absolute left-1/2 -translate-x-1/2 top-[62px]" />
           <LibraryPanel page={page} className="absolute left-4 top-4" />
         </div>
-        <div className="w-[360px] bg-white border-l border-ink-150 flex-none flex flex-col min-h-0">
-          <Tabs id="c" def="ai" items={[['sections', <>Sections <span className="font-display text-ink-400">{(page.sections ?? []).length + 2}</span></>], ['props', 'คุณสมบัติ'], ['ai', <><MascotImg size={18} className="border border-ink-150" />ผู้ช่วย Ket</>]]} />
+        <div className="w-[340px] bg-white border-l border-ink-150 flex-none flex flex-col min-h-0">
+          <PanelTabs id="c" def="ai" items={[['sections', <>Sections <span className="font-display text-ink-400">{(page.sections ?? []).length + 2}</span></>], ['props', 'คุณสมบัติ'], ['ai', <><MascotImg size={18} className="border border-ink-150" />ผู้ช่วย Ket</>]]} />
           {tab === 'ai' ? (
             <>
-              <div className="flex-1 overflow-auto p-5 flex flex-col gap-4 text-[13.5px] leading-[1.6]">
+              <div className="flex-1 overflow-auto p-5 flex flex-col gap-4 text-[13px] leading-[1.6]">
                 {isHome ? <>
                   <div className="self-end max-w-[88%] bg-ink-900 text-white rounded-[16px_16px_4px_16px] px-3.5 py-2.5">เปลี่ยนแบนเนอร์เป็นโทน Autumn แล้วเพิ่มบล็อกสินค้าแนะนำใต้แบนเนอร์</div>
                   <div className="flex flex-col gap-2"><div>ผมเตรียมให้ 2 จุด — ไม่แตะ Header/Footer (ใช้ร่วมทุกหน้า) กดยอมรับทีละจุดได้ครับ</div><DiffCard accept="var(--red-600)" compact /></div>
@@ -131,7 +131,7 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
             </>
           ) : tab === 'sections' ? (
             <div className="flex-1 overflow-auto p-4 flex flex-col gap-3">
-              <AddButton className={`h-9 border rounded-lg flex items-center justify-center gap-2 font-semibold ${pageCanInsert(page) ? 'border-ink-200 hover:bg-ink-50' : 'border-ink-150 text-ink-400'}`}><i className="fas fa-plus text-[12px]" />เพิ่ม Section จากคลัง</AddButton>
+              <AddButton className={`h-9 border rounded-lg flex items-center justify-center gap-2 font-semibold ${pageCanInsert(page) ? 'border-ink-200 hover:bg-ink-50' : 'border-ink-150 text-ink-400'}`}><i className="fas fa-plus text-[11px]" />เพิ่ม Section จากคลัง</AddButton>
               <LayerList site={site} page={page} variant="card" />
             </div>
           ) : tab === 'props' ? <PropertiesPanel site={site} pageId={page.id} /> : <HistoryPanel />}
@@ -146,7 +146,20 @@ function AssistantNote({ page }: { page: PageDoc }) {
   return (
     <div className="flex gap-2.5 items-start">
       <MascotImg src="mascot-idea.png" size={26} pos="center 22%" className="border border-ink-150" />
-      <div className="flex-1 bg-ink-50 rounded-xl p-3">หน้านี้ระดับ <b>{page.lock}</b> — {LOCK_TEXT[page.lock].rule}<br /><span className="text-ink-500 text-[12.5px]">ผมจะเสนอเฉพาะสิ่งที่หน้านี้อนุญาต และเขียนลงฉบับร่างเท่านั้น (บทตั้งไว้ของ prototype มีเฉพาะหน้าแรก)</span></div>
+      <div className="flex-1 bg-ink-50 rounded-xl p-3">หน้านี้ระดับ <b>{page.lock}</b> — {LOCK_TEXT[page.lock].rule}<br /><span className="text-ink-500 text-[12px]">ผมจะเสนอเฉพาะสิ่งที่หน้านี้อนุญาต และเขียนลงฉบับร่างเท่านั้น (บทตั้งไว้ของ prototype มีเฉพาะหน้าแรก)</span></div>
+    </div>
+  )
+}
+
+/* 3a tab strip: 13px · padding 14 / 10 / 12 (the shared Tabs is 14px for V1–V3) */
+function PanelTabs({ id, items, def }: { id: string; items: [string, React.ReactNode][]; def: string }) {
+  const cur = useStore(s => s.panel[id] ?? def); const setPanel = useStore(s => s.setPanel)
+  return (
+    <div role="tablist" className="flex border-b border-ink-150 px-2 font-medium text-ink-500 text-[13px] flex-none">
+      {items.map(([k, label]) => (
+        <button key={k} role="tab" aria-selected={k === cur} onClick={() => setPanel(id, k)}
+          className={`pt-3.5 pb-3 px-2.5 flex gap-1.5 items-center ${k === cur ? 'text-ink-900 font-semibold border-b-2 border-red-600 -mb-px' : 'hover:text-ink-900'}`}>{label}</button>
+      ))}
     </div>
   )
 }
