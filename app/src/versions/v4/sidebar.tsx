@@ -2,7 +2,7 @@
    Wide 240px: rows 30px · text 13 (body) · icons 13 · group label 11/600 caps (caption) with a 12px gap before each group ·
    toggle 12 (meta) · footer 12/11 (numbers from CmsSidebar.dc.html; V1–V3 were enlarged).
    « folds it to a 72px icon rail to give the canvas room (remembered per browser) — groups become thin dividers,
-   names show as a tooltip on hover / focus, the ย้าย / ⇄ / ใหม่ hints become a small dot. */
+   names show as a tooltip on hover / focus, (no ย้าย / ⇄ / ใหม่ hints in V4). */
 import { useState } from 'react'
 import { FRONT_GROUPS, MANAGE_GROUPS } from '@/versions/registry'
 import { useSidebarActions } from '@/components/shell/Sidebars'
@@ -33,14 +33,13 @@ export function SidebarV4() {
           <div key={g.label}>
             {/* group gap 12 (> row gap 0) so each group reads as one block · label 11px ink-400 = 5.9:1 on ink-900 */}
             <div className={`text-caption tracking-[.06em] uppercase text-ink-400 font-semibold px-2.5 pb-1 font-display ${gi === 0 ? 'pt-1' : 'pt-3'}`}>{g.label}</div>
-            {g.items.map(([label, icon, hint]) => {
+            {g.items.map(([label, icon]) => {
               const on = tab === 'front' && label === active
               return (
                 <button key={label} onClick={() => tab === 'front' && openItem(label)} aria-current={on ? 'page' : undefined}
                   className={`w-full text-left h-[30px] flex items-center px-2.5 gap-2.5 rounded-lg ${on ? 'bg-red-600 text-white font-semibold' : 'text-ink-300 hover:bg-white/5'}`}>
                   <span className="w-[18px] text-body text-center flex-none opacity-90"><i className={icon} /></span>
                   <span className="flex-1 truncate">{label}</span>
-                  <span className={`text-caption ${on ? 'text-white/70' : 'text-ink-400'}`}>{hint}</span>
                 </button>
               )
             })}
@@ -76,13 +75,12 @@ function Rail({ groups, tab, active, openItem, setTab, onExpand }: {
         {groups.map((g, gi) => (
           <div key={g.label} className="w-full flex flex-col items-center">
             {gi > 0 && <span className="w-8 h-px bg-ink-800 my-1.5" aria-hidden />}
-            {g.items.map(([label, icon, hint]) => {
+            {g.items.map(([label, icon]) => {
               const on = tab === 'front' && label === active
               return (
-                <button key={label} onClick={() => tab === 'front' && openItem(label)} aria-current={on ? 'page' : undefined} {...tipProps(hint ? `${label} · ${hint}` : label)}
+                <button key={label} onClick={() => tab === 'front' && openItem(label)} aria-current={on ? 'page' : undefined} {...tipProps(label)}
                   className={`relative w-11 h-8 flex-none grid place-items-center rounded-lg text-body ${on ? 'bg-red-600 text-white' : 'text-ink-300 hover:bg-white/5 hover:text-ink-100'}`}>
                   <i className={icon} />
-                  {hint && <span className={`absolute right-1.5 top-1.5 w-1.5 h-1.5 rounded-full ${on ? 'bg-white/70' : 'bg-ink-500'}`} aria-hidden />}
                 </button>
               )
             })}
