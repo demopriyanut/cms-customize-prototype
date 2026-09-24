@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { diffSites, useStore } from '@/data/store'
 import { HEADER_INHERIT, HEADER_PRESETS, MENU_FONTS, NAV_LAYOUTS, tokenHex, type ColorRef, type SiteDoc } from '@/data/schema'
 import { HeaderPreview, type HZone } from '@/components/storefront/Canvas'
-import { DeviceToggle, MascotImg } from '@/components/editor/parts'
-import { PublishDialog } from '@/components/editor/panels'
-import { ColorField, DraftState, Empty, PublishBtn, Toggle, useUndoKeys, useWidth, ViewSite, type Look } from '@/screens/shared'
+import { DeviceToggle, MascotImg } from './parts'
+import { PublishDialog } from './panels'
+import { ColorField, DraftState, Empty, PublishBtn, Toggle, useUndoKeys, useWidth, ViewSite, type Look } from './shared'
 
 /* =====================================================================
    Header (ใช้ร่วมทุกหน้า) — V1 = 1h · V2 = 1i · V3 = 3c · flow 3v

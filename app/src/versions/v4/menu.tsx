@@ -3,8 +3,8 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { useStore } from '@/data/store'
 import { CATEGORIES, hasSub, HEADER_INHERIT, MENU_KIND_ICON, MENU_KIND_LABEL, MENU_LAYOUTS, MENU_MAX, MENU_TYPES, menuLabel, tokenByName, tokenHex, type Device, type MenuItem, type MenuLayout, type MenuLink } from '@/data/schema'
-import { MascotImg } from '@/components/editor/parts'
-import { useUndoKeys, type Look } from '@/screens/shared'
+import { MascotImg } from './parts'
+import { useUndoKeys, type Look } from './shared'
 
 /* =====================================================================
    Menu (แถบเมนูบน Header) — V1 = 1f · V2 = 1g · V3 = 3b · flow 3u

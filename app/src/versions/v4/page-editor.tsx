@@ -5,8 +5,8 @@ import { useChanges, usePage, useStore, type Device } from '@/data/store'
 import { LOCK_TEXT, type PageDoc } from '@/data/schema'
 import { Canvas } from '@/components/storefront/Canvas'
 import { useGo, useRoute } from '@/components/shell/nav'
-import { Avatar, DeviceToggle, DiffCard, Legend, LockPill, MascotImg, TierChips, usePanel } from '@/components/editor/parts'
-import { HistoryPanel, LayerList, LibraryPanel, PageRuleBanner, PlacingBar, PropertiesPanel, PublishDialog, useEditorKeys } from '@/components/editor/panels'
+import { Avatar, DeviceToggle, DiffCard, Legend, LockPill, MascotImg, TierChips, usePanel } from './parts'
+import { HistoryPanel, LayerList, LibraryPanel, PageRuleBanner, PlacingBar, PropertiesPanel, PublishDialog, useEditorKeys } from './panels'
 
 /* =====================================================================
    แต่งหน้าเว็บ (Page Layout) — V1 = 1b · V2 = 1c · V3 = 3a

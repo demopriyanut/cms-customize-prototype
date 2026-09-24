@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { diffSites, useStore, type Actor } from '@/data/store'
 import { colSummary, FOOTER_LANGS, FOOTER_TEXT, rowMeta, type Device, type FooterCol, type FooterRow } from '@/data/schema'
 import { FooterPreview } from '@/components/storefront/Canvas'
-import { PublishDialog } from '@/components/editor/panels'
-import { ColorField, PublishBtn, useUndoKeys, useWidth, type Look } from '@/screens/shared'
+import { PublishDialog } from './panels'
+import { ColorField, PublishBtn, useUndoKeys, useWidth, type Look } from './shared'
 
 /* =====================================================================
    Footer (ใช้ร่วมทุกหน้า) — V1 = 1j · V2 = 1k · V3 = 3d · flow 3w
