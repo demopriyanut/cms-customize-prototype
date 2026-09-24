@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { HOME_ID, INITIAL_SITE, type Device, type FooterRow, type PageDoc, type Section, type SectionStyle, type SiteDoc, type Zone } from './schema'
+import { HOME_ID, INITIAL_SITE, type Device, type FooterRow, type MenuItem, type PageDoc, type Section, type SectionStyle, type SiteDoc, type Zone } from './schema'
 
 /* =====================================================================
    One shared store for every version (V1/V2/V3) — Blueprint D1: all editing modes write to the same draft.
@@ -77,6 +77,7 @@ interface Store {
   setField: (id: string, field: string, value: string) => void
   setStyle: (id: string, patch: Partial<SectionStyle>, label: string) => void
   setGlobal: (which: 'header' | 'footer', patch: { data?: Record<string, string>; style?: Partial<SectionStyle> }, label: string, actor?: Actor) => boolean
+  editMenu: (fn: (menu: MenuItem[], d: SiteDoc) => void | false, label: string, actor?: Actor) => boolean
   editFooter: (lang: string, fn: (rows: FooterRow[], all: Record<string, FooterRow[]>) => void | false, label: string, actor?: Actor) => boolean
   createPage: () => string
   undo: () => void
@@ -227,6 +228,7 @@ export const useStore = create<Store>()(persist((set, get) => {
       if (JSON.stringify(nextData) === JSON.stringify(s.data) && JSON.stringify(nextStyle) === JSON.stringify(s.style ?? {})) return false
       s.data = nextData; s.style = nextStyle
     }, actor),
+    editMenu: (fn, label, actor = 'คุณ') => commit('Menu · ' + label, d => fn((d.menu ??= []), d), actor),
     /* Footer rows of one language (clone a language = all[lang] = copy of TH) */
     editFooter: (lang, fn, label, actor = 'คุณ') => commit(label, d => {
       const all = (d.footer.rows ??= {})
@@ -289,7 +291,7 @@ export const useStore = create<Store>()(persist((set, get) => {
   }
 }, {
   name: 'ketshopweb-cms-customize-prototype',
-  version: 4,
+  version: 5,
   migrate: () => ({ published: clone(INITIAL_SITE), draft: clone(INITIAL_SITE), diff: { hero: null, prod: null }, log: [] }) as unknown as Store,
   partialize: s => ({ published: s.published, draft: s.draft, diff: s.diff, log: s.log.map(e => ({ ...e })) }),
 }))
@@ -305,6 +307,7 @@ export function usePage() {
 export interface Change { pageName: string; label: string; kind: 'add' | 'edit' | 'remove' | 'move' }
 export function diffSites(pub: SiteDoc, draft: SiteDoc): Change[] {
   const out: Change[] = []
+  if (JSON.stringify(pub.menu) !== JSON.stringify(draft.menu)) out.push({ pageName: 'ทุกหน้า', label: 'แก้ Menu (แถบเมนูบน Header)', kind: 'edit' })
   for (const k of ['header', 'footer'] as const)
     if (JSON.stringify(pub[k]) !== JSON.stringify(draft[k])) out.push({ pageName: 'ทุกหน้า', label: `แก้ ${draft[k].name} (ใช้ร่วมทุกหน้า)`, kind: 'edit' })
   for (const dp of draft.pages) {

@@ -66,11 +66,30 @@ export interface PageDoc {
 
 export interface Token { name: string; hex: string }
 
+/* Menu (mockup 1f / 1g / 3b · flow 3u) — drives the Header navigation
+   layout: normal = dropdown of children · col1–3 = columns of links + banner (Menu Collection) · none = no submenu */
+export type MenuLayout = 'none' | 'normal' | 'col1' | 'col2' | 'col3'
+export interface MenuLink { name: string; url: string }
+export interface MenuItem {
+  id: string
+  kind: string                     // one of MENU_TYPES keys (+ 'system')
+  i18n: Record<string, string>     // ชื่อเมนู TH / EN / JP / CN ('' = ยังไม่ใส่)
+  target: string                   // ลิงก์ไปที่ (label shown in the picker)
+  layout: MenuLayout
+  children: MenuItem[]
+  cols: { head: string; links: MenuLink[] }[]
+  banner?: { url: string }
+  showOn: Record<Device, boolean>
+  newTab?: boolean
+  iconOnly?: boolean               // shown as a search icon (ผู้ช่วยเสนอใน 1g)
+}
+
 export interface SiteDoc {
   name: string
   tokens: Token[]
   header: Section
   footer: Section
+  menu: MenuItem[]
   pages: PageDoc[]
 }
 
@@ -134,7 +153,6 @@ const HEADER_DATA: Record<string, string> = {
   sticky: 'yes', topbar: 'yes', mobileMenu: 'yes', transparent: 'no',
 }
 export const HEADER_INHERIT = { bg: 'พื้นผิว', fg: 'ตัวอักษร' }
-export const NAV_ITEMS = ['Home', 'Collection ▾', 'Product ▾', 'Promotion ▾', 'Blog', 'Contact ▾']
 export const NAV_LAYOUTS = [
   { key: 'standard', name: 'มาตรฐาน', justify: 'space-between', logoOrder: 1 },
   { key: 'center', name: 'โลโก้กลาง', justify: 'center', logoOrder: 2 },
@@ -167,12 +185,49 @@ const FOOTER_ROWS: FooterRow[] = [
 export const colSummary = (c: FooterCol) => c.kind === 'brand' ? 'แบรนด์' : c.kind === 'payments' ? 'โลโก้ช่องทางชำระเงิน' : c.kind === 'copyright' ? 'ลิขสิทธิ์' : c.kind === 'empty' ? 'ว่าง' : c.title
 export const rowMeta = (r: FooterRow) => `${r.cols.length} คอลัมน์ · ${r.cols.map(colSummary).join(' / ')}`
 
+/* the 10 menu types (mockup data "menuTypes") */
+export const MENU_TYPES: { key: string; name: string; desc: string; icon: string }[] = [
+  { key: 'page', name: 'หน้าเพจใหม่', desc: 'สร้างหน้าว่างแล้วแต่ง', icon: 'far fa-file' }, { key: 'link', name: 'แทรกลิงก์', desc: 'URL ภายนอก/ภายใน', icon: 'fas fa-link' },
+  { key: 'category', name: 'หมวดหมู่สินค้า', desc: 'ลิงก์ไปหมวด', icon: 'fas fa-tags' }, { key: 'product', name: 'สินค้า', desc: 'ลิงก์ไปสินค้าชิ้นเดียว', icon: 'fas fa-box' },
+  { key: 'blog', name: 'บทความ', desc: 'ลิงก์ไปบทความ', icon: 'far fa-newspaper' }, { key: 'blogcat', name: 'หมวดหมู่บทความ', desc: 'รวมบทความ', icon: 'fas fa-folder' },
+  { key: 'heading', name: 'หัวข้อ', desc: 'เมนูแม่ ไม่มีลิงก์', icon: 'fas fa-heading' }, { key: 'pay', name: 'แจ้งชำระเงิน', desc: 'หน้าระบบ · L2', icon: 'fas fa-receipt' },
+  { key: 'track', name: 'ตรวจสอบพัสดุ', desc: 'หน้าระบบ · L2', icon: 'fas fa-truck' }, { key: 'order', name: 'ค้นหาคำสั่งซื้อ', desc: 'หน้าระบบ · L2', icon: 'fas fa-search' },
+]
+export const MENU_KIND_LABEL: Record<string, string> = { page: 'หน้าเพจ', link: 'ลิงก์', category: 'หมวดหมู่สินค้า', product: 'สินค้า', blog: 'บทความ', blogcat: 'หมวดหมู่บทความ', heading: 'หัวข้อ', system: 'หน้าระบบ', pay: 'หน้าระบบ', track: 'หน้าระบบ', order: 'หน้าระบบ' }
+export const MENU_KIND_ICON: Record<string, string> = { page: 'far fa-file', link: 'fas fa-link', category: 'fas fa-tags', product: 'fas fa-box', blog: 'far fa-newspaper', blogcat: 'fas fa-folder', heading: 'fas fa-heading', system: 'fas fa-magic', pay: 'fas fa-receipt', track: 'fas fa-truck', order: 'fas fa-search' }
+export const MENU_LAYOUTS: { key: MenuLayout; name: string; desc: string; cols: number[] }[] = [
+  { key: 'normal', name: 'Normal', desc: 'dropdown ธรรมดา', cols: [1] }, { key: 'col1', name: 'Column 1', desc: '1 คอลัมน์ + banner', cols: [1, 1.2] },
+  { key: 'col2', name: 'Column 2', desc: '2 คอลัมน์ + banner', cols: [1, 1, 1.2] }, { key: 'col3', name: 'Column 3', desc: '3 คอลัมน์ + banner', cols: [1, 1, 1, 1.2] },
+]
+export const MENU_MAX = 12
+/* product categories seen in the mockup (Menu Collection of COLLECTION) — the only category data the prototype has */
+export const CATEGORIES: MenuLink[] = [{ name: 'New in', url: '/new' }, { name: 'Dresses', url: '/c/dresses' }, { name: 'Accessories', url: '/c/acc' }, { name: 'Autumn', url: '/c/autumn' }, { name: 'Office', url: '/c/office' }, { name: 'ลด 30%+', url: '/sale' }]
+export const menuLabel = (m: MenuItem) => m.i18n.EN || m.i18n.TH || 'เมนูใหม่'
+export const hasSub = (m: MenuItem) => m.layout.startsWith('col') || (m.layout === 'normal' && m.children.length > 0)
+const ALL_ON: Record<Device, boolean> = { desktop: true, tablet: true, mobile: true }
+const mItem = (id: string, en: string, kind: string, target: string, extra: Partial<MenuItem> = {}): MenuItem =>
+  ({ id, kind, i18n: { TH: '', EN: en, JP: '', CN: '' }, target, layout: 'normal', children: [], cols: [], showOn: { ...ALL_ON }, ...extra })
+/* menu tree of mockup 1f / 3b (7 / 12) · COLLECTION = Column 3 with the Menu Collection of 3b */
+const MENU: MenuItem[] = [
+  mItem('m-home', 'HOME', 'page', 'หน้าเพจ: HOME · /home'),
+  mItem('m-collection', 'COLLECTION', 'category', 'หมวดหมู่: Collection (ทั้งหมด)', { i18n: { TH: 'คอลเลกชัน', EN: 'COLLECTION', JP: '', CN: '' }, layout: 'col3',
+    cols: [{ head: 'SHOP BY', links: [{ name: 'New in', url: '/new' }, { name: 'Dresses', url: '/c/dresses' }, { name: 'Accessories', url: '/c/acc' }] },
+      { head: 'EDIT', links: [{ name: 'Autumn', url: '/c/autumn' }, { name: 'Office', url: '/c/office' }] },
+      { head: 'SALE', links: [{ name: 'ลด 30%+', url: '/sale' }] }], banner: { url: '/collection/autumn' } }),
+  mItem('m-product', 'PRODUCT', 'product', 'หน้าเพจ: PRODUCT · /product'),
+  mItem('m-promotion', 'PROMOTION', 'page', 'หน้าเพจ: PROMOTION · /promotion'),
+  mItem('m-blog', 'BLOG', 'blog', 'หน้าเพจ: BLOG · /blog'),
+  mItem('m-contact', 'CONTACT', 'page', 'หน้าเพจ: CONTACT · /contact'),
+  mItem('m-ai', 'AI SEARCH', 'system', 'หน้าระบบ: AI Search', { showOn: { desktop: true, tablet: true, mobile: false } }),
+]
+
 export const INITIAL_SITE: SiteDoc = {
   name: 'GIRLY CLOSET',
   tokens: TOKENS,
   header: { id: 'site-header', type: 'header', role: 'global', zone: 'site', name: 'Header', meta: 'ใช้ร่วมทุกหน้า', data: HEADER_DATA, style: { fg: { hex: '#333333' } } },
   footer: { id: 'site-footer', type: 'footer', role: 'global', zone: 'site', name: 'Footer', meta: 'ใช้ร่วมทุกหน้า', data: {
     brand: 'GIRLY CLOSET', about: 'เสื้อผ้าแฟชั่นผู้หญิง ส่งไวทั่วไทย', contact: '02-345-6789 · hello@girlycloset.co' }, rows: { TH: FOOTER_ROWS } },
+  menu: MENU,
   pages: [
     { id: HOME_ID, name: 'หน้าแรก', path: '/home', lock: 'L0', group: 'on', when: 'แก้ 2 นาทีที่แล้ว', thumb: 'linear-gradient(160deg,#d9b493,#5e3b28)', zones: Z_MAIN, sections: home },
     { id: 'collection', name: 'COLLECTION', path: '/collection', lock: 'L1', group: 'on', when: 'เมื่อวาน', thumb: '#f6dfe6' },

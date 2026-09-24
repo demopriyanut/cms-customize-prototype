@@ -1,5 +1,5 @@
 import { useRef, useState, type CSSProperties, type ReactNode } from 'react'
-import { colSummary, FOOTER_TEXT, HEADER_INHERIT, NAV_ITEMS, PRODUCTS, ROLE_STYLE, tokenByName, tokenHex, type FooterCol, type Section, type SiteDoc, type Zone, type PageDoc } from '@/data/schema'
+import { colSummary, FOOTER_TEXT, hasSub, HEADER_INHERIT, menuLabel, PRODUCTS, ROLE_STYLE, tokenByName, tokenHex, type FooterCol, type Section, type SiteDoc, type Zone, type PageDoc } from '@/data/schema'
 import { orderedBlocks, useStore, type Device, type DropTarget } from '@/data/store'
 import { useGo, useRoute } from '@/components/shell/nav'
 import { useDrag, type Gap } from '@/components/editor/drag'
@@ -374,7 +374,7 @@ function HeaderBody({ s, site, device, zoom, hot }: { s: Section; site: SiteDoc;
   const logo = <Z zone="logo" tagSide={m ? 'right' : 'left'} style={{ fontFamily: 'Georgia,serif', fontSize: m ? 22 : 30, letterSpacing: '.06em', fontWeight: 700, color: fg, whiteSpace: 'nowrap' }}>{d.logo}</Z>
   const navList = (
     <div style={{ display: 'flex', gap: t ? 16 : 22, fontSize: fs, fontFamily: font, textTransform: d.menuUpper === 'no' ? 'none' : 'uppercase', letterSpacing: '.02em', color: fg, alignItems: 'center', flexWrap: m ? 'nowrap' : 'wrap', whiteSpace: 'nowrap' }}>
-      {NAV_ITEMS.map(n => <span key={n}>{n}</span>)}
+      {(site.menu ?? []).filter(n => n.showOn[device]).map(n => n.iconOnly ? <i key={n.id} className="fas fa-search" title={menuLabel(n)} /> : <span key={n.id}>{menuLabel(n)}{hasSub(n) ? ' ▾' : ''}</span>)}
     </div>
   )
   const nav = collapse ? <Z zone="nav"><i className="fas fa-bars" style={{ fontSize: 22, color: fg }} /></Z> : <Z zone="nav">{navList}</Z>
