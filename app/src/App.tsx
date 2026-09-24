@@ -8,6 +8,7 @@ import { useGo, useRoute, useUi } from '@/components/shell/nav'
 import { EntryA, EntryB, EntryC } from '@/screens/entry'
 import { PageEditorA, PageEditorB, PageEditorC } from '@/screens/page-editor'
 import { HeaderA, HeaderB, HeaderC } from '@/screens/header'
+import { FooterA, FooterB, FooterC } from '@/screens/footer'
 
 /* hash routes when run locally; in-memory routes inside the Artifact frame (it only passes plain #anchors) */
 const Router = import.meta.env.VITE_ROUTER === 'memory' ? MemoryRouter : HashRouter
@@ -55,6 +56,7 @@ function Screen({ v, s, collapsed }: { v: VersionId; s: ScreenId; collapsed: boo
   if (s === 'entry') return v === 'v1' ? <EntryA /> : v === 'v2' ? <EntryB /> : <EntryC />
   if (s === 'page') return v === 'v1' ? <PageEditorA /> : v === 'v2' ? <PageEditorB collapsed={collapsed} /> : <PageEditorC />
   if (s === 'header') return v === 'v1' ? <HeaderA /> : v === 'v2' ? <HeaderB /> : <HeaderC />
+  if (s === 'footer') return v === 'v1' ? <FooterA /> : v === 'v2' ? <FooterB /> : <FooterC />
   return null
 }
 

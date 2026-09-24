@@ -25,6 +25,11 @@ export interface SectionStyle {
   hideOn?: Device[]
 }
 
+/* Footer = rows → columns (mockup 1j / 1k / 3d); one set of rows per language (TH = main) */
+export interface FooterLink { label: string; href: string }
+export interface FooterCol { id: string; kind: 'brand' | 'links' | 'social' | 'payments' | 'copyright' | 'empty'; title: string; text?: string; links?: FooterLink[]; items?: string[] }
+export interface FooterRow { id: string; cols: FooterCol[]; widths: number[]; bg?: ColorRef; padY: number; hidden?: boolean; hideOn?: Device[]; bar?: boolean }
+
 export interface Section {
   id: string
   type: SectionType
@@ -36,6 +41,7 @@ export interface Section {
   data: Record<string, string>
   style?: SectionStyle
   origin?: 'ai'                    // added by ผู้ช่วย Ket (T0)
+  rows?: Record<string, FooterRow[]>  // footer only · key = language
 }
 
 export interface Zone {
@@ -142,12 +148,31 @@ export const HEADER_PRESETS: { key: string; name: string; desc: string; data: Re
   { key: 'dark', name: 'Dark contrast', desc: 'พื้นเข้มจาก Token Surface Dark', data: { layout: 'standard' }, style: { bg: { token: 'พื้นเข้ม (Footer)' }, fg: { hex: '#FFFFFF' } } },
 ]
 
+/* Footer rows as drawn in mockup 1j / 1k / 3d (row list data "footerRows"):
+   แถว 1 · 4 คอลัมน์ 1.4fr 1fr 1fr 1fr (แบรนด์ / Shop / Help / Follow) · พื้น Token พื้นเข้ม · ระยะบน–ล่าง 40 px · แสดงบนคอม+แท็บเล็ต
+   แถว 2 · ช่องทางชำระเงิน · แถว 3 · ลิขสิทธิ์ (both on the darker bar #242220)
+   Help links have no URL in the mockup → left empty (ยังไม่ผูกลิงก์) */
+export const FOOTER_LANGS = ['TH', 'EN', 'JP', 'CN']
+export const FOOTER_TEXT = '#CFC8C2'             // mockup: "Token · On Dark" — not in the 1l token set
+const FOOTER_ROWS: FooterRow[] = [
+  { id: 'fr-1', widths: [1.4, 1, 1, 1], padY: 40, hideOn: ['mobile'], cols: [
+    { id: 'fc-brand', kind: 'brand', title: 'GIRLY CLOSET', text: 'เสื้อผ้าแฟชั่นผู้หญิง ส่งไวทั่วไทย\n02-345-6789 · hello@girlycloset.co' },
+    { id: 'fc-shop', kind: 'links', title: 'Shop', links: [{ label: 'New in', href: '/collection/new' }, { label: 'Collection', href: '/collection' }, { label: 'Sale', href: '/promotion' }] },
+    { id: 'fc-help', kind: 'links', title: 'Help', links: [{ label: 'การจัดส่ง', href: '' }, { label: 'คืนสินค้า', href: '' }, { label: 'ติดต่อเรา', href: '' }] },
+    { id: 'fc-follow', kind: 'social', title: 'Follow', items: ['facebook', 'instagram', 'line'] },
+  ] },
+  { id: 'fr-2', widths: [1], padY: 12, bar: true, bg: { hex: '#242220' }, cols: [{ id: 'fc-pay', kind: 'payments', title: 'ชำระเงิน', items: ['VISA', 'Mastercard', 'PromptPay', 'COD'] }] },
+  { id: 'fr-3', widths: [1], padY: 12, bar: true, bg: { hex: '#242220' }, cols: [{ id: 'fc-copy', kind: 'copyright', title: '', text: '© 2026 Girly Closet · Powered by Ketshopweb' }] },
+]
+export const colSummary = (c: FooterCol) => c.kind === 'brand' ? 'แบรนด์' : c.kind === 'payments' ? 'โลโก้ช่องทางชำระเงิน' : c.kind === 'copyright' ? 'ลิขสิทธิ์' : c.kind === 'empty' ? 'ว่าง' : c.title
+export const rowMeta = (r: FooterRow) => `${r.cols.length} คอลัมน์ · ${r.cols.map(colSummary).join(' / ')}`
+
 export const INITIAL_SITE: SiteDoc = {
   name: 'GIRLY CLOSET',
   tokens: TOKENS,
   header: { id: 'site-header', type: 'header', role: 'global', zone: 'site', name: 'Header', meta: 'ใช้ร่วมทุกหน้า', data: HEADER_DATA, style: { fg: { hex: '#333333' } } },
   footer: { id: 'site-footer', type: 'footer', role: 'global', zone: 'site', name: 'Footer', meta: 'ใช้ร่วมทุกหน้า', data: {
-    brand: 'GIRLY CLOSET', about: 'เสื้อผ้าแฟชั่นผู้หญิง ส่งไวทั่วไทย', contact: '02-345-6789 · hello@girlycloset.co' }, style: { bg: { token: 'พื้นเข้ม (Footer)' } } },
+    brand: 'GIRLY CLOSET', about: 'เสื้อผ้าแฟชั่นผู้หญิง ส่งไวทั่วไทย', contact: '02-345-6789 · hello@girlycloset.co' }, rows: { TH: FOOTER_ROWS } },
   pages: [
     { id: HOME_ID, name: 'หน้าแรก', path: '/home', lock: 'L0', group: 'on', when: 'แก้ 2 นาทีที่แล้ว', thumb: 'linear-gradient(160deg,#d9b493,#5e3b28)', zones: Z_MAIN, sections: home },
     { id: 'collection', name: 'COLLECTION', path: '/collection', lock: 'L1', group: 'on', when: 'เมื่อวาน', thumb: '#f6dfe6' },

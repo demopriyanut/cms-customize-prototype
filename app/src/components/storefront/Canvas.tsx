@@ -1,5 +1,5 @@
-import { useRef, type CSSProperties, type ReactNode } from 'react'
-import { HEADER_INHERIT, NAV_ITEMS, PRODUCTS, ROLE_STYLE, tokenByName, tokenHex, type Section, type SiteDoc, type Zone, type PageDoc } from '@/data/schema'
+import { useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { colSummary, FOOTER_TEXT, HEADER_INHERIT, NAV_ITEMS, PRODUCTS, ROLE_STYLE, tokenByName, tokenHex, type FooterCol, type Section, type SiteDoc, type Zone, type PageDoc } from '@/data/schema'
 import { orderedBlocks, useStore, type Device, type DropTarget } from '@/data/store'
 import { useGo, useRoute } from '@/components/shell/nav'
 import { useDrag, type Gap } from '@/components/editor/drag'
@@ -311,14 +311,7 @@ function Body({ s, ctx, bg, pad }: { s: Section; ctx: Ctx; bg: string | null; pa
         </div>
       )
     }
-    case 'footer': return (
-      <div style={{ background: bg ?? '#2d2a28', color: '#cfc8c2', padding: m ? '28px 20px 20px' : '28px 28px 20px', fontSize: 15, display: 'grid', gridTemplateColumns: m ? '1fr 1fr' : '1.4fr 1fr 1fr 1fr', gap: 20 }}>
-        <div style={m ? { gridColumn: '1 / -1' } : undefined}><div style={{ fontFamily: 'Georgia,serif', color: '#fff', fontSize: 24, marginBottom: 12 }}>{s.data.brand}</div><div style={{ lineHeight: 1.5 }}>{s.data.about}<br />{s.data.contact}</div></div>
-        <div><div style={{ color: '#fff', fontWeight: 600, marginBottom: 8 }}>Shop</div>New in<br />Collection<br />Sale</div>
-        <div><div style={{ color: '#fff', fontWeight: 600, marginBottom: 8 }}>Help</div>การจัดส่ง<br />คืนสินค้า<br />ติดต่อเรา</div>
-        <div><div style={{ color: '#fff', fontWeight: 600, marginBottom: 8 }}>Follow</div><div style={{ display: 'flex', gap: 12, fontSize: 20 }}><i className="fab fa-facebook" /><i className="fab fa-instagram" /><i className="fab fa-line" /></div></div>
-      </div>
-    )
+    case 'footer': return <FooterBody s={s} site={ctx.site} device={ctx.device} zoom={ctx.zoom} edit={ctx.overlays} />
   }
 }
 
@@ -428,6 +421,124 @@ export function HeaderPreview({ site, width, hot, strip = 0 }: { site: SiteDoc; 
       <div style={{ width: real, zoom, fontFamily: "'Prompt',sans-serif", color: '#222', position: 'relative', background: '#fff' } as CSSProperties}>
         <HeaderBody s={site.header} site={site} device={device} zoom={zoom} hot={hot} />
         {h > 0 && <div style={{ height: h / zoom, background: 'linear-gradient(160deg,#d9b493,#5e3b28)', opacity: transparent ? 1 : 0.32 }} />}
+      </div>
+    </div>
+  )
+}
+
+/* =====================================================================
+   Footer — rows → columns (mockup 1j / 1k / 3d), one renderer for the canvas and the Footer screens.
+   Each row: column widths (fr) · background (inherit Token พื้นเข้ม / override) · ระยะบน–ล่าง · แสดงบนจอไหน.
+   Footer screens add: column grid lines, row tags, click a column → select (toolbar ✦ ⚙ ลบ),
+   and in V2 (1k) drag a grid line to change column widths.
+   ===================================================================== */
+export interface FooterHot {
+  sel: { row: string; col: number } | null
+  look: 'a' | 'b' | 'c'
+  color: string
+  onCol: (row: string, col: number) => void
+  onAction: (a: 'ai' | 'props' | 'delete', row: string, col: number) => void
+  onResize?: (row: string, widths: number[]) => void
+}
+const FOOTER_BG = 'พื้นเข้ม (Footer)'
+const SOCIAL_ICON: Record<string, string> = { facebook: 'fab fa-facebook', instagram: 'fab fa-instagram', line: 'fab fa-line', tiktok: 'fab fa-tiktok' }
+
+function FooterCell({ c, m }: { c: FooterCol; m: boolean }) {
+  if (c.kind === 'brand') return <div><div style={{ fontFamily: 'Georgia,serif', color: '#fff', fontSize: 24, marginBottom: 12 }}>{c.title}</div><div style={{ lineHeight: 1.6, whiteSpace: 'pre-line' }}>{c.text}</div></div>
+  if (c.kind === 'links') return <div><div style={{ color: '#fff', fontWeight: 600, marginBottom: 8 }}>{c.title}</div>{(c.links ?? []).map((l, i) => <div key={i} style={{ lineHeight: 1.7 }}>{l.label}</div>)}</div>
+  if (c.kind === 'social') return <div><div style={{ color: '#fff', fontWeight: 600, marginBottom: 8 }}>{c.title}</div><div style={{ display: 'flex', gap: 12, fontSize: 20 }}>{(c.items ?? []).map(k => <i key={k} className={SOCIAL_ICON[k] ?? 'fas fa-link'} />)}</div></div>
+  if (c.kind === 'payments') return <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>{(c.items ?? []).map(k => <span key={k} style={{ minWidth: 52, height: 30, padding: '0 8px', borderRadius: 4, background: '#fff', color: '#2d2a28', fontSize: 11, fontWeight: 700, display: 'grid', placeItems: 'center', fontFamily: "'Poppins',sans-serif" }}>{k}</span>)}</div>
+  if (c.kind === 'copyright') return <div style={{ fontSize: 13, color: '#9a938d' }}>{c.text}</div>
+  return <div style={{ minHeight: m ? 40 : 60 }} />
+}
+
+function FooterBody({ s, site, device, zoom, lang = 'TH', hot, edit }: { s: Section; site: SiteDoc; device: Device; zoom: number; lang?: string; hot?: FooterHot; edit?: boolean }) {
+  const [live, setLive] = useState<{ row: string; widths: number[] } | null>(null)
+  const m = device === 'mobile'
+  const rows = s.rows?.[lang] ?? s.rows?.TH ?? []
+  const dim = !!hot || !!edit
+  return (
+    <div style={{ color: FOOTER_TEXT, fontSize: 15 }}>
+      {rows.map((r, ri) => {
+        const off = r.hidden || r.hideOn?.includes(device)
+        if (off && !dim) return null
+        const widths = live?.row === r.id ? live.widths : r.widths
+        const cols = m && r.cols.length > 2 ? '1fr 1fr' : widths.map(w => `${w}fr`).join(' ')
+        const selRow = hot?.sel?.row === r.id
+        const bg = tokenHex(site, r.bg) ?? tokenByName(site, FOOTER_BG)
+        const pad = hot ? Math.max(r.padY, (r.bar ? 30 : 36) / zoom) : r.padY   // hot mode: room for the row tag
+        const startResize = (e: React.PointerEvent, i: number) => {
+          if (!hot?.onResize) return
+          e.preventDefault(); e.stopPropagation()
+          const grid = (e.currentTarget as HTMLElement).closest('[data-frow]')?.querySelector('[data-fgrid]') as HTMLElement | null
+          if (!grid) return
+          const x0 = e.clientX, w0 = [...widths], sum = w0.reduce((a, b) => a + b, 0)
+          const pxPerFr = (grid.getBoundingClientRect().width - 20 * zoom * (w0.length - 1)) / sum
+          let cur = w0
+          const move = (ev: PointerEvent) => {
+            const d = (ev.clientX - x0) / pxPerFr
+            const a = Math.max(0.4, w0[i] + d), b = Math.max(0.4, w0[i] + w0[i + 1] - a)
+            cur = w0.map((w, k) => k === i ? Math.round((w0[i] + w0[i + 1] - b) * 10) / 10 : k === i + 1 ? Math.round(b * 10) / 10 : w)
+            setLive({ row: r.id, widths: cur })
+          }
+          const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); setLive(null); if (cur !== w0) hot.onResize!(r.id, cur) }
+          window.addEventListener('pointermove', move); window.addEventListener('pointerup', up)
+        }
+        const tag = hot && (
+          <span style={{ position: 'absolute', left: 28, top: 6 / zoom, zIndex: 3, fontSize: px(11, zoom), fontWeight: 700, color: '#fff', background: selRow ? hot.color : 'var(--ink-600)', padding: `${px(2, zoom)} ${px(7, zoom)}`, borderRadius: px(5, zoom), fontFamily: 'var(--font-heading)', whiteSpace: 'nowrap', pointerEvents: 'none' }}>
+            แถว {ri + 1}{selRow ? ` · ${r.cols.length} คอลัมน์` : hot.look === 'b' && r.bar ? ` · ${colSummary(r.cols[0])}` : ''}{off ? ' · ซ่อนอยู่' : ''}
+          </span>
+        )
+        return (
+          <div key={r.id} data-frow={r.id} style={{ background: bg, padding: `${pad}px ${m ? 20 : 28}px ${r.bar ? (hot ? r.padY : pad) : Math.round(pad * 0.7)}px`, position: 'relative', opacity: off ? 0.4 : 1 }}>
+            {tag}
+            {hot && !m && r.cols.length > 1 && (
+              <div style={{ position: 'absolute', left: 28, right: 28, top: 0, bottom: 0, display: 'grid', gridTemplateColumns: cols, gap: 20, pointerEvents: 'none' }}>
+                {r.cols.map((_, i) => (
+                  <span key={i} style={{ borderRight: `${px(1, zoom)} dashed rgba(255,255,255,.18)`, borderLeft: i === 0 ? `${px(1, zoom)} dashed rgba(255,255,255,.18)` : undefined, position: 'relative' }}>
+                    {hot.onResize && i < r.cols.length - 1 && <span role="separator" aria-label="ลากเพื่อปรับความกว้างคอลัมน์" onPointerDown={e => startResize(e, i)} style={{ position: 'absolute', right: -11, top: 0, bottom: 0, width: 20, cursor: 'col-resize', pointerEvents: 'auto', display: 'grid', placeItems: 'center' }}><span style={{ width: px(6, zoom), height: px(28, zoom), borderRadius: px(3, zoom), background: 'rgba(255,255,255,.4)' }} /></span>}
+                  </span>
+                ))}
+              </div>
+            )}
+            <div data-fgrid="" style={{ display: 'grid', gridTemplateColumns: cols, gap: 20, position: 'relative', alignItems: r.bar ? 'center' : 'start' }}>
+              {r.cols.map((c, ci) => {
+                const span = m && r.cols.length > 2 && c.kind === 'brand' ? { gridColumn: '1 / -1' } : undefined
+                if (!hot) return <div key={c.id} style={span}><FooterCell c={c} m={m} /></div>
+                const on = selRow && hot.sel?.col === ci
+                const tb = (icon: string, label: string, a: 'ai' | 'props' | 'delete', grad?: boolean) => (
+                  <button key={a} title={label} aria-label={label} onClick={e => { e.stopPropagation(); hot.onAction(a, r.id, ci) }} style={{ width: px(24, zoom), height: px(24, zoom), display: 'grid', placeItems: 'center', borderRadius: px(5, zoom), color: '#fff', background: grad ? 'linear-gradient(135deg,var(--red-600),var(--orange-500))' : undefined }}><i className={icon} style={{ fontSize: px(10, zoom) }} /></button>
+                )
+                return (
+                  <div key={c.id} data-fcol="" data-hz-on={on ? '' : undefined} role="button" tabIndex={0} aria-pressed={on} aria-label={`เลือกคอลัมน์ ${colSummary(c)}`}
+                    onClick={e => { e.stopPropagation(); hot.onCol(r.id, ci) }} onKeyDown={e => { if (e.key === 'Enter') hot.onCol(r.id, ci) }}
+                    style={{ ...span, position: 'relative', cursor: 'pointer', borderRadius: 2, outline: on ? `${px(2, zoom)} solid ${hot.color}` : `${px(1, zoom)} dashed transparent`, outlineOffset: px(8, zoom) }}>
+                    {on && <span style={{ position: 'absolute', right: px(-8, zoom), top: px(-38, zoom), display: 'flex', gap: px(2, zoom), background: 'var(--ink-900)', borderRadius: px(7, zoom), padding: px(3, zoom), zIndex: 4 }}>
+                      {hot.look !== 'a' && tb('fas fa-magic', 'ปรับด้วยผู้ช่วย Ket', 'ai', true)}{tb('fas fa-cog', 'คุณสมบัติคอลัมน์', 'props')}{tb('fas fa-trash-alt', 'ลบคอลัมน์', 'delete')}
+                    </span>}
+                    {c.kind === 'empty'
+                      ? <div style={{ minHeight: 60, border: `${px(1, zoom)} dashed rgba(255,255,255,.3)`, borderRadius: 6, display: 'grid', placeItems: 'center', fontSize: 13, color: 'rgba(255,255,255,.55)', fontFamily: 'var(--font-heading)' }}>คอลัมน์ว่าง · คลิกเพื่อใส่เนื้อหา</div>
+                      : <FooterCell c={c} m={m} />}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/* Footer screens: the real footer at desktop width, zoomed to fit, under a hint of the page content */
+export function FooterPreview({ site, width, lang, hot, strip = 0 }: { site: SiteDoc; width: number; lang: string; hot?: FooterHot; strip?: number }) {
+  const real = REAL_W.desktop
+  const zoom = width / real
+  return (
+    <div style={{ width }}>
+      {strip > 0 && <div style={{ height: strip, background: 'var(--ink-100)', display: 'grid', placeItems: 'center', color: 'var(--ink-400)', fontSize: 12 }}>… เนื้อหาหน้า …</div>}
+      <div style={{ width: real, zoom, fontFamily: "'Prompt',sans-serif", position: 'relative' } as CSSProperties}>
+        <FooterBody s={site.footer} site={site} device="desktop" zoom={zoom} lang={lang} hot={hot} />
       </div>
     </div>
   )
