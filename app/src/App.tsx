@@ -33,11 +33,12 @@ function VersionShell() {
 
   const collapsedAuto = screen?.id === 'entry' || screen?.id === 'page'
   const collapsed = v2Collapsed ?? collapsedAuto
-  const sbw = !version ? 0 : version.sidebar === 'bold' && collapsed ? 72 : 240
+  const OwnSidebar = version ? sidebarOf(version.id) : null
+  const rail = useUi(s => s.rail)
+  const sbw = !version ? 0 : OwnSidebar ? (rail ? 72 : 240) : version.sidebar === 'bold' && collapsed ? 72 : 240
   useEffect(() => { document.body.style.setProperty('--sbw', sbw + 'px') }, [sbw])
 
   if (!version) return <IndexPage />
-  const OwnSidebar = sidebarOf(version.id)
   const sidebar = OwnSidebar ? <OwnSidebar /> : version.sidebar === 'safe' ? <SidebarSafe />
     : collapsed ? <SidebarBoldNarrow onExpand={() => set({ v2Collapsed: false })} /> : <SidebarBoldWide onCollapse={() => set({ v2Collapsed: true })} />
 

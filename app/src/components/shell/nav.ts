@@ -8,9 +8,15 @@ interface Ui {
   v2Collapsed: boolean | null   // null = follow the mockup (collapsed on หน้าเลือก / แต่งหน้าเว็บ)
   dockMini: boolean
   dockPop: boolean
+  rail: boolean                 // a version's own sidebar folded to icons (V4) — remembered per browser
   set: (p: Partial<Omit<Ui, 'set'>>) => void
 }
-export const useUi = create<Ui>(set => ({ tab: 'front', v2Collapsed: null, dockMini: false, dockPop: false, set: p => set(p) }))
+const RAIL_KEY = 'cms-proto-sidebar-rail'
+const readRail = () => { try { return localStorage.getItem(RAIL_KEY) === '1' } catch { return false } }
+export const useUi = create<Ui>(set => ({ tab: 'front', v2Collapsed: null, dockMini: false, dockPop: false, rail: readRail(), set: p => {
+  if ('rail' in p) { try { localStorage.setItem(RAIL_KEY, p.rail ? '1' : '0') } catch { /* private window: not remembered */ } }
+  set(p)
+} }))
 
 /* current route: /:v/:screen   (screen "x:<label>" = a sidebar item that has no mockup) */
 export function useRoute() {

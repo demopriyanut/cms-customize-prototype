@@ -34,12 +34,15 @@
 | `app/src/App.tsx` (รอบ Master V) | `Screen()` อ่านจาก `SCREEN_MAP` · หน้ารวมเวอร์ชันแสดงเวอร์ชันย่อย / ต่อยอดจาก |
 | `app/src/components/storefront/Canvas.tsx` (รอบ V4) | prop ใหม่ `selBar="float"` = toolbar ไอคอนเล็กมุมขวาบนของ Section ตาม 3a (ค่าเดิม `bar` ของ V1–V3 ไม่เปลี่ยน) |
 | `app/src/versions/screens.tsx` + `App.tsx` (รอบ V4) | เวอร์ชันมี sidebar ของตัวเองได้ (`SIDEBAR_MAP`) |
+| `app/src/index.css` (รอบมาตรฐานตัวอักษร) | token ตัวอักษร 6 ขั้น `text-display/title/heading/body/meta/caption` (ใช้ได้ทุกเวอร์ชัน แต่ตอนนี้ใช้แค่ V4) |
+| `app/src/components/shell/nav.ts` + `App.tsx` | สถานะ `rail` (sidebar ของเวอร์ชันย่อเหลือไอคอน · จำไว้ในเบราว์เซอร์) · ความกว้าง 72/240 |
 | `app/src/index.css` | สี `warning-50` / `info-50` · สไตล์ hover ของ hot-zone |
 
 ## บันทึก (ใหม่อยู่บน)
 
 | วันที่ | ทำอะไร | commit | ค้าง / ส่งต่อ |
 |---|---|---|---|
+| 2026-09-24 | V4: มาตรฐานตัวอักษร 6 ขั้น (ไม่มีครึ่ง px) ใช้ทั้งชุด · sidebar เว้นก่อนหัวกลุ่ม 12px หัวกลุ่ม 11px สีอ่านง่ายขึ้น · sidebar ย่อเหลือไอคอน 72px ได้ (« / ») ชื่อขึ้นเมื่อชี้ จำสถานะไว้ | (commit นี้) | แผงขวาของหน้าแต่ง (ชิ้นกลาง) ยังไม่ใช้มาตรฐานนี้ · ปรับโครงสร้างโดยรวม → Page Layouts |
 | 2026-09-24 | V4 ปรับระยะ/ตัวอักษรกลับไปตามตัวเลขใน mockup แนว C + Design System 0a (gridgeist): สเกลตัวอักษรลด 0.5–1px ทั้งชุด · ฐาน 13px · sidebar แถว 30px · หน้าเลือกแถวตาม 3f · หน้าแต่ง: toolbar ลอยเล็ก · คำอธิบายสีเป็นแคปซูลมุมซ้ายล่าง · panel 340 · canvas กว้างไม่เกิน 680 | d341ce3 | รายงานจุดที่ V1–V3 ไม่ตรง mockup ให้ผู้ใช้ (ส่งแล้ว) |
 | 2026-09-24 | Master V รองรับเวอร์ชันหลัก/ย่อย · โคลน V3 ทั้งชุดเป็น V4 (`versions/v4/`) | 9bb00f9 | — |
 | 2026-09-24 | Menu ครบ 3 เวอร์ชัน (1f · 1g · 3b) ตามขั้นตอน 3u: สร้างเมนู 10 ประเภท (สูงสุด 12) · ลากชิป/แถวต้นไม้เรียง + ลากซ้อนกลาง = เมนูย่อย · ชื่อ 4 ภาษา · ลิงก์ไปที่ · Menu Type Normal/Column 1–3 (V1 Dropdown/Mega/ไม่มี) · Menu Collection ลิงก์ + Banner · mega menu บน preview (V2 แก้ในที่) · มือถือ ☰ · ผู้ช่วยเสนอ (1g ยุบ AI SEARCH/ย้าย CONTACT · 3b เติมช่อง SALE) | ec01432 | แตกงานที่เหลือเป็น task แยก 4 ชิ้น (System Design · 1n + หน้าแต่ง · หน้าเลือก + sidebar · ระบบเดิม) |

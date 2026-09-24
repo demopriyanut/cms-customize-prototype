@@ -55,7 +55,7 @@ function UndoRedo({ canUndo, canRedo, round }: { canUndo: boolean; canRedo: bool
 }
 function PreviewToggle({ pill }: { pill?: boolean }) {
   const preview = useStore(s => s.preview); const setPreview = useStore(s => s.setPreview)
-  return <button onClick={() => setPreview(!preview)} aria-pressed={preview} title="พรีวิว — ซ่อนกรอบและป้ายเพื่อดูหน้าจริง" className={`h-[30px] px-2.5 flex items-center gap-1.5 text-[12.5px] font-semibold whitespace-nowrap ${pill ? 'rounded-full' : 'rounded-md'} ${preview ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}><i className={preview ? 'fas fa-eye' : 'far fa-eye'} />พรีวิว</button>
+  return <button onClick={() => setPreview(!preview)} aria-pressed={preview} title="พรีวิว — ซ่อนกรอบและป้ายเพื่อดูหน้าจริง" className={`h-[30px] px-2.5 flex items-center gap-1.5 text-body font-semibold whitespace-nowrap ${pill ? 'rounded-full' : 'rounded-md'} ${preview ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}><i className={preview ? 'fas fa-eye' : 'far fa-eye'} />พรีวิว</button>
 }
 function Publish({ variant }: { variant: 'split' | 'pill' }) {
   const open = useStore(s => s.setPublishOpen)
@@ -68,7 +68,7 @@ function Publish({ variant }: { variant: 'split' | 'pill' }) {
   )
 }
 const ViewSite = () => <div className="h-9 border border-ink-200 rounded-lg flex items-center px-3.5 gap-2 bg-white font-medium"><i className="fas fa-external-link-alt text-[11px] text-ink-500" />ดูเว็บไซต์</div>
-const DraftDot = ({ n, suffix = '' }: { n: number; suffix?: string }) => <div className="flex items-center gap-1.5 text-[12.5px] text-ink-500"><span className={`w-2 h-2 rounded-full ${n ? 'bg-warning-500' : 'bg-success-500'}`} />{n ? `ฉบับร่าง · ${n} การเปลี่ยนแปลง${suffix}` : 'ฉบับร่างตรงกับเว็บจริง'}</div>
+const DraftDot = ({ n, suffix = '' }: { n: number; suffix?: string }) => <div className="flex items-center gap-1.5 text-body text-ink-500"><span className={`w-2 h-2 rounded-full ${n ? 'bg-warning-500' : 'bg-success-500'}`} />{n ? `ฉบับร่าง · ${n} การเปลี่ยนแปลง${suffix}` : 'ฉบับร่างตรงกับเว็บจริง'}</div>
 function AddButton({ className = '', children }: { className?: string; children: React.ReactNode }) {
   const setLibrary = useStore(s => s.setLibrary); const open = useStore(s => s.libraryOpen)
   return <button onClick={() => setLibrary(!open)} aria-expanded={open} className={className}>{children}</button>
@@ -83,7 +83,7 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
   const isHome = page.id === 'home'
   const fit = useFitWidth(device)
   return (
-    <div className="text-[13px] flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
+    <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
       <div className="h-14 bg-white border-b border-ink-150 flex items-center px-4 gap-2.5 flex-none">
         <PagePicker page={page} onClick={back} />
         <div className="h-9 flex items-center px-2.5 gap-1.5 text-ink-700"><i className="fas fa-globe text-ink-500" />TH <i className="fas fa-chevron-down text-[11px] text-ink-400" /></div>
@@ -101,16 +101,16 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
           </div>
           <div className="absolute left-1/2 top-4 -translate-x-1/2 flex items-center gap-1 bg-white rounded-full p-[5px] shadow-lg border border-black/5">
             <DeviceToggle variant="pill" />
-            <span className="font-display text-[12.5px] text-ink-500 px-2">100%</span>
+            <span className="font-display text-body text-ink-500 px-2">100%</span>
             <span className="w-px h-5 bg-ink-150" />
             <span className="flex gap-0.5 text-ink-600"><UndoRedo canUndo={canUndo} canRedo={canRedo} round /></span>
             <span className="w-px h-5 bg-ink-150" />
-            <span className="flex gap-0.5 bg-ink-100 rounded-full p-[3px] text-[11px] font-semibold">
+            <span className="flex gap-0.5 bg-ink-100 rounded-full p-[3px] text-caption font-semibold">
               {([['before', 'ก่อน'], ['after', 'หลัง']] as const).map(([k, l]) => <button key={k} onClick={() => setCompare(k)} aria-pressed={compare === k} className={`px-2.5 py-1 rounded-full ${compare === k ? 'bg-white shadow-xs' : 'text-ink-500'}`}>{l}</button>)}
             </span>
             <PreviewToggle pill />
           </div>
-          <div className="fb absolute left-4 bottom-4 flex gap-2.5 text-[11px] text-ink-600 bg-white rounded-full px-3 py-1.5 shadow-sm"><Legend all /></div>
+          <div className="fb absolute left-4 bottom-4 flex gap-2.5 text-caption text-ink-600 bg-white rounded-full px-3 py-1.5 shadow-sm"><Legend all /></div>
           <PlacingBar className="absolute left-1/2 -translate-x-1/2 top-[62px]" />
           <LibraryPanel page={page} className="absolute left-4 top-4" />
         </div>
@@ -118,7 +118,7 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
           <PanelTabs id="c" def="ai" items={[['sections', <>Sections <span className="font-display text-ink-400">{(page.sections ?? []).length + 2}</span></>], ['props', 'คุณสมบัติ'], ['ai', <><MascotImg size={18} className="border border-ink-150" />ผู้ช่วย Ket</>]]} />
           {tab === 'ai' ? (
             <>
-              <div className="flex-1 overflow-auto p-5 flex flex-col gap-4 text-[13px] leading-[1.6]">
+              <div className="flex-1 overflow-auto p-5 flex flex-col gap-4 text-body leading-[1.6]">
                 {isHome ? <>
                   <div className="self-end max-w-[88%] bg-ink-900 text-white rounded-[16px_16px_4px_16px] px-3.5 py-2.5">เปลี่ยนแบนเนอร์เป็นโทน Autumn แล้วเพิ่มบล็อกสินค้าแนะนำใต้แบนเนอร์</div>
                   <div className="flex flex-col gap-2"><div>ผมเตรียมให้ 2 จุด — ไม่แตะ Header/Footer (ใช้ร่วมทุกหน้า) กดยอมรับทีละจุดได้ครับ</div><DiffCard accept="var(--red-600)" compact /></div>
@@ -146,7 +146,7 @@ function AssistantNote({ page }: { page: PageDoc }) {
   return (
     <div className="flex gap-2.5 items-start">
       <MascotImg src="mascot-idea.png" size={26} pos="center 22%" className="border border-ink-150" />
-      <div className="flex-1 bg-ink-50 rounded-xl p-3">หน้านี้ระดับ <b>{page.lock}</b> — {LOCK_TEXT[page.lock].rule}<br /><span className="text-ink-500 text-[12px]">ผมจะเสนอเฉพาะสิ่งที่หน้านี้อนุญาต และเขียนลงฉบับร่างเท่านั้น (บทตั้งไว้ของ prototype มีเฉพาะหน้าแรก)</span></div>
+      <div className="flex-1 bg-ink-50 rounded-xl p-3">หน้านี้ระดับ <b>{page.lock}</b> — {LOCK_TEXT[page.lock].rule}<br /><span className="text-ink-500 text-meta">ผมจะเสนอเฉพาะสิ่งที่หน้านี้อนุญาต และเขียนลงฉบับร่างเท่านั้น (บทตั้งไว้ของ prototype มีเฉพาะหน้าแรก)</span></div>
     </div>
   )
 }
@@ -155,7 +155,7 @@ function AssistantNote({ page }: { page: PageDoc }) {
 function PanelTabs({ id, items, def }: { id: string; items: [string, React.ReactNode][]; def: string }) {
   const cur = useStore(s => s.panel[id] ?? def); const setPanel = useStore(s => s.setPanel)
   return (
-    <div role="tablist" className="flex border-b border-ink-150 px-2 font-medium text-ink-500 text-[13px] flex-none">
+    <div role="tablist" className="flex border-b border-ink-150 px-2 font-medium text-ink-500 text-body flex-none">
       {items.map(([k, label]) => (
         <button key={k} role="tab" aria-selected={k === cur} onClick={() => setPanel(id, k)}
           className={`pt-3.5 pb-3 px-2.5 flex gap-1.5 items-center ${k === cur ? 'text-ink-900 font-semibold border-b-2 border-red-600 -mb-px' : 'hover:text-ink-900'}`}>{label}</button>
