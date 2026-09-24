@@ -1,0 +1,201 @@
+/* =====================================================================
+   Page Schema (mock) — per Blueprint v0.3
+   D2: Site → Theme tokens → Header & Footer (site-level, shared by every page) → Page → Zone (Region) → Section
+   D3: every PAGE declares its lock level; the editor reads it from data and changes behaviour — no per-page code.
+       L0 free · L1 insert only in open zones · L2 values only · L3 read-only (not listed for editing)
+   Demo data = what the mockup already contains (GIRLY CLOSET, products, tokens). Generic UI labels only beyond that.
+   ===================================================================== */
+
+export type Lock = 'L0' | 'L1' | 'L2' | 'L3'
+export type Device = 'desktop' | 'tablet' | 'mobile'
+export type SectionType =
+  | 'header' | 'footer'                                 // site-level regions
+  | 'marquee' | 'hero' | 'products' | 'benefit'         // content blocks from the mockup storefront
+  | 'library'                                           // a block added from the library (placeholder look)
+  | 'product-info' | 'cart'                             // system blocks (L1 / L2 pages)
+
+/* role on the canvas — what the user may do with it (D3 legend) */
+export type Role = 'free' | 'system' | 'global'
+
+export interface SectionStyle {
+  bg?: { token: string } | { hex: string }   // undefined = inherit (no own background)
+  spacing?: 'S' | 'M' | 'L'
+  hideOn?: Device[]
+}
+
+export interface Section {
+  id: string
+  type: SectionType
+  name: string
+  meta: string
+  role: Role
+  zone: string                     // zone id inside the page ('site' for header/footer)
+  hidden?: boolean
+  data: Record<string, string>
+  style?: SectionStyle
+  origin?: 'ai'                    // added by ผู้ช่วย Ket (T0)
+}
+
+export interface Zone {
+  id: string
+  label: string
+  insert: boolean                  // may new blocks be dropped here?
+  closedNote?: string              // shown when a zone exists but is closed for this shop
+}
+
+export interface PageDoc {
+  id: string
+  name: string
+  path: string
+  lock: Lock
+  group: 'on' | 'off' | 'sys'
+  when: string
+  thumb: string
+  mockDraft?: boolean              // mockup shows this page as having a draft
+  zones?: Zone[]                   // pages that can be opened in the editor
+  sections?: Section[]
+}
+
+export interface Token { name: string; hex: string }
+
+export interface SiteDoc {
+  name: string
+  tokens: Token[]
+  header: Section
+  footer: Section
+  pages: PageDoc[]
+}
+
+export const HOME_ID = 'home'
+export const EDITABLE_PAGES = ['home', 'product-detail', 'cart']
+
+/* tokens from mockup 1l (สีหลักของร้าน) */
+const TOKENS: Token[] = [
+  { name: 'Primary', hex: '#134083' }, { name: 'Accent', hex: '#E32929' }, { name: 'ตัวอักษร', hex: '#13151B' },
+  { name: 'พื้นผิว', hex: '#DFE7F3' }, { name: 'พื้นเข้ม (Footer)', hex: '#2D2A28' }, { name: 'ราคา', hex: '#000000' },
+]
+
+export const PRODUCTS = [
+  { name: 'Aloe Water Jelly 50ml', price: '฿590', bg: '#f6dfe6' },
+  { name: 'Hydra Gel Cream', price: '฿690', bg: '#f3f3f3' },
+  { name: 'Happy Frog Mask Set', price: '฿290', bg: '#e6f0fb' },
+  { name: 'Scrunchie Bag Mini', price: '฿1,290', bg: '#ecebf5' },
+]
+
+const Z_MAIN: Zone[] = [{ id: 'main', label: 'เนื้อหาของหน้า', insert: true }]
+
+const home: Section[] = [
+  { id: 's-marquee-1', type: 'marquee', role: 'free', zone: 'main', name: 'ข้อความวิ่ง · SALE', meta: 'Marquee', data: { text: 'SALE • LIMITED TIME' } },
+  { id: 's-hero', type: 'hero', role: 'free', zone: 'main', name: 'Hero Banner', meta: 'Slider · 2 สไลด์', data: {
+    tag: 'GIRLY CLOSET', title: 'NEW COLLECTION 2026',
+    body: 'อัปเดตลุคใหม่กับคอลเลกชันล่าสุด รวมไอเทมที่ต้องมี ไม่ว่าจะลุคชิล ลุคเที่ยว หรือวันสบายๆ ก็ครบจบในที่เดียว',
+    cta: 'SHOP NOW', panelBg: '#faf8f5' } },
+  { id: 's-marquee-2', type: 'marquee', role: 'free', zone: 'main', name: 'ข้อความวิ่ง · SALE', meta: 'Marquee', data: { text: 'SALE • LIMITED TIME' } },
+  { id: 's-products', type: 'products', role: 'free', zone: 'main', name: 'Product · แนะนำ', meta: 'Product_ห้ามลบ · 4 ชิ้น', data: { title: 'SHOP NOW', badge: 'RECOMMENDED' } },
+  { id: 's-benefit', type: 'benefit', role: 'free', zone: 'main', name: 'benefit', meta: 'รูปภาพ · 1 element', data: {} },
+]
+
+/* L1 — product detail (mockup 1l product card data + D3 layout: ช่องบน / บล็อกสินค้าของระบบ / ช่องล่าง) */
+const productDetail: Section[] = [
+  { id: 'p-info', type: 'product-info', role: 'system', zone: 'system', name: 'รายละเอียดสินค้า', meta: 'บล็อกของระบบ · ข้อมูลจากคลังสินค้า', data: {
+    name: 'Aloe Water Jelly 50ml', desc: 'เจลบำรุงผิวสูตรว่านหางจระเข้', price: '฿590', compare: '฿790', cta: 'หยิบใส่ตะกร้า', showCompare: 'yes' } },
+]
+const Z_L1: Zone[] = [
+  { id: 'top', label: 'ช่องบน · แทรกได้', insert: true },
+  { id: 'system', label: 'บล็อกสินค้าของระบบ', insert: false },
+  { id: 'bottom', label: 'ช่องล่าง · แทรกได้', insert: true },
+]
+
+/* L2 — cart: values only (ข้อความ · ซ่อนฟิลด์ · สีปุ่ม) + bottom slot open only for some shops */
+const cart: Section[] = [
+  { id: 'c-cart', type: 'cart', role: 'system', zone: 'system', name: 'ตะกร้าสินค้า', meta: 'บล็อกของระบบ · แก้ได้เฉพาะค่า', data: {
+    title: 'ตะกร้าสินค้า', cta: 'ดำเนินการชำระเงิน', showNote: 'yes', showCoupon: 'yes', noteLabel: 'หมายเหตุถึงร้าน', couponLabel: 'โค้ดส่วนลด' },
+    style: { bg: { token: 'Primary' } } },
+]
+const Z_L2: Zone[] = [
+  { id: 'system', label: 'บล็อกของระบบ', insert: false },
+  { id: 'bottom', label: 'ช่องล่าง', insert: false, closedNote: 'เปิดเฉพาะบางร้าน' },
+]
+
+export const INITIAL_SITE: SiteDoc = {
+  name: 'GIRLY CLOSET',
+  tokens: TOKENS,
+  header: { id: 'site-header', type: 'header', role: 'global', zone: 'site', name: 'Header', meta: 'ใช้ร่วมทุกหน้า', data: { phone: '02-345-6789', logo: 'GIRLY CLOSET' }, style: { bg: { token: 'พื้นผิว' } } },
+  footer: { id: 'site-footer', type: 'footer', role: 'global', zone: 'site', name: 'Footer', meta: 'ใช้ร่วมทุกหน้า', data: {
+    brand: 'GIRLY CLOSET', about: 'เสื้อผ้าแฟชั่นผู้หญิง ส่งไวทั่วไทย', contact: '02-345-6789 · hello@girlycloset.co' }, style: { bg: { token: 'พื้นเข้ม (Footer)' } } },
+  pages: [
+    { id: HOME_ID, name: 'หน้าแรก', path: '/home', lock: 'L0', group: 'on', when: 'แก้ 2 นาทีที่แล้ว', thumb: 'linear-gradient(160deg,#d9b493,#5e3b28)', zones: Z_MAIN, sections: home },
+    { id: 'collection', name: 'COLLECTION', path: '/collection', lock: 'L1', group: 'on', when: 'เมื่อวาน', thumb: '#f6dfe6' },
+    { id: 'product', name: 'PRODUCT', path: '/product', lock: 'L1', group: 'on', when: '3 วันก่อน', thumb: '#e6f0fb' },
+    { id: 'promotion', name: 'PROMOTION', path: '/promotion', lock: 'L0', group: 'on', when: '5 วันก่อน', thumb: '#fde9c9' },
+    { id: 'blog', name: 'BLOG', path: '/blog', lock: 'L1', group: 'on', when: '1 สัปดาห์', thumb: '#ecebf5' },
+    { id: 'contact', name: 'CONTACT', path: '/contact', lock: 'L0', group: 'on', when: '2 สัปดาห์', thumb: '#e8f5ee' },
+    { id: 'landing-1111', name: 'Landing 11.11', path: '/sale-1111', lock: 'L0', group: 'off', when: 'แก้ 1 ชม.ที่แล้ว', thumb: '#13151B', mockDraft: true },
+    { id: 'about', name: 'About us', path: '/about', lock: 'L0', group: 'off', when: '1 เดือน', thumb: '#f3f3f3' },
+    { id: 'size-guide', name: 'Size guide', path: '/size-guide', lock: 'L0', group: 'off', when: '2 เดือน', thumb: '#fff7ed' },
+    { id: 'product-detail', name: 'รายละเอียดสินค้า', path: '/product/:id', lock: 'L1', group: 'sys', when: 'เมื่อวาน', thumb: '#e6f0fb', zones: Z_L1, sections: productDetail },
+    { id: 'cart', name: 'ตะกร้า', path: '/cart', lock: 'L2', group: 'sys', when: '—', thumb: '#f7f8fa', zones: Z_L2, sections: cart },
+    { id: 'checkout', name: 'ชำระเงิน', path: '/checkout', lock: 'L2', group: 'sys', when: '—', thumb: '#f7f8fa' },
+    { id: 'register', name: 'สมัครสมาชิก / เข้าสู่ระบบ', path: '/register', lock: 'L2', group: 'sys', when: '—', thumb: '#f7f8fa' },
+    { id: 'thankyou', name: 'ขอบคุณ (Thank you)', path: '/thankyou', lock: 'L3', group: 'sys', when: 'ระบบ', thumb: '#eef0f4' },
+  ],
+}
+
+/* page-group headers as in mockup 1d / 1e / 3f (counts are the mockup's own numbers) */
+export const PAGE_GROUPS = [
+  { key: 'on' as const, label: 'หน้าบนเมนู', count: 7, note: 'แก้ได้ตามระดับ', icon: 'fa fa-bars' },
+  { key: 'off' as const, label: 'หน้านอกเมนู', count: 3, note: 'Landing / Sale page', icon: 'far fa-file' },
+  { key: 'sys' as const, label: 'หน้าของระบบ', count: 12, note: 'L2 แก้ค่า · L3 ล็อก', icon: 'fas fa-lock' },
+]
+
+export const LOCK_STYLE: Record<Lock, { bg: string; fg: string }> = {
+  L0: { bg: 'var(--success-100)', fg: 'var(--success-700)' },
+  L1: { bg: 'var(--info-100)', fg: 'var(--info-700)' },
+  L2: { bg: 'var(--warning-100)', fg: 'var(--warning-700)' },
+  L3: { bg: 'var(--ink-150)', fg: 'var(--ink-700)' },
+}
+export const LOCK_TEXT: Record<Lock, { short: string; rule: string }> = {
+  L0: { short: 'แก้ได้อิสระ', rule: 'เพิ่ม ลบ ย้ายได้ทั้งหน้า' },
+  L1: { short: 'มีช่องแทรก', rule: 'แทรก Section ได้เฉพาะช่องที่เปิด · บล็อกหลักของระบบปรับค่าได้แต่ย้ายไม่ได้' },
+  L2: { short: 'แก้ได้เฉพาะค่า', rule: 'ไม่มีที่จับลาก · แก้ข้อความ ซ่อนฟิลด์ เปลี่ยนสีปุ่มได้' },
+  L3: { short: 'อ่านอย่างเดียว', rule: 'ระบบเรนเดอร์ทั้งหมด ไม่เปิดให้แต่ง' },
+}
+
+/* canvas region states (D3 legend) mapped onto the mockup DS colours */
+export const ROLE_STYLE = {
+  free: { color: 'var(--success-500)', bg: 'var(--success-100)', fg: 'var(--success-700)', label: 'แก้ได้อิสระ' },
+  slot: { color: 'var(--info-500)', bg: 'var(--info-100)', fg: 'var(--info-700)', label: 'ช่องที่เปิดให้แทรก' },
+  system: { color: 'var(--warning-500)', bg: 'var(--warning-100)', fg: 'var(--warning-700)', label: 'บล็อกของระบบ · แก้ค่าได้' },
+  global: { color: 'var(--ink-500)', bg: 'var(--ink-150)', fg: 'var(--ink-700)', label: 'ใช้ร่วมทุกหน้า' },
+  ai: { color: 'var(--orange-600)', bg: 'var(--orange-100)', fg: 'var(--orange-700)', label: 'เพิ่มโดยผู้ช่วย' },
+}
+
+/* library (D4 left rail: คลัง Section / คลัง Element) — pick first, then choose where to drop */
+export const LIBRARY = {
+  sections: [
+    { key: 'content', label: 'เนื้อหา', icon: 'fas fa-align-left', desc: 'หัวข้อ + ข้อความ + รูป' },
+    { key: 'slide', label: 'สไลด์', icon: 'far fa-images', desc: 'แบนเนอร์เลื่อน' },
+    { key: 'map', label: 'แผนที่', icon: 'fas fa-map-marked-alt', desc: 'ที่ตั้งร้าน' },
+    { key: 'columns', label: 'คอลัมน์', icon: 'fas fa-columns', desc: 'แบ่ง 2–4 คอลัมน์' },
+    { key: 'template', label: 'เทมเพลตสำเร็จ', icon: 'far fa-clone', desc: 'แม่แบบที่จัดไว้แล้ว' },
+  ],
+  elements: [
+    { key: 'text', label: 'ข้อความ', icon: 'fas fa-font' }, { key: 'image', label: 'รูป', icon: 'far fa-image' },
+    { key: 'gallery', label: 'แกลเลอรี', icon: 'fas fa-th' }, { key: 'product', label: 'สินค้า', icon: 'fas fa-box-open' },
+    { key: 'category', label: 'หมวดหมู่', icon: 'fas fa-tags' }, { key: 'search', label: 'ค้นหา', icon: 'fas fa-search' },
+    { key: 'form', label: 'ฟอร์ม', icon: 'far fa-list-alt' }, { key: 'video', label: 'วิดีโอ', icon: 'fas fa-play-circle' },
+    { key: 'code', label: 'โค้ด', icon: 'fas fa-code' },
+  ],
+}
+
+/* the assistant's scripted proposal from mockup 1c / 3a */
+export const AI_PROPOSAL = {
+  prompt: 'เปลี่ยนแบนเนอร์หน้าแรกให้เป็นโทน Autumn แล้วเพิ่มบล็อกสินค้าแนะนำใต้แบนเนอร์',
+  items: [
+    { id: 'hero', title: 'Hero Banner · แก้ไข', short: 'สีพื้น + หัวข้อ "AUTUMN EDIT"' },
+    { id: 'prod', title: 'เพิ่ม Section · Product แนะนำ', short: 'ใต้ Hero · T0', detail: 'ตำแหน่ง: ใต้ Hero · T0 ประกอบจากบล็อกที่มี' },
+  ],
+}
+
+export const tokenHex = (site: SiteDoc, bg: SectionStyle['bg']) =>
+  !bg ? null : 'token' in bg ? (site.tokens.find(t => t.name === bg.token)?.hex ?? null) : bg.hex

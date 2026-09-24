@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/ketshopweb-design-system-0c9edde7-7aa0-4c37-b5da-588c9069a7f6/design-system/tokens.css">
+  <link rel="stylesheet" href="_ds/ketshopweb-design-system-0c9edde7-7aa0-4c37-b5da-588c9069a7f6/design-system/fonts.css">
+  <link rel="stylesheet" href="assets/fa/css/all.min.css">
+  <script src="_ds/ketshopweb-design-system-0c9edde7-7aa0-4c37-b5da-588c9069a7f6/_ds_bundle.js"></script>
+</helmet>
+<!-- LEGACY: recreated from system.component.html + style-backend.css (#1a1a1a, active #E85440, 240px) -->
+<sc-if value="{{ isLegacy }}" hint-placeholder-val="{{ true }}">
+<div style="width:240px;height:100%;background:#1a1a1a;display:flex;flex-direction:column;font-family:'Poppins','Prompt',sans-serif;font-size:14px;color:rgba(255,255,255,.65);flex:none">
+  <div style="height:64px;display:flex;align-items:center;padding:0 28px;flex:none"><img src="assets/Logo-Light-Color.png" alt="Ketshopweb" style="height:30px;width:auto"></div>
+  <div style="display:flex;justify-content:center;margin:16px 0">
+    <div style="display:flex;border:1px solid #fff;border-radius:2px;font-size:13px;line-height:22px">
+      <div style="padding:0 10px;color:#fff">จัดการ</div>
+      <div style="padding:0 10px;background:#fff;color:#1a1a1a;font-weight:600">ปรับแต่ง</div>
+    </div>
+  </div>
+  <div style="flex:1;overflow:hidden">
+    <sc-for list="{{ legacyItems }}" as="it" hint-placeholder-count="13">
+      <div style="height:46px;display:flex;align-items:center;padding:0 0 0 24px;gap:0;background:{{ it.bg }};color:{{ it.color }};font-weight:{{ it.weight }}">
+        <span style="width:28px;font-size:15px;text-align:left;flex:none"><i class="{{ it.icon }}"></i></span>
+        <span>{{ it.label }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="text-align:center;padding:8px 0 14px;font-size:12px;color:rgba(255,255,255,.45)">เวอร์ชัน 8.7.4+2840</div>
+</div>
+</sc-if>
+
+<!-- SAFE: dark ink-900 sidebar, grouped Design / Content / Setting -->
+<sc-if value="{{ isSafe }}" hint-placeholder-val="{{ false }}">
+<div style="width:240px;height:100%;background:var(--ink-900);display:flex;flex-direction:column;font-family:var(--font-heading);font-size:13px;color:var(--ink-300);flex:none">
+  <div style="height:56px;display:flex;align-items:center;padding:0 20px;flex:none;border-bottom:1px solid var(--ink-800)"><img src="assets/Logo-Light-Color.png" alt="Ketshopweb" style="height:24px;width:auto"></div>
+  <div style="padding:14px 14px 6px">
+    <div style="display:flex;background:var(--ink-800);border-radius:var(--radius-md);padding:3px;font-size:12px;font-weight:500">
+      <div style="flex:1;text-align:center;padding:5px 0;border-radius:6px;color:{{ tg.mFg }};background:{{ tg.mBg }};font-weight:{{ tg.mW }}">จัดการ</div>
+      <div style="flex:1;text-align:center;padding:5px 0;border-radius:6px;color:{{ tg.fFg }};background:{{ tg.fBg }};font-weight:{{ tg.fW }}">ปรับแต่ง</div>
+    </div>
+  </div>
+  <div style="flex:1;overflow:hidden;padding:4px 10px">
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+      <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-500);font-weight:600;padding:6px 10px 2px;font-family:var(--font-display)">{{ g.label }}</div>
+      <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4">
+        <div style="height:30px;display:flex;align-items:center;padding:0 10px;gap:10px;border-radius:var(--radius-md);margin-bottom:0;background:{{ it.bgSafe }};color:{{ it.colorSafe }};font-weight:{{ it.weightSafe }}">
+          <span style="width:18px;font-size:13px;text-align:center;flex:none;opacity:.9"><i class="{{ it.icon }}"></i></span>
+          <span style="flex:1">{{ it.label }}</span>
+          <span style="font-size:10px;color:var(--ink-500)">{{ it.hint }}</span>
+        </div>
+      </sc-for>
+    </sc-for>
+  </div>
+  <div style="padding:8px 14px 10px;border-top:1px solid var(--ink-800);display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--ink-0);overflow:hidden;flex:none"><img src="assets/mascot-hello.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 20%"></div>
+    <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--ink-100)">ผู้ช่วย Ket</div><div style="font-size:11px;color:var(--ink-500)">พร้อมช่วยเสมอ · ⌘K</div></div>
+    <span style="font-size:11px;color:var(--ink-500)">8.7.4</span>
+  </div>
+</div>
+</sc-if>
+
+<!-- BOLD: legacy #1a1a1a sidebar, 2 modes — expanded 240px / collapsed 72px icon-only (prop collapsed) -->
+<sc-if value="{{ isBoldWide }}" hint-placeholder-val="{{ false }}">
+<div style="width:240px;height:100%;background:#1a1a1a;display:flex;flex-direction:column;font-family:var(--font-heading);font-size:14px;color:rgba(255,255,255,.7);flex:none">
+  <div style="height:60px;display:flex;align-items:center;padding:0 12px 0 20px;flex:none;border-bottom:1px solid rgba(255,255,255,.08);gap:8px"><img src="assets/Logo-Light-Color.png" alt="Ketshopweb" style="height:26px;width:auto"><span title="ย่อเมนู" style="margin-left:auto;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:rgba(255,255,255,.55);background:rgba(255,255,255,.06)"><i class="fas fa-angle-double-left" style="font-size:13px"></i></span></div>
+  <div style="padding:10px 14px 4px">
+    <div style="display:flex;background:rgba(255,255,255,.1);border-radius:10px;padding:3px;font-size:13px;font-weight:600">
+      <div style="flex:1;text-align:center;padding:5px 0;border-radius:8px;color:{{ tg.bmFg }};background:{{ tg.bmBg }}">จัดการ</div>
+      <div style="flex:1;text-align:center;padding:5px 0;border-radius:8px;color:{{ tg.bfFg }};background:{{ tg.bfBg }}">ปรับแต่ง</div>
+    </div>
+  </div>
+  <div style="flex:1;overflow:hidden;padding:4px 12px">
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+      <div style="font-size:10.5px;letter-spacing:.06em;color:rgba(255,255,255,.4);font-weight:600;padding:6px 10px 2px;line-height:1.3">{{ g.label }}</div>
+      <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4">
+        <div style="height:31px;display:flex;align-items:center;padding:0 10px;gap:12px;border-radius:9px;background:{{ it.bgBold }};color:{{ it.colorBold }};font-weight:{{ it.weightBold }}">
+          <span style="width:22px;font-size:15px;text-align:center;flex:none"><i class="{{ it.icon }}"></i></span>
+          <span style="flex:1;white-space:nowrap;font-size:13.5px">{{ it.label }}</span>
+          <span style="font-size:10px;color:rgba(255,255,255,.4)">{{ it.hint }}</span>
+        </div>
+      </sc-for>
+    </sc-for>
+  </div>
+  <div style="padding:10px 14px 12px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px">
+    <div style="position:relative;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--red-600),var(--orange-500));padding:2px;flex:none"><div style="width:100%;height:100%;border-radius:50%;background:#1a1a1a;overflow:hidden"><img src="assets/mascot-laptop.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 22%"></div><span style="position:absolute;right:-1px;top:-1px;width:11px;height:11px;border-radius:50%;background:var(--success-500);border:2px solid #1a1a1a"></span></div>
+    <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#fff">ผู้ช่วย Ket</div><div style="font-size:11px;color:rgba(255,255,255,.45)">พร้อมช่วยเสมอ · ⌘K</div></div>
+  </div>
+</div>
+</sc-if>
+<sc-if value="{{ isBoldNarrow }}" hint-placeholder-val="{{ false }}">
+<div style="width:72px;height:100%;background:#1a1a1a;display:flex;flex-direction:column;align-items:center;font-family:var(--font-heading);flex:none">
+  <div style="height:60px;display:flex;align-items:center;justify-content:center;flex:none;width:100%;border-bottom:1px solid rgba(255,255,255,.08)"><img src="assets/Logo-Circle-Light.svg" alt="Ketshopweb" style="width:32px;height:32px"></div>
+  <span title="ขยายเมนู" style="margin:10px 0 6px;width:40px;height:32px;border-radius:8px;display:grid;place-items:center;color:rgba(255,255,255,.55);background:rgba(255,255,255,.06)"><i class="fas fa-angle-double-right" style="font-size:13px"></i></span>
+  <div style="width:48px;background:rgba(255,255,255,.1);border-radius:10px;padding:3px;display:flex;flex-direction:column;gap:2px;font-size:10px;font-weight:600;margin-bottom:6px">
+    <div title="จัดการ" style="text-align:center;padding:5px 0;border-radius:7px;color:{{ tg.bmFg }};background:{{ tg.bmBg }}"><i class="fas fa-store"></i></div>
+    <div title="ปรับแต่ง" style="text-align:center;padding:5px 0;border-radius:7px;color:{{ tg.bfFg }};background:{{ tg.bfBg }}"><i class="fas fa-paint-brush"></i></div>
+  </div>
+  <div style="flex:1;overflow:hidden;width:100%;padding:0 12px;display:flex;flex-direction:column;gap:2px">
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+      <div style="height:1px;background:rgba(255,255,255,.1);margin:6px 4px"></div>
+      <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4">
+        <div title="{{ it.label }}" style="height:40px;display:grid;place-items:center;border-radius:10px;font-size:17px;background:{{ it.bgBold }};color:{{ it.colorBold }}"><i class="{{ it.icon }}"></i></div>
+      </sc-for>
+    </sc-for>
+  </div>
+  <div style="padding:8px 0 12px"><div title="ผู้ช่วย Ket" style="position:relative;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--red-600),var(--orange-500));padding:2px;box-shadow:var(--shadow-md)"><div style="width:100%;height:100%;border-radius:50%;background:#1a1a1a;overflow:hidden"><img src="assets/mascot-laptop.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 22%"></div><span style="position:absolute;right:-1px;top:-1px;width:12px;height:12px;border-radius:50%;background:var(--success-500);border:2px solid #1a1a1a"></span></div></div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:240,&quot;height&quot;:900},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;legacy&quot;,&quot;safe&quot;,&quot;bold&quot;],&quot;default&quot;:&quot;legacy&quot;,&quot;tsType&quot;:&quot;'legacy'|'safe'|'bold'&quot;},&quot;tab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;front&quot;,&quot;back&quot;],&quot;default&quot;:&quot;front&quot;,&quot;tsType&quot;:&quot;'front'|'back'&quot;},&quot;active&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Page Layouts&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;collapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const variant = this.props.variant ?? 'legacy';
+    const active = this.props.active ?? 'Page Layouts';
+    const legacy = [
+      ['Page Layouts','far fa-window-restore'],['Product Display','fas fa-table'],['Blog Manager','fas fa-newspaper'],['Coupon Display','fas fa-ticket-alt'],
+      ['Menu','fa fa-bars'],['Header','far fa-window-maximize'],['Footer','far fa-window-maximize'],['Sidebar','far fa-window-maximize'],
+      ['Button','fas fa-toggle-on'],['Language','fas fa-language'],['Event Popup','fas fa-ticket-alt'],['Advance CSS','fab fa-css3'],['Maintenance','fas fa-bug']
+    ];
+    const legacyItems = legacy.map(([label, icon]) => {
+      const on = label === active;
+      return { label, icon, bg: on ? '#E85440' : 'transparent', color: on ? '#fff' : 'rgba(255,255,255,.65)', weight: on ? 600 : 400 };
+    });
+    const mk = (label, icon, short, hint) => {
+      const on = label === active;
+      return { label, icon, short: short || label, hint: hint || '',
+        bgSafe: on ? 'var(--red-600)' : 'transparent', colorSafe: on ? '#fff' : 'var(--ink-300)', weightSafe: on ? 600 : 400,
+        bgBold: on ? '#E85440' : 'transparent', colorBold: on ? '#fff' : 'rgba(255,255,255,.7)', weightBold: on ? 600 : 400 };
+    };
+    const tab = this.props.tab ?? 'front';
+    const isBack = tab === 'back';
+    const tg = {
+      mBg: isBack ? 'var(--ink-0)' : 'transparent', mFg: isBack ? 'var(--ink-900)' : 'var(--ink-400)', mW: isBack ? 600 : 500,
+      fBg: isBack ? 'transparent' : 'var(--ink-0)', fFg: isBack ? 'var(--ink-400)' : 'var(--ink-900)', fW: isBack ? 500 : 600,
+      bmBg: isBack ? '#fff' : 'transparent', bmFg: isBack ? '#1a1a1a' : 'rgba(255,255,255,.6)',
+      bfBg: isBack ? 'transparent' : '#fff', bfFg: isBack ? 'rgba(255,255,255,.6)' : '#1a1a1a',
+    };
+    const manageGroups = [
+      { label: 'ภาพรวม · Overview', primary: true, items: [mk('Overview','fas fa-tachometer-alt','ภาพรวม'), mk('Dashboard','fas fa-chart-line','รายงาน','▾')] },
+      { label: 'ขาย · Sales', primary: true, items: [mk('E-commerce','fas fa-receipt','ออเดอร์','▾'), mk('Marketing','fas fa-bullhorn','การตลาด','▾'), mk('Delivery Manager','fas fa-shipping-fast','ขนส่ง','▾')] },
+      { label: 'สินค้า & ลูกค้า', short: 'สินค้า/ลูกค้า', icon: 'fas fa-tags', items: [mk('Product Manager','fas fa-box-open','สินค้า','▾'), mk('Warehouse','fas fa-boxes','คลัง','▾'), mk('Users','fas fa-user-friends','ลูกค้า/ทีม','▾')] },
+      { label: 'ระบบ · System', short: 'ระบบ', icon: 'fas fa-server', items: [mk('Media','far fa-images','มีเดีย','⇄'), mk('Email','far fa-envelope','อีเมล'), mk('Extension','fas fa-plug','ส่วนเสริม'), mk('History Logs','fas fa-history','ประวัติ')] },
+      { label: 'ตั้งค่าร้าน · Setting', short: 'ตั้งค่า', icon: 'fas fa-cog', items: [mk('ทั่วไป','fas fa-sliders-h','ทั่วไป'), mk('การขาย · ขนส่ง · ชำระเงิน','far fa-credit-card','การขาย'), mk('การแจ้งเตือน','fas fa-bell','แจ้งเตือน'), mk('PDPA · นโยบาย','fas fa-shield-alt','PDPA','⇄')] },
+    ];
+    const frontGroups = [
+      { label: 'ออกแบบ · Design', primary: true, items: [mk('Page Layouts','fas fa-th-large','เพจ'), mk('Header','fas fa-heading','Header'), mk('Footer','fas fa-shoe-prints','Footer'), mk('Menu','fas fa-stream','เมนู'), mk('System Design','fas fa-palette','ธีม','ใหม่'), mk('เทมเพลต','far fa-clone','เทมเพลต','ย้าย')] },
+      { label: 'เนื้อหา · Content', short: 'เนื้อหา', icon: 'far fa-newspaper', items: [mk('Product Display','fas fa-store','สินค้า'), mk('Blog Manager','fas fa-pen-nib','บทความ'), mk('Coupon Display','fas fa-ticket-alt','คูปอง'), mk('Event Popup','far fa-window-restore','Popup'), mk('Sidebar','fas fa-columns','Sidebar'), mk('Media','far fa-images','มีเดีย','⇄')] },
+      { label: 'เว็บไซต์ & SEO', short: 'เว็บ · SEO', icon: 'fas fa-globe', items: [mk('SEO','fas fa-search-location','SEO','ย้าย'), mk('Conversion Tools','fas fa-chart-pie','Tracking','ย้าย'), mk('Google Map','fas fa-map-marked-alt','แผนที่','ย้าย'), mk('Cookie · PDPA banner','fas fa-cookie-bite','Cookie','⇄'), mk('Language','fas fa-globe-asia','ภาษา')] },
+      { label: 'ขั้นสูง · Advanced', short: 'ขั้นสูง', icon: 'fas fa-sliders-h', items: [mk('Button','far fa-hand-pointer','ปุ่ม'), mk('Advance CSS','fas fa-code','CSS'), mk('Maintenance','fas fa-tools','ปิดปรับปรุง')] },
+    ];
+    const groups = isBack ? manageGroups : frontGroups;
+    const collapsed = this.props.collapsed ?? false;
+    const isBold = variant === 'bold';
+    return { isLegacy: variant === 'legacy', isSafe: variant === 'safe', isBoldWide: isBold && !collapsed, isBoldNarrow: isBold && collapsed, legacyItems, groups, tg };
+  }
+}
+</script>
+</body>
+</html>

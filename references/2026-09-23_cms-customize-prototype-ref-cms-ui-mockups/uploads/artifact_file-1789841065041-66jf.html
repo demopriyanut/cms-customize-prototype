@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ketshopweb CMS Design Layer — Redesign Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Sarabun:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+
+  --paper:#FAFAF7;
+  --panel:#FFFFFF;
+  --ink:#16181D;
+  --ink-2:#4B535F;
+  --rule:#DFDFD6;
+  --rule-strong:#B9B9AE;
+
+  --locked:#B12629;      /* ket red  = ล็อก / ระบบ */
+  --ai:#E63422;          /* ket orange = AI */
+  --free:#1E7A56;        /* เขียว = แก้ไขได้ */
+  --slot:#B8860B;        /* เหลืองเข้ม = slot */
+
+  --locked-bg:#F7E9E9;
+  --free-bg:#E6F2EC;
+  --slot-bg:#F7EFDC;
+  --ai-bg:#FBE9E6;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131417; --panel:#1A1C21; --ink:#ECECE6; --ink-2:#9AA3B0;
+    --rule:#2C2F36; --rule-strong:#454A54;
+    --locked:#E8585B; --ai:#F26A55; --free:#4FBF8F; --slot:#D8A93C;
+    --locked-bg:#2B1A1B; --free-bg:#12281F; --slot-bg:#2A2418; --ai-bg:#2B1B18;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131417; --panel:#1A1C21; --ink:#ECECE6; --ink-2:#9AA3B0;
+  --rule:#2C2F36; --rule-strong:#454A54;
+  --locked:#E8585B; --ai:#F26A55; --free:#4FBF8F; --slot:#D8A93C;
+  --locked-bg:#2B1A1B; --free-bg:#12281F; --slot-bg:#2A2418; --ai-bg:#2B1B18;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px);scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Sarabun",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.72;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.pm{font-family:"Prompt",system-ui,sans-serif;font-weight:600;line-height:1.28;letter-spacing:-.005em}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 96px}
+
+/* ---------- masthead ---------- */
+.mast{border-bottom:2px solid var(--ink);padding:40px 0 22px;margin-bottom:0}
+.mast .sheet{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-2);letter-spacing:.04em}
+.mast h1{font-size:clamp(28px,4.4vw,46px);margin:.28em 0 .18em;max-width:20ch}
+.mast p{margin:0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.mast .bar{height:4px;width:96px;background:var(--locked);margin-top:22px}
+
+.meta{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--rule);margin-bottom:44px}
+.meta div{flex:1 1 200px;padding:14px 18px 14px 0;border-right:1px solid var(--rule)}
+.meta div:last-child{border-right:0}
+.meta dt{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-2);margin:0 0 2px}
+.meta dd{margin:0;font-size:15px;font-family:"Prompt",sans-serif;font-weight:500}
+
+/* ---------- layout ---------- */
+.cols{display:grid;grid-template-columns:200px 1fr;gap:56px;align-items:start}
+@media (max-width:900px){.cols{grid-template-columns:1fr;gap:0}}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);font-size:14px}
+@media (max-width:900px){
+  nav.toc{position:static;border:1px solid var(--rule);padding:16px 18px;margin-bottom:40px;background:var(--panel)}
+}
+nav.toc ol{list-style:none;margin:0;padding:0}
+nav.toc li{margin:0 0 3px}
+nav.toc a{color:var(--ink-2);text-decoration:none;display:block;padding:3px 0 3px 0;border-left:2px solid transparent;padding-left:10px}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--locked);border-left-color:var(--locked)}
+nav.toc .grp{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--rule-strong);margin:18px 0 6px;padding-left:10px}
+nav.toc .grp:first-child{margin-top:0}
+
+section{scroll-margin-top:24px;margin-bottom:64px}
+h2{font-size:26px;margin:0 0 6px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+h2 .n{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--locked);margin-right:12px;font-weight:500}
+h3{font-size:19px;margin:34px 0 8px}
+h4{font-size:16px;margin:24px 0 4px}
+p{margin:0 0 14px;max-width:74ch}
+ul,ol{max-width:74ch;padding-left:22px;margin:0 0 16px}
+li{margin:0 0 6px}
+strong{font-weight:600}
+code{font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--rule);padding:1px 5px;border-radius:2px}
+:root:not([data-theme="light"]) code{background:#2C2F36}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) code{background:#2C2F36}}
+
+.lead{font-size:18px;color:var(--ink-2);max-width:68ch;margin-bottom:22px}
+
+/* ---------- figure ---------- */
+figure{margin:26px 0 30px;border:1px solid var(--rule);background:var(--panel)}
+figure .fh{display:flex;gap:12px;align-items:baseline;padding:11px 16px;border-bottom:1px solid var(--rule);background:var(--paper)}
+figure .fh b{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--locked);font-weight:500}
+figure .fh span{font-family:"Prompt",sans-serif;font-size:14px;font-weight:500}
+.scroller{overflow-x:auto;padding:18px}
+figure svg{display:block;max-width:100%;height:auto;min-width:640px}
+figcaption{padding:0 16px 14px;font-size:14px;color:var(--ink-2)}
+
+/* svg text defaults */
+svg text{font-family:"Prompt","Sarabun",sans-serif}
+
+/* ---------- legend chips ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;border:1px solid var(--rule);padding:4px 10px;background:var(--panel)}
+.chip i{width:10px;height:10px;display:block}
+.sw-free{background:var(--free)} .sw-slot{background:var(--slot)}
+.sw-lock{background:var(--locked)} .sw-ai{background:var(--ai)}
+
+/* ---------- table ---------- */
+.tw{overflow-x:auto;margin:18px 0 24px;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:600px;background:var(--panel);font-size:14.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"Prompt",sans-serif;font-weight:600;font-size:13.5px;background:var(--paper);border-bottom:1px solid var(--rule-strong)}
+tr:last-child td{border-bottom:0}
+td.mono,th.mono{font-family:"IBM Plex Mono",monospace;font-size:13px;white-space:nowrap}
+
+/* ---------- callout ---------- */
+.note{border-left:3px solid var(--locked);background:var(--locked-bg);padding:14px 18px;margin:20px 0;font-size:15px}
+.note p:last-child{margin-bottom:0}
+.note.ok{border-left-color:var(--free);background:var(--free-bg)}
+
+/* ---------- brief block ---------- */
+.brief{border:2px solid var(--ink);background:var(--panel);margin:24px 0 32px}
+.brief header{padding:14px 20px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline}
+.brief header b{font-family:"Prompt",sans-serif;font-size:16px}
+.brief header em{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-2)}
+.brief .body{padding:6px 20px 18px}
+.brief .body h4:first-child{margin-top:16px}
+
+pre{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.62;background:var(--paper);border:1px solid var(--rule);padding:16px;overflow-x:auto;margin:14px 0}
+
+.kv{display:grid;grid-template-columns:150px 1fr;gap:2px 18px;font-size:15px;margin:14px 0 20px}
+.kv dt{font-family:"Prompt",sans-serif;font-weight:500;color:var(--ink-2)}
+.kv dd{margin:0}
+@media (max-width:560px){.kv{grid-template-columns:1fr;gap:0 0}.kv dd{margin:0 0 12px}}
+
+footer.end{border-top:2px solid var(--ink);padding-top:22px;margin-top:70px;font-size:14px;color:var(--ink-2)}
+footer.end a{color:var(--locked)}
+a{color:var(--locked)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="sheet">KETSHOPWEB / CMS DESIGN LAYER / BLUEPRINT v0.3 — ก.ย. 2026</div>
+  <h1>โครงสร้าง CMS ตกแต่งเว็บไซต์ และแนวทาง Redesign</h1>
+  <p>เอกสารส่งต่อสำหรับสองทีม: ทีมออกแบบใช้กำหนดหน้าตา Editor ใหม่ ทีมพัฒนาใช้ตั้ง scope ของ POC เนื้อหาตรวจสอบกับซอร์สโค้ดจริงของ ketcms แล้ว ครอบคลุมโครงสร้างปัจจุบัน ช่องว่างที่พบ แกนสถาปัตยกรรม 3 โหมดการแก้ไข ขอบเขตความปลอดภัยของหน้าที่แก้ไขไม่ได้ และแผนแยกหน้าร้านออกเพื่อให้ได้คะแนนความเร็วและการถูกค้นเจอตามเป้า</p>
+  <div class="bar"></div>
+</header>
+
+<div class="meta">
+  <div><dt>สถานะ</dt><dd>ยืนยันกับโค้ดแล้ว</dd></div>
+  <div><dt>ผู้อ่าน</dt><dd>Design · Engineering</dd></div>
+  <div><dt>ขอบเขต</dt><dd>ส่วนตกแต่ง + ชั้นเรนเดอร์หน้าร้าน</dd></div>
+  <div><dt>ที่มาของข้อมูล</dt><dd>ซอร์สโค้ด ketcms + คู่มือ v8</dd></div>
+</div>
+
+<div class="cols">
+
+<nav class="toc" aria-label="สารบัญ">
+  <ol>
+    <li class="grp">สรุป</li>
+    <li><a href="#tldr">ข้อสรุป 8 ข้อ</a></li>
+    <li class="grp">โครงสร้าง</li>
+    <li><a href="#verified">D0 · สิ่งที่พบในโค้ด</a></li>
+    <li><a href="#d1">D1 · สามโหมด</a></li>
+    <li><a href="#d2">D2 · Content Model</a></li>
+    <li><a href="#d3">D3 · หน้าที่ล็อกได้</a></li>
+    <li><a href="#d4">D4 · หน้าตา Editor</a></li>
+    <li><a href="#d5">D5 · Section AI</a></li>
+    <li><a href="#d6">D6 · MCP</a></li>
+    <li><a href="#d7">D7 · เรนเดอร์และความเร็ว</a></li>
+    <li><a href="#d8">D8 · การวัดผลโฆษณา</a></li>
+    <li class="grp">ส่งต่อ</li>
+    <li><a href="#design">Brief · Claude Design</a></li>
+    <li><a href="#poc">Brief · POC ทีม Tech</a></li>
+    <li><a href="#open">ที่ยังต้องตัดสินใจ</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============ TLDR ============ -->
+<section id="tldr">
+  <h2><span class="n">00</span>ข้อสรุป</h2>
+  <p class="lead">CMS ปัจจุบันมีโครงสร้าง Page → Section → Element ที่ใช้งานได้ดีอยู่แล้ว งานนี้ไม่ใช่การเขียนใหม่ แต่คือการทำให้โครงนั้นเป็นสัญญาที่เครื่องอ่านออก เพื่อให้คนลากวาง เอเจนต์ภายนอก และผู้ช่วยในตัวระบบ แก้หน้าเดียวกันได้โดยไม่ชนกัน</p>
+
+  <ol>
+    <li><strong>แกนกลางคือ Page Schema</strong> — JSON ก้อนเดียวต่อหนึ่งหน้า ทุกวิธีแก้ไขเขียนลงก้อนนี้ ทำให้ undo, เวอร์ชัน, พรีวิว และ diff ใช้ร่วมกันได้ทั้งหมด</li>
+    <li><strong>ลากวางยังเป็นทางหลัก</strong> — ทุกอย่างที่ผู้ใช้ทำได้วันนี้ต้องทำได้เหมือนเดิมหรือดีกว่า ก่อนจะปล่อยฟีเจอร์ AI ใด ๆ</li>
+    <li><strong>ล็อกด้วยข้อมูล ไม่ใช่ด้วยเงื่อนไขในโค้ด</strong> — แต่ละหน้าประกาศระดับล็อก L0–L3 แล้ว Editor กับ API อ่านค่าเดียวกัน เพิ่มหน้าใหม่ไม่ต้องแก้ Editor</li>
+    <li><strong>หน้าธุรกรรมแก้ได้เฉพาะค่า</strong> — ตะกร้า ชำระเงิน สมัครสมาชิก โปรไฟล์ ปรับข้อความ ซ่อนฟิลด์ เปลี่ยนสีปุ่มได้ แต่ย้ายหรือลบบล็อกหลักไม่ได้</li>
+    <li><strong>Section AI แบ่งเป็นสองระดับ</strong> — ระดับ HTML กับ CSS เป็นค่าเริ่มต้นเพราะยังเก็บ SEO ได้เต็ม ส่วนระดับที่มี JavaScript ต้องอยู่ในกรอบแยกและไม่ถูกจัดทำดัชนี</li>
+    <li><strong>MCP ต่อยอดของเดิม</strong> — ระบบมีช่องทางให้ผู้ช่วยภายนอกเชื่อมอยู่แล้ว เพิ่มชุดคำสั่งฝั่งตกแต่งเข้าไป โดยเขียนได้เฉพาะฉบับร่าง</li>
+    <li><strong>ผู้ช่วยในระบบต้องใช้ทางเดียวกับภายนอก</strong> — ถ้าเราสร้างทางลัดให้ตัวเอง จะไม่มีวันรู้ว่าชุดคำสั่งที่ปล่อยให้ลูกค้านั้นใช้งานได้จริงหรือไม่</li>
+    <li><strong>เผยแพร่ต้องมีคนกด</strong> — ค่าเริ่มต้นให้ทุกการแก้ไขจากผู้ช่วยลงฉบับร่าง แล้วให้คนดูส่วนต่างก่อนขึ้นจริง</li>
+    <li><strong>หน้าร้านแยกออกมาเป็นเทคใหม่ หลังร้านอยู่ที่เดิม</strong> — หน้าร้านปัจจุบันวาดด้วยสคริปต์หลังโหลด ทำให้เครื่องมือค้นหาและผู้ช่วยมองไม่เห็นเนื้อหา และคะแนนความเร็วขึ้นไม่ถึงเป้า ย้ายทั้งหมดรวมหน้าตะกร้าและหน้าสมาชิก เพื่อไม่ให้เหลือสองระบบที่ต้องดูแลคู่กันไปตลอด</li>
+    <li><strong>ย้ายการวัดผลโฆษณาก่อนย้ายหน้าร้าน</strong> — ถ้าเปลี่ยนสองอย่างพร้อมกันแล้วยอดแปลงตก จะแยกไม่ออกว่าอะไรเป็นสาเหตุ</li>
+  </ol>
+
+  <div class="note ok">
+    <p><strong>อ่านซอร์สโค้ดแล้ว</strong> ข้อสรุปข้างบนตรวจสอบกับ ketcms ของจริงแล้ว รายละเอียดสิ่งที่พบและช่องว่างห้าข้อ อยู่ในหัวข้อถัดไป ส่วนที่ยังเหลือคือโครงสร้างตารางฐานข้อมูลฝั่งเซิร์ฟเวอร์ เพราะที่เก็บนี้เป็นฝั่งหน้าจออย่างเดียว</p>
+  </div>
+</section>
+
+
+<!-- ============ D0 VERIFIED ============ -->
+<section id="verified">
+  <h2><span class="n">D0</span>สิ่งที่พบในโค้ดจริง</h2>
+  <p class="lead">อ่านซอร์สโค้ด ketcms แล้วทั้งส่วนตกแต่ง ผลคือสมมติฐานเดิมสามข้อผิด และพบช่องว่างห้าข้อที่กลายเป็นเนื้องานหลักของโครงการ</p>
+
+  <h3>ของจริงเป็นอย่างไร</h3>
+  <div class="tw">
+  <table>
+    <thead><tr><th>เรื่อง</th><th>ข้อเท็จจริง</th></tr></thead>
+    <tbody>
+      <tr><td>เทคโนโลยี</td><td>Angular 8 กับ TypeScript 3.5.3 ไม่ใช่ AngularJS จึงไม่ต้องย้ายทีละส่วนแบบที่เคยเสนอ</td></tr>
+      <tr><td>โครงแอป</td><td>หน้าร้านกับหลังร้านอยู่ในแอปเดียวกัน เส้นทางขึ้นต้นด้วย system คือหลังร้าน ที่เหลือคือหน้าร้าน ใช้คอมโพเนนต์ชุดเดียวกันวาด</td></tr>
+      <tr><td>โครงข้อมูลของบล็อก</td><td>มีรูปแบบชัดอยู่แล้วคือสามส่วน ข้อมูลระบุตัวตน ข้อมูลเนื้อหา และรายการลูก งานจึงเป็นการทำให้เป็นทางการ ไม่ใช่สร้างใหม่</td></tr>
+      <tr><td>ทะเบียนชนิดบล็อก</td><td>มี 74 รายการในไฟล์เดียว ในจำนวนนี้ 20 รายการเป็นหน้าทั้งหน้า เช่นตะกร้า โปรไฟล์ สมัครสมาชิก ไม่ใช่บล็อกย่อย</td></tr>
+      <tr><td>คลังให้ผู้ใช้เลือก</td><td>Section 11 · Element 22 · แม่แบบสำเร็จ 30 · Element ของส่วนท้าย 17 · Element ในเลย์เอาต์อิสระ 24</td></tr>
+      <tr><td>การลากวาง</td><td>ใช้ไลบรารีที่รองรับการสัมผัสอยู่แล้ว ไม่ต้องเปลี่ยน</td></tr>
+      <tr><td>กันชนกัน</td><td>มีระบบจองหน้าอยู่แล้ว ถามเซิร์ฟเวอร์ทุกห้าวินาทีว่ามีคนอื่นแก้อยู่ไหม</td></tr>
+      <tr><td>ประวัติเวอร์ชัน</td><td>มีครบทั้งหน้าปกติและหน้ารายละเอียดสินค้า</td></tr>
+      <tr><td>หลายภาษา</td><td>เป็นช่องตายตัวสี่ช่อง ทั้งชื่อเมนูและข้อมูล SEO</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>ช่องว่างห้าข้อ คือเนื้องานจริง</h3>
+  <div class="tw">
+  <table>
+    <thead><tr><th style="width:34%">ช่องว่าง</th><th>ผลที่ตามมา</th><th class="mono" style="white-space:normal">หลักฐาน</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>การล็อกหน้าเขียนเป็นเงื่อนไขตายตัวในหน้าจอ</strong> ไล่เทียบชื่อชนิดบล็อกทีละอันรวมสิบห้ากรณี แล้วติดธงไว้ จากนั้นหน้าจอซ่อนปุ่มตามธงนั้น</td>
+        <td>เซิร์ฟเวอร์ไม่รู้เรื่องการล็อกเลย ใครเรียกบริการตรงก็แก้หน้าตะกร้าได้ · เพิ่มหน้าใหม่ต้องแก้โค้ดหน้าจอแล้วปล่อยเวอร์ชันใหม่ · ล็อกได้แค่เปิดกับปิด ไม่มีระดับกลาง</td>
+        <td>panel.component.ts บรรทัด 533 ถึง 620 และ panel.component.html บรรทัด 49</td>
+      </tr>
+      <tr>
+        <td><strong>ไม่มีฉบับร่างแยกจากฉบับจริง</strong> คำสั่งบันทึกเขียนทับของจริงทันที ส่วนประวัติเวอร์ชันเป็นการย้อนหลัง ไม่ใช่ที่พักงาน</td>
+        <td>ให้ผู้ช่วยแก้แล้วค่อยให้คนตรวจไม่ได้ · พรีวิวก่อนขึ้นจริงไม่ได้ · เป็นอุปสรรคโดยตรงต่อการเปิดให้ผู้ช่วยภายนอกเขียน</td>
+        <td>panel.component.ts บรรทัด 800 ถึง 870</td>
+      </tr>
+      <tr>
+        <td><strong>ชุดสีเก็บเป็นข้อความโค้ดแล้วสั่งรัน</strong> ค่าที่ดึงจากฐานข้อมูลถูกนำไปประมวลผลเป็นโปรแกรมโดยตรง</td>
+        <td>เครื่องอ่านค่าไม่ได้ จึงทำระบบอ้างอิงสีกลางไม่ได้ · ผู้ช่วยอ่านชุดสีของร้านไม่ได้ · เป็นช่องโหว่ในตัว</td>
+        <td>reder-style.ts บรรทัด 160</td>
+      </tr>
+      <tr>
+        <td><strong>ข้อมูลโครงสร้างสำหรับเครื่องมือค้นหาตายตัว</strong> ทุกหน้าประกาศเป็นบทความข่าวเหมือนกันหมด ไม่ได้ดูว่าในหน้ามีบล็อกชนิดใด</td>
+        <td>หน้าสินค้าไม่ได้ประกาศข้อมูลสินค้าและราคา · หน้าคำถามที่พบบ่อยไม่ได้ประกาศเป็นคำถาม · เสียโอกาสทั้งกับเครื่องมือค้นหาและผู้ช่วยที่มาอ่าน</td>
+        <td>front.component.ts บรรทัด 688 ถึง 720</td>
+      </tr>
+      <tr>
+        <td><strong>ไม่พบไฟล์ฝั่งเซิร์ฟเวอร์สำหรับวาดหน้าล่วงหน้า</strong> มีคำสั่งสร้างอยู่ในรายการสคริปต์ แต่ไม่มีไฟล์ในที่เก็บ ปัจจุบันใช้การติดธงบนหน้าต่างเบราว์เซอร์แทน</td>
+        <td>ต้องยืนยันกับทีมว่าหน้าเว็บถูกวาดให้เครื่องมือค้นหาเห็นด้วยวิธีใด เป็นคำถามค้างที่กระทบแผนทั้งหมดของงาน SEO</td>
+        <td>package.json กับ front.component.ts</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <p><strong>ลำดับความสำคัญที่ตามมา</strong> ช่องว่างข้อหนึ่งกับข้อสองต้องแก้ก่อนเปิดให้ผู้ช่วยภายนอกเขียนได้ ไม่ใช่งานที่ทำทีหลัง เพราะถ้าการล็อกยังอยู่แค่ในหน้าจอ การเปิดช่องทางให้ผู้ช่วยเท่ากับเปิดให้แก้หน้าชำระเงินได้โดยไม่มีอะไรกั้น</p>
+  </div>
+
+  <h3>โครงข้อมูลของบล็อกที่ใช้อยู่</h3>
+  <p>ทุกบล็อกไม่ว่าจะเป็นแถบใหญ่หรือชิ้นย่อย ใช้รูปแบบเดียวกันสามส่วน จุดนี้คือข้อดีที่สุดของระบบเดิม และเป็นเหตุผลว่าทำไมจึงไม่ควรเขียนใหม่</p>
+  <pre>{
+  "init": {                    ข้อมูลระบุตัวตนและพฤติกรรมในหน้าจอแก้ไข
+    "name":         ชื่อที่แสดงในรายการ
+    "selector":     ชนิดของบล็อก ใช้เลือกคอมโพเนนต์ที่จะวาด
+    "id" / "uid":   ตัวระบุแถวในฐานข้อมูล และตัวระบุชั่วคราวในหน้าจอ
+    "enable":       เปิดหรือปิดการแสดงผล
+    "have_element": บล็อกนี้รับลูกได้หรือไม่
+    "have_setting": มีหน้าต่างตั้งค่าหรือไม่
+    "static_page":  ธงล็อก ปัจจุบันติดจากเงื่อนไขตายตัวในหน้าจอ
+  },
+  "data": {                    ค่าที่ผู้ใช้ตั้ง แตกต่างกันตามชนิดบล็อก
+    "fullwidth", "paddingTopBottom", "display_screen", สี ฟอนต์ รูป ...
+  },
+  "elements": [ ... ]          รายการลูก ใช้โครงเดียวกันซ้อนลงไป
+}</pre>
+  <p>ข้อเสนอคือเติมสามสิ่งลงในโครงนี้โดยไม่รื้อของเดิม หนึ่งคือชั้นช่องที่บอกว่าตรงไหนเปิดให้แก้ สองคือการอ้างอิงชุดสีกลางแทนค่าสีดิบ สามคือหมายเลขรุ่นของโครงสร้างเพื่อให้ย้ายข้อมูลในอนาคตได้</p>
+</section>
+
+<!-- ============ D1 ============ -->
+<section id="d1">
+  <h2><span class="n">D1</span>สามโหมดการแก้ไข หนึ่งแกนกลาง</h2>
+  <p>สามวิธีแก้ไขหน้าเว็บไม่ใช่สามระบบ แต่เป็นสามหน้าต่างที่มองเข้าไปยังข้อมูลชุดเดียวกัน จุดที่ทุกอย่างมาบรรจบคือ Design Core API ซึ่งเป็นด่านเดียวที่เขียนลงฉบับร่างได้</p>
+
+  <figure>
+    <div class="fh"><b>D1</b><span>สถาปัตยกรรมสามโหมด</span></div>
+    <div class="scroller">
+<svg viewBox="0 0 900 540" role="img" aria-label="แผนภาพสามโหมดการแก้ไขที่เชื่อมเข้าสู่แกนกลางเดียวกัน">
+  <defs>
+    <marker id="a1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="var(--rule-strong)"/>
+    </marker>
+    <marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="var(--locked)"/>
+    </marker>
+  </defs>
+
+  <!-- clients -->
+  <g>
+    <rect x="20" y="22" width="258" height="94" fill="var(--free-bg)" stroke="var(--free)" stroke-width="1.5"/>
+    <text x="36" y="48" font-size="13" font-weight="600" fill="var(--free)">โหมด A · Visual Editor</text>
+    <text x="36" y="72" font-size="12.5" fill="var(--ink)">ลากวาง คลิกแก้ไขในที่</text>
+    <text x="36" y="93" font-size="12" fill="var(--ink-2)">ผู้ใช้ทั่วไป ทางหลักของระบบ</text>
+  </g>
+  <g>
+    <rect x="308" y="22" width="258" height="94" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+    <text x="324" y="48" font-size="13" font-weight="600" fill="var(--ink)">โหมด B · MCP</text>
+    <text x="324" y="72" font-size="12.5" fill="var(--ink)">Claude · ChatGPT · เอเจนต์อื่น</text>
+    <text x="324" y="93" font-size="12" fill="var(--ink-2)">ลูกค้าเชื่อมผู้ช่วยของตัวเองเข้ามา</text>
+  </g>
+  <g>
+    <rect x="596" y="22" width="284" height="94" fill="var(--ai-bg)" stroke="var(--ai)" stroke-width="1.5"/>
+    <text x="612" y="48" font-size="13" font-weight="600" fill="var(--ai)">โหมด C · Agent Studio</text>
+    <text x="612" y="72" font-size="12.5" fill="var(--ink)">แชทข้างผืนผ้าใบ ในระบบเรา</text>
+    <text x="612" y="93" font-size="12" fill="var(--ink-2)">ใช้ชุดคำสั่งเดียวกับโหมด B</text>
+  </g>
+
+  <path d="M149 116 L149 152 L449 152 L449 176" fill="none" stroke="var(--rule-strong)" stroke-width="1.5" marker-end="url(#a1)"/>
+  <path d="M437 116 L437 176" fill="none" stroke="var(--rule-strong)" stroke-width="1.5" marker-end="url(#a1)"/>
+  <path d="M738 116 L738 152 L461 152 L461 176" fill="none" stroke="var(--rule-strong)" stroke-width="1.5" marker-end="url(#a1)"/>
+  <text x="470" y="146" font-size="11.5" fill="var(--ink-2)">เขียนผ่านสัญญาเดียวกันทั้งสามทาง</text>
+
+  <!-- core -->
+  <rect x="150" y="178" width="600" height="78" fill="var(--panel)" stroke="var(--ink)" stroke-width="2"/>
+  <text x="176" y="209" font-size="15" font-weight="600" fill="var(--ink)">Design Core API</text>
+  <text x="176" y="234" font-size="12.5" fill="var(--ink-2)">สัญญากลางคือ Page Schema — หนึ่งหน้า หนึ่งเอกสาร JSON</text>
+  <rect x="612" y="196" width="116" height="42" fill="var(--paper)" stroke="var(--rule-strong)"/>
+  <text x="670" y="214" font-size="11.5" text-anchor="middle" fill="var(--ink-2)">Page → Region</text>
+  <text x="670" y="230" font-size="11.5" text-anchor="middle" fill="var(--ink-2)">→ Section → Element</text>
+
+  <path d="M450 256 L450 286" fill="none" stroke="var(--locked)" stroke-width="1.8" marker-end="url(#a2)"/>
+
+  <!-- pipeline -->
+  <rect x="60" y="288" width="780" height="92" fill="var(--paper)" stroke="var(--rule-strong)" stroke-dasharray="4 3"/>
+  <text x="76" y="309" font-size="11.5" fill="var(--ink-2)">ด่านตรวจก่อนบันทึก ใช้ร่วมกันทุกโหมด</text>
+  <g font-size="12.5" text-anchor="middle">
+    <rect x="76" y="318" width="132" height="44" fill="var(--panel)" stroke="var(--locked)" stroke-width="1.4"/>
+    <text x="142" y="338" fill="var(--ink)">ตรวจ Schema</text><text x="142" y="354" font-size="11" fill="var(--ink-2)">validate</text>
+    <rect x="228" y="318" width="132" height="44" fill="var(--panel)" stroke="var(--locked)" stroke-width="1.4"/>
+    <text x="294" y="338" fill="var(--ink)">ยามล็อก</text><text x="294" y="354" font-size="11" fill="var(--ink-2)">lock guard</text>
+    <rect x="380" y="318" width="132" height="44" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.4"/>
+    <text x="446" y="338" fill="var(--ink)">เก็บฉบับร่าง</text><text x="446" y="354" font-size="11" fill="var(--ink-2)">draft</text>
+    <rect x="532" y="318" width="132" height="44" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.4"/>
+    <text x="598" y="338" fill="var(--ink)">พรีวิว + ส่วนต่าง</text><text x="598" y="354" font-size="11" fill="var(--ink-2)">preview · diff</text>
+    <rect x="684" y="318" width="140" height="44" fill="var(--free-bg)" stroke="var(--free)" stroke-width="1.6"/>
+    <text x="754" y="338" fill="var(--free)">คนกดเผยแพร่</text><text x="754" y="354" font-size="11" fill="var(--ink-2)">publish</text>
+  </g>
+
+  <path d="M754 380 L754 408 L300 408 L300 430" fill="none" stroke="var(--free)" stroke-width="1.6" marker-end="url(#a1)"/>
+  <path d="M754 380 L754 430" fill="none" stroke="var(--free)" stroke-width="1.6" marker-end="url(#a1)"/>
+
+  <!-- outputs -->
+  <rect x="120" y="432" width="360" height="80" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="140" y="458" font-size="13.5" font-weight="600" fill="var(--ink)">หน้าบ้าน เรนเดอร์ฝั่งเซิร์ฟเวอร์</text>
+  <text x="140" y="480" font-size="12" fill="var(--ink-2)">HTML พร้อมเก็บดัชนี · JSON-LD ต่อชนิด Section</text>
+  <text x="140" y="499" font-size="12" fill="var(--ink-2)">sitemap · hreflang · llms.txt</text>
+
+  <rect x="560" y="432" width="300" height="80" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="580" y="458" font-size="13.5" font-weight="600" fill="var(--ink)">ประวัติเวอร์ชัน</text>
+  <text x="580" y="480" font-size="12" fill="var(--ink-2)">ย้อนกลับได้ทุกจุด ต่อยอดจากของเดิม</text>
+  <text x="580" y="499" font-size="12" fill="var(--ink-2)">บันทึกว่าใครหรือเอเจนต์ใดแก้อะไร</text>
+</svg>
+    </div>
+    <figcaption>ข้อบังคับสำคัญ โหมด C ต้องเรียกผ่านชุดคำสั่งเดียวกับโหมด B ห้ามมีทางลัดภายใน เพราะเป็นวิธีเดียวที่จะพิสูจน์ว่าชุดคำสั่งที่ปล่อยให้ลูกค้าใช้งานได้จริง</figcaption>
+  </figure>
+</section>
+
+<!-- ============ D2 ============ -->
+<section id="d2">
+  <h2><span class="n">D2</span>โครงสร้างเนื้อหา</h2>
+  <p>ลำดับชั้นปัจจุบันชัดเจนอยู่แล้ว สิ่งที่เพิ่มคือชั้น Region ซึ่งเป็นตัวกำหนดว่าตรงไหนของหน้าเปิดให้แก้ และชั้น Token ที่ทำให้สีกับฟอนต์ไหลลงมาจากศูนย์กลางแทนที่จะฝังในแต่ละชิ้น</p>
+
+  <figure>
+    <div class="fh"><b>D2</b><span>ลำดับชั้นเนื้อหาและจุดเชื่อม</span></div>
+    <div class="scroller">
+<svg viewBox="0 0 900 600" role="img" aria-label="แผนภาพลำดับชั้นจากเว็บไซต์ลงไปถึงอิลิเมนต์">
+  <defs>
+    <marker id="b1" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="var(--rule-strong)"/>
+    </marker>
+  </defs>
+
+  <!-- left spine -->
+  <rect x="24" y="24" width="210" height="62" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.8"/>
+  <text x="42" y="50" font-size="14" font-weight="600" fill="var(--ink)">Site</text>
+  <text x="42" y="71" font-size="11.5" fill="var(--ink-2)">ตั้งค่าร้าน · โลโก้ · ภาษา</text>
+
+  <rect x="24" y="112" width="210" height="88" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="42" y="137" font-size="13.5" font-weight="600" fill="var(--ink)">Theme &amp; Design Tokens</text>
+  <text x="42" y="158" font-size="11.5" fill="var(--ink-2)">สีหลัก · ชุดฟอนต์ · ปุ่ม</text>
+  <text x="42" y="176" font-size="11.5" fill="var(--ink-2)">ระยะห่าง · ความมน</text>
+  <text x="42" y="193" font-size="11" fill="var(--ai)">ทุกชิ้นอ้างค่าจากที่นี่เป็นค่าตั้งต้น</text>
+
+  <rect x="24" y="226" width="210" height="72" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="42" y="251" font-size="13.5" font-weight="600" fill="var(--ink)">Menu</text>
+  <text x="42" y="272" font-size="11.5" fill="var(--ink-2)">รายการเมนู ผูกกับหน้า</text>
+  <text x="42" y="289" font-size="11.5" fill="var(--ink-2)">หลายภาษา · ลำดับ</text>
+
+  <rect x="24" y="324" width="210" height="88" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="42" y="349" font-size="13.5" font-weight="600" fill="var(--ink)">Header &amp; Footer</text>
+  <text x="42" y="370" font-size="11.5" fill="var(--ink-2)">ตั้งค่าระดับเว็บ ใช้ร่วมทุกหน้า</text>
+  <text x="42" y="388" font-size="11.5" fill="var(--ink-2)">แถบโซเชียล · ปุ่มติดต่อ</text>
+  <text x="42" y="405" font-size="11.5" fill="var(--ink-2)">ปุ่มกลับขึ้นบน · ป๊อปอัป</text>
+
+  <path d="M129 86 L129 112" fill="none" stroke="var(--rule-strong)" marker-end="url(#b1)"/>
+  <path d="M129 200 L129 226" fill="none" stroke="var(--rule-strong)" marker-end="url(#b1)"/>
+  <path d="M129 298 L129 324" fill="none" stroke="var(--rule-strong)" marker-end="url(#b1)"/>
+
+  <!-- page column -->
+  <rect x="290" y="112" width="250" height="100" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.8"/>
+  <text x="308" y="137" font-size="14" font-weight="600" fill="var(--ink)">Page</text>
+  <text x="308" y="158" font-size="11.5" fill="var(--ink-2)">ชนิดหน้า · เส้นทาง · ระดับล็อก</text>
+  <text x="308" y="176" font-size="11.5" fill="var(--ink-2)">ฉบับร่าง / ฉบับเผยแพร่</text>
+  <text x="308" y="197" font-size="11.5" fill="var(--locked)">Menu List · Page List · Static Page</text>
+
+  <path d="M234 262 L290 262 L290 212" fill="none" stroke="var(--rule-strong)" marker-end="url(#b1)"/>
+
+  <rect x="290" y="238" width="250" height="76" fill="var(--paper)" stroke="var(--rule-strong)" stroke-dasharray="4 3"/>
+  <text x="308" y="262" font-size="13.5" font-weight="600" fill="var(--ink)">Region</text>
+  <text x="308" y="283" font-size="11.5" fill="var(--ink-2)">ชั้นใหม่ · แต่ละช่องบอกว่าล็อกหรือไม่</text>
+  <text x="308" y="301" font-size="11.5" fill="var(--ink-2)">header · beforeContent · content …</text>
+
+  <rect x="290" y="340" width="250" height="76" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="308" y="364" font-size="13.5" font-weight="600" fill="var(--ink)">Section</text>
+  <text x="308" y="385" font-size="11.5" fill="var(--ink-2)">พื้นหลัง · คอลัมน์ · ชื่อเรียก</text>
+  <text x="308" y="403" font-size="11.5" fill="var(--ink-2)">ซ่อนตามอุปกรณ์ · เรียงลำดับ</text>
+
+  <rect x="290" y="442" width="250" height="76" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="308" y="466" font-size="13.5" font-weight="600" fill="var(--ink)">Element</text>
+  <text x="308" y="487" font-size="11.5" fill="var(--ink-2)">ข้อความ · รูป · สินค้า · ฟอร์ม</text>
+  <text x="308" y="505" font-size="11.5" fill="var(--ink-2)">วิดีโอ · แผนที่ · โค้ด · หมวดหมู่</text>
+
+  <path d="M415 314 L415 340" fill="none" stroke="var(--rule-strong)" marker-end="url(#b1)"/>
+  <path d="M415 416 L415 442" fill="none" stroke="var(--rule-strong)" marker-end="url(#b1)"/>
+
+  <!-- right side attachments -->
+  <rect x="596" y="112" width="278" height="76" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="614" y="136" font-size="13.5" font-weight="600" fill="var(--ink)">SEO ต่อหน้า</text>
+  <text x="614" y="157" font-size="11.5" fill="var(--ink-2)">ชื่อเรื่อง · คำอธิบาย · ภาพแชร์</text>
+  <text x="614" y="175" font-size="11.5" fill="var(--ink-2)">canonical · แยกตามภาษา</text>
+
+  <rect x="596" y="208" width="278" height="76" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="614" y="232" font-size="13.5" font-weight="600" fill="var(--ink)">ประวัติเวอร์ชัน</text>
+  <text x="614" y="253" font-size="11.5" fill="var(--ink-2)">บันทึกทั้งหน้าเป็นภาพนิ่ง</text>
+  <text x="614" y="271" font-size="11.5" fill="var(--ink-2)">มีอยู่แล้วในระบบ ต่อยอดได้</text>
+
+  <rect x="596" y="340" width="278" height="76" fill="var(--paper)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="614" y="364" font-size="13.5" font-weight="600" fill="var(--ink)">แหล่งข้อมูลจริง</text>
+  <text x="614" y="385" font-size="11.5" fill="var(--ink-2)">สินค้า · หมวดหมู่ · บทความ</text>
+  <text x="614" y="403" font-size="11.5" fill="var(--ink-2)">Element บางตัวดึงสด ไม่เก็บสำเนา</text>
+
+  <rect x="596" y="442" width="278" height="76" fill="var(--ai-bg)" stroke="var(--ai)" stroke-width="1.5"/>
+  <text x="614" y="466" font-size="13.5" font-weight="600" fill="var(--ai)">Section AI</text>
+  <text x="614" y="487" font-size="11.5" fill="var(--ink-2)">ชนิดพิเศษ เก็บโค้ดแทนโครงอิลิเมนต์</text>
+  <text x="614" y="505" font-size="11.5" fill="var(--ink-2)">ยังลาก ซ่อน ลบ ได้เหมือน Section ปกติ</text>
+
+  <path d="M540 150 L596 150" fill="none" stroke="var(--rule-strong)" marker-end="url(#b1)"/>
+  <path d="M540 170 L568 170 L568 246 L596 246" fill="none" stroke="var(--rule-strong)" marker-end="url(#b1)"/>
+  <path d="M540 480 L596 480" fill="none" stroke="var(--ai)" stroke-dasharray="4 3" marker-end="url(#b1)"/>
+  <path d="M540 378 L596 378" fill="none" stroke="var(--rule-strong)" stroke-dasharray="4 3" marker-end="url(#b1)"/>
+
+  <path d="M234 156 L268 156 L268 460 L290 460" fill="none" stroke="var(--ai)" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="246" y="536" font-size="11" fill="var(--ai)">เส้นประจาก Token คือค่าตั้งต้นที่ไหลลงทุกชั้น</text>
+</svg>
+    </div>
+    <figcaption>ชื่อสนามที่ยืนยันแล้วจากโค้ด หน้าหนึ่งมี page_id กับ path และมีข้อมูล SEO แยกสี่ภาษาคือชื่อเรื่อง คำสำคัญ คำอธิบาย และภาพแชร์ พร้อมธงหน้าอ้างอิงหลักและรหัสหน้าที่อ้างถึง ส่วนเมนูมีชนิดสิบแบบ เช่นหน้าปกติ หน้าระบบ สินค้า บทความ หมวดหมู่ ลิงก์ภายนอก ลิงก์ภายใน และหัวข้อ ชั้นช่องเป็นสิ่งที่เสนอเพิ่ม ยังไม่มีในของเดิม ส่วนโครงสร้างตารางฝั่งเซิร์ฟเวอร์ยังต้องขอแยก เพราะที่เก็บนี้เป็นฝั่งหน้าจออย่างเดียว</figcaption>
+  </figure>
+</section>
+
+<!-- ============ D3 ============ -->
+<section id="d3">
+  <h2><span class="n">D3</span>หน้าไหนแก้ได้แค่ไหน</h2>
+  <p>ปัจจุบันระบบแบ่งหน้าเป็นสามกลุ่มคือหน้าที่อยู่บนเมนู หน้าที่ไม่อยู่บนเมนู และหน้าที่ระบบสร้างเอง โดยหน้ากลุ่มหลังถูกทำเครื่องหมายด้วยเงื่อนไขตายตัวสิบห้ากรณีในหน้าจอแก้ไข ข้อเสนอคือย้ายกฎนี้ลงไปเป็นข้อมูลที่เซิร์ฟเวอร์บังคับ และขยายเป็นสี่ระดับ เพราะแก้ไม่ได้เลยกับแก้ได้บางอย่างต่างกันมากในมุมผู้ใช้</p>
+
+  <div class="chips">
+    <span class="chip"><i class="sw-free"></i>แก้ได้อิสระ</span>
+    <span class="chip"><i class="sw-slot"></i>ช่องที่เปิดให้แทรก</span>
+    <span class="chip"><i class="sw-lock"></i>ระบบล็อก</span>
+    <span class="chip"><i class="sw-ai"></i>Section AI วางได้</span>
+  </div>
+
+  <figure>
+    <div class="fh"><b>D3</b><span>สี่ระดับการล็อก เทียบเป็นผังหน้า</span></div>
+    <div class="scroller">
+<svg viewBox="0 0 900 430" role="img" aria-label="ผังเปรียบเทียบสี่ระดับการล็อกของหน้าเว็บ">
+  <g font-size="12">
+  <!-- L0 -->
+  <text x="20" y="26" font-size="13.5" font-weight="600" fill="var(--free)">L0 · อิสระ</text>
+  <text x="20" y="45" font-size="11.5" fill="var(--ink-2)">หน้าแรก · แลนดิ้ง · เซลเพจ · เกี่ยวกับเรา</text>
+  <rect x="20" y="56" width="192" height="26" fill="var(--locked-bg)" stroke="var(--locked)"/>
+  <text x="116" y="74" text-anchor="middle" font-size="11.5" fill="var(--locked)">Header</text>
+  <rect x="20" y="88" width="192" height="196" fill="var(--free-bg)" stroke="var(--free)" stroke-dasharray="5 3"/>
+  <text x="116" y="176" text-anchor="middle" font-size="12.5" fill="var(--free)">เพิ่ม ลบ ย้าย</text>
+  <text x="116" y="196" text-anchor="middle" font-size="12.5" fill="var(--free)">ได้ทั้งหน้า</text>
+  <circle cx="196" cy="104" r="7" fill="var(--ai)"/><text x="196" y="108" text-anchor="middle" font-size="9" fill="#fff">AI</text>
+  <rect x="20" y="290" width="192" height="26" fill="var(--locked-bg)" stroke="var(--locked)"/>
+  <text x="116" y="308" text-anchor="middle" font-size="11.5" fill="var(--locked)">Footer</text>
+
+  <!-- L1 -->
+  <text x="248" y="26" font-size="13.5" font-weight="600" fill="var(--slot)">L1 · มีช่องแทรก</text>
+  <text x="248" y="45" font-size="11.5" fill="var(--ink-2)">รายละเอียดสินค้า · หมวดหมู่ · บทความ</text>
+  <rect x="248" y="56" width="192" height="26" fill="var(--locked-bg)" stroke="var(--locked)"/>
+  <text x="344" y="74" text-anchor="middle" font-size="11.5" fill="var(--locked)">Header</text>
+  <rect x="248" y="88" width="192" height="52" fill="var(--slot-bg)" stroke="var(--slot)" stroke-dasharray="5 3"/>
+  <text x="344" y="119" text-anchor="middle" font-size="11.5" fill="var(--slot)">ช่องบน · แทรกได้</text>
+  <circle cx="424" cy="104" r="7" fill="var(--ai)"/><text x="424" y="108" text-anchor="middle" font-size="9" fill="#fff">AI</text>
+  <rect x="248" y="146" width="192" height="80" fill="var(--locked-bg)" stroke="var(--locked)" stroke-width="1.6"/>
+  <text x="344" y="180" text-anchor="middle" font-size="12" fill="var(--locked)">บล็อกสินค้าของระบบ</text>
+  <text x="344" y="199" text-anchor="middle" font-size="11" fill="var(--ink-2)">ปรับค่าได้ ย้ายไม่ได้</text>
+  <rect x="248" y="232" width="192" height="52" fill="var(--slot-bg)" stroke="var(--slot)" stroke-dasharray="5 3"/>
+  <text x="344" y="263" text-anchor="middle" font-size="11.5" fill="var(--slot)">ช่องล่าง · แทรกได้</text>
+  <circle cx="424" cy="248" r="7" fill="var(--ai)"/><text x="424" y="252" text-anchor="middle" font-size="9" fill="#fff">AI</text>
+  <rect x="248" y="290" width="192" height="26" fill="var(--locked-bg)" stroke="var(--locked)"/>
+  <text x="344" y="308" text-anchor="middle" font-size="11.5" fill="var(--locked)">Footer</text>
+
+  <!-- L2 -->
+  <text x="476" y="26" font-size="13.5" font-weight="600" fill="var(--locked)">L2 · แก้ได้เฉพาะค่า</text>
+  <text x="476" y="45" font-size="11.5" fill="var(--ink-2)">ตะกร้า · ชำระเงิน · สมัคร · โปรไฟล์</text>
+  <rect x="476" y="56" width="192" height="26" fill="var(--locked-bg)" stroke="var(--locked)"/>
+  <text x="572" y="74" text-anchor="middle" font-size="11.5" fill="var(--locked)">Header</text>
+  <rect x="476" y="88" width="192" height="168" fill="var(--locked-bg)" stroke="var(--locked)" stroke-width="1.8"/>
+  <text x="572" y="150" text-anchor="middle" font-size="12.5" fill="var(--locked)">ไม่มีที่จับลาก</text>
+  <text x="572" y="172" text-anchor="middle" font-size="11.5" fill="var(--ink-2)">แก้ข้อความ ซ่อนฟิลด์</text>
+  <text x="572" y="190" text-anchor="middle" font-size="11.5" fill="var(--ink-2)">เปลี่ยนสีปุ่มได้</text>
+  <text x="654" y="104" text-anchor="middle" font-size="14" fill="var(--locked)">&#128274;</text>
+  <rect x="476" y="262" width="192" height="22" fill="var(--slot-bg)" stroke="var(--slot)" stroke-dasharray="4 3"/>
+  <text x="572" y="278" text-anchor="middle" font-size="10.5" fill="var(--slot)">ช่องล่าง เปิดเฉพาะบางร้าน</text>
+  <rect x="476" y="290" width="192" height="26" fill="var(--locked-bg)" stroke="var(--locked)"/>
+  <text x="572" y="308" text-anchor="middle" font-size="11.5" fill="var(--locked)">Footer</text>
+
+  <!-- L3 -->
+  <text x="704" y="26" font-size="13.5" font-weight="600" fill="var(--ink-2)">L3 · อ่านอย่างเดียว</text>
+  <text x="704" y="45" font-size="11.5" fill="var(--ink-2)">ผลชำระเงิน · ตั้งรหัสผ่านใหม่</text>
+  <rect x="704" y="56" width="176" height="260" fill="var(--paper)" stroke="var(--rule-strong)" stroke-width="1.6"/>
+  <text x="792" y="176" text-anchor="middle" font-size="12.5" fill="var(--ink-2)">ระบบเรนเดอร์ทั้งหมด</text>
+  <text x="792" y="198" text-anchor="middle" font-size="11.5" fill="var(--ink-2)">ไม่ปรากฏในรายการแต่ง</text>
+  <text x="792" y="104" text-anchor="middle" font-size="14" fill="var(--ink-2)">&#128274;</text>
+
+  <line x1="20" y1="348" x2="880" y2="348" stroke="var(--rule)"/>
+  <text x="20" y="374" font-size="12.5" fill="var(--ink)">Editor อ่านค่าระดับล็อกจากข้อมูล แล้วปรับพฤติกรรมเอง ไม่มีการเขียนเงื่อนไขต่อหน้าในโค้ด Editor</text>
+  <text x="20" y="396" font-size="12.5" fill="var(--ink-2)">ผลคือเพิ่มหน้าใหม่หรือเปลี่ยนนโยบายความปลอดภัย ทำได้ที่ชั้นข้อมูลโดยไม่ต้องปล่อยเวอร์ชัน Editor ใหม่</text>
+  <text x="20" y="418" font-size="12.5" fill="var(--locked)">ข้อเสนอเด็ดขาด ปิด Section AI ที่มี JavaScript บนหน้าชำระเงินถาวร ไม่ใช่แค่เตือน</text>
+  </g>
+</svg>
+    </div>
+    <figcaption>ระดับ L1 คือหัวใจของงาน เพราะหน้าสินค้าและหมวดหมู่คือหน้าที่ลูกค้าอยากแต่งมากที่สุด แต่ก็เป็นหน้าที่พังง่ายที่สุดถ้าปล่อยอิสระ</figcaption>
+  </figure>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th class="mono">ระดับ</th><th>ลากวาง</th><th>แก้ค่า</th><th>Section AI</th><th>ตัวอย่างหน้า</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">L0</td><td>ได้ทั้งหน้า</td><td>ได้</td><td>ได้ทุกระดับ</td><td>หน้าแรก แลนดิ้ง เซลเพจ</td></tr>
+      <tr><td class="mono">L1</td><td>เฉพาะช่องที่เปิด</td><td>ได้</td><td>ได้ทุกระดับ ในช่องที่เปิด</td><td>รายละเอียดสินค้า หมวดหมู่ บทความ</td></tr>
+      <tr><td class="mono">L2</td><td>ไม่ได้</td><td>ข้อความ ซ่อนฟิลด์ สีปุ่ม</td><td>เฉพาะ HTML กับ CSS และเฉพาะช่องท้าย</td><td>ตะกร้า ชำระเงิน สมัคร โปรไฟล์</td></tr>
+      <tr><td class="mono">L3</td><td>ไม่ได้</td><td>ไม่ได้</td><td>ไม่ได้</td><td>ผลชำระเงิน ตั้งรหัสผ่านใหม่</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>รายการที่ถูกล็อกอยู่จริงในวันนี้</h3>
+  <p>สิบห้ากรณีที่หน้าจอแก้ไขไล่เทียบอยู่ ทั้งหมดถูกจัดเป็นล็อกแบบเดียวกันหมด ไม่มีระดับกลาง งานแรกคือแมปรายการนี้เข้ากับสี่ระดับข้างบน แล้วย้ายไปเก็บเป็นข้อมูลฝั่งเซิร์ฟเวอร์</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>กลุ่ม</th><th>ชนิดบล็อกที่ถูกล็อก</th><th class="mono">ระดับที่เสนอ</th></tr></thead>
+    <tbody>
+      <tr><td>บัญชีและสมาชิก</td><td>เข้าสู่ระบบ · สมัครสมาชิก · โปรไฟล์ · ประวัติการสั่งซื้อ</td><td class="mono">L2</td></tr>
+      <tr><td>ธุรกรรม</td><td>ยืนยันคำสั่งซื้อ · แจ้งชำระเงิน · ติดตามพัสดุ</td><td class="mono">L2</td></tr>
+      <tr><td>ปลายทาง</td><td>ขอบคุณ · ได้รับการแจ้งชำระเงินแล้ว</td><td class="mono">L3</td></tr>
+      <tr><td>รายการเนื้อหา</td><td>รายการสินค้า · รายการบทความ · สินค้าตามป้าย · บทความตามป้าย</td><td class="mono">L1</td></tr>
+      <tr><td>รายละเอียด</td><td>รายละเอียดสินค้า · รายละเอียดบทความ</td><td class="mono">L1</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>สังเกตว่าห้ารายการล่างสุดคือหน้าที่ลูกค้าอยากแต่งมากที่สุด แต่วันนี้ถูกล็อกเท่ากับหน้าชำระเงิน การแยกเป็นสี่ระดับจึงปลดล็อกคุณค่าให้ลูกค้าได้ทันทีโดยไม่ลดความปลอดภัย</p>
+</section>
+
+<!-- ============ D4 ============ -->
+<section id="d4">
+  <h2><span class="n">D4</span>ผังหน้าจอ Editor</h2>
+  <p>ผังนี้คือจุดตั้งต้นสำหรับทีมออกแบบ ไม่ใช่ข้อบังคับเรื่องหน้าตา แต่เป็นรายการงานที่หน้าจอต้องรองรับ ทุกช่องมีเหตุผลเชิงโครงสร้างรองรับจาก D2 และ D3</p>
+
+  <figure>
+    <div class="fh"><b>D4</b><span>ส่วนประกอบหน้าจอและหน้าที่ของแต่ละช่อง</span></div>
+    <div class="scroller">
+<svg viewBox="0 0 900 520" role="img" aria-label="ผังหน้าจอเอดิเตอร์แสดงแถบซ้าย ผืนผ้าใบกลาง และแผงขวา">
+  <!-- top bar -->
+  <rect x="20" y="20" width="860" height="44" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.6"/>
+  <text x="36" y="47" font-size="12.5" fill="var(--ink)">เลือกหน้า</text>
+  <line x1="120" y1="28" x2="120" y2="56" stroke="var(--rule)"/>
+  <text x="136" y="47" font-size="12.5" fill="var(--ink-2)">คอม / แท็บเล็ต / มือถือ</text>
+  <line x1="300" y1="28" x2="300" y2="56" stroke="var(--rule)"/>
+  <text x="316" y="47" font-size="12.5" fill="var(--ink-2)">ย้อน / ทำซ้ำ</text>
+  <line x1="420" y1="28" x2="420" y2="56" stroke="var(--rule)"/>
+  <text x="436" y="47" font-size="12.5" fill="var(--ink-2)">ประวัติเวอร์ชัน</text>
+  <rect x="600" y="30" width="86" height="24" fill="var(--paper)" stroke="var(--rule-strong)"/>
+  <text x="643" y="47" font-size="12" text-anchor="middle" fill="var(--ink-2)">พรีวิว</text>
+  <rect x="694" y="30" width="78" height="24" fill="var(--paper)" stroke="var(--rule-strong)"/>
+  <text x="733" y="47" font-size="12" text-anchor="middle" fill="var(--ink-2)">ร่าง</text>
+  <rect x="780" y="30" width="84" height="24" fill="var(--locked)"/>
+  <text x="822" y="47" font-size="12" text-anchor="middle" fill="#fff">เผยแพร่</text>
+
+  <!-- left rail -->
+  <rect x="20" y="76" width="176" height="384" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.4"/>
+  <text x="36" y="100" font-size="12.5" font-weight="600" fill="var(--ink)">ชั้นของหน้า</text>
+  <rect x="34" y="112" width="148" height="22" fill="var(--locked-bg)"/>
+  <text x="44" y="127" font-size="11" fill="var(--locked)">&#128274; Header</text>
+  <rect x="34" y="140" width="148" height="22" fill="var(--free-bg)"/>
+  <text x="44" y="155" font-size="11" fill="var(--free)">Hero</text>
+  <rect x="34" y="168" width="148" height="22" fill="var(--free-bg)"/>
+  <text x="44" y="183" font-size="11" fill="var(--free)">สินค้าแนะนำ</text>
+  <rect x="34" y="196" width="148" height="22" fill="var(--ai-bg)"/>
+  <text x="44" y="211" font-size="11" fill="var(--ai)">Section AI</text>
+  <rect x="34" y="224" width="148" height="22" fill="var(--locked-bg)"/>
+  <text x="44" y="239" font-size="11" fill="var(--locked)">&#128274; Footer</text>
+  <line x1="20" y1="262" x2="196" y2="262" stroke="var(--rule)"/>
+  <text x="36" y="286" font-size="12.5" font-weight="600" fill="var(--ink)">คลัง Section</text>
+  <text x="36" y="306" font-size="11" fill="var(--ink-2)">เนื้อหา · สไลด์ · แผนที่</text>
+  <text x="36" y="324" font-size="11" fill="var(--ink-2)">คอลัมน์ · เทมเพลตสำเร็จ</text>
+  <text x="36" y="350" font-size="12.5" font-weight="600" fill="var(--ink)">คลัง Element</text>
+  <text x="36" y="370" font-size="11" fill="var(--ink-2)">ข้อความ · รูป · แกลเลอรี</text>
+  <text x="36" y="388" font-size="11" fill="var(--ink-2)">สินค้า · หมวดหมู่ · ค้นหา</text>
+  <text x="36" y="406" font-size="11" fill="var(--ink-2)">ฟอร์ม · วิดีโอ · โค้ด</text>
+  <text x="36" y="436" font-size="11" fill="var(--slot)">เลือกจากคลังแล้วผืนผ้าใบ</text>
+  <text x="36" y="452" font-size="11" fill="var(--slot)">เข้าโหมดเลือกตำแหน่งวาง</text>
+
+  <!-- canvas -->
+  <rect x="208" y="76" width="420" height="384" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.8"/>
+  <text x="224" y="98" font-size="11.5" fill="var(--ink-2)">ผืนผ้าใบ อยู่ใน iframe แยก การลากทั้งหมดเกิดข้างใน</text>
+  <rect x="224" y="108" width="388" height="28" fill="var(--locked-bg)" stroke="var(--locked)"/>
+  <text x="240" y="126" font-size="11.5" fill="var(--locked)">&#128274; Header ใช้ร่วมทุกหน้า แก้ที่ตั้งค่ากลาง</text>
+
+  <rect x="224" y="148" width="388" height="86" fill="var(--panel)" stroke="var(--free)" stroke-width="2"/>
+  <rect x="224" y="148" width="388" height="20" fill="var(--free)"/>
+  <text x="236" y="163" font-size="11" fill="#fff">&#9776; Hero</text>
+  <text x="500" y="163" font-size="10.5" fill="#fff">แก้ไข · ทำซ้ำ · ซ่อน · ลบ</text>
+  <text x="240" y="196" font-size="12" fill="var(--ink-2)">เลือกอยู่ มีที่จับลากที่หัว Section</text>
+  <text x="240" y="216" font-size="12" fill="var(--ink-2)">ดับเบิลคลิกข้อความเพื่อแก้ในที่</text>
+
+  <line x1="224" y1="246" x2="612" y2="246" stroke="var(--slot)" stroke-width="2.5"/>
+  <circle cx="224" cy="246" r="4" fill="var(--slot)"/>
+  <text x="240" y="262" font-size="11" fill="var(--slot)">เส้นบอกตำแหน่งวาง ปรากฏตอนลาก</text>
+
+  <rect x="224" y="272" width="388" height="66" fill="var(--panel)" stroke="var(--rule-strong)"/>
+  <text x="240" y="296" font-size="12" fill="var(--ink-2)">สินค้าแนะนำ ดึงข้อมูลสดจากคลังสินค้า</text>
+  <text x="240" y="318" font-size="11.5" fill="var(--ink-2)">แก้การแสดงผลได้ แต่ข้อมูลมาจากระบบ</text>
+
+  <rect x="224" y="350" width="388" height="62" fill="var(--ai-bg)" stroke="var(--ai)" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <text x="240" y="374" font-size="12" fill="var(--ai)">Section AI · สร้างจากคำสั่ง</text>
+  <text x="240" y="394" font-size="11.5" fill="var(--ink-2)">ลาก ซ่อน ลบ ได้เหมือน Section อื่น</text>
+
+  <rect x="224" y="424" width="388" height="24" fill="var(--locked-bg)" stroke="var(--locked)"/>
+  <text x="240" y="440" font-size="11.5" fill="var(--locked)">&#128274; Footer</text>
+
+  <!-- right panel -->
+  <rect x="640" y="76" width="240" height="384" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.4"/>
+  <text x="656" y="100" font-size="12.5" font-weight="600" fill="var(--ink)">คุณสมบัติของสิ่งที่เลือก</text>
+  <rect x="656" y="112" width="208" height="1" fill="var(--rule)"/>
+  <text x="656" y="134" font-size="11.5" fill="var(--ink-2)">เนื้อหา</text>
+  <rect x="656" y="142" width="208" height="24" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="656" y="188" font-size="11.5" fill="var(--ink-2)">สีพื้นหลัง</text>
+  <rect x="656" y="196" width="208" height="24" fill="var(--paper)" stroke="var(--rule)"/>
+  <rect x="662" y="202" width="12" height="12" fill="var(--locked)"/>
+  <text x="684" y="212" font-size="10.5" fill="var(--ink-2)">สีหลักจากชุดสีของเว็บ</text>
+  <text x="656" y="242" font-size="11.5" fill="var(--ink-2)">ระยะห่าง · ความมน · เงา</text>
+  <rect x="656" y="250" width="208" height="24" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="656" y="296" font-size="11.5" fill="var(--ink-2)">ซ่อนตามขนาดจอ</text>
+  <rect x="656" y="304" width="208" height="24" fill="var(--paper)" stroke="var(--rule)"/>
+  <line x1="656" y1="344" x2="864" y2="344" stroke="var(--rule)"/>
+  <text x="656" y="366" font-size="12" fill="var(--ai)">แผงผู้ช่วย</text>
+  <rect x="656" y="376" width="208" height="46" fill="var(--ai-bg)" stroke="var(--ai)" stroke-dasharray="4 3"/>
+  <text x="666" y="396" font-size="10.5" fill="var(--ink-2)">พิมพ์สิ่งที่อยากได้ ระบบเสนอ</text>
+  <text x="666" y="412" font-size="10.5" fill="var(--ink-2)">ส่วนต่างให้ยอมรับทีละจุด</text>
+  <text x="656" y="446" font-size="10.5" fill="var(--ink-2)">ค่าที่ไม่ตั้ง จะไหลมาจากชุดสีกลาง</text>
+
+  <text x="20" y="486" font-size="12" fill="var(--ink-2)">บนจอเล็ก แผงขวาและแถบซ้ายยุบเป็นชั้นซ้อน ผืนผ้าใบต้องได้พื้นที่มากที่สุดเสมอ</text>
+  <text x="20" y="506" font-size="12" fill="var(--ink-2)">ทุกการกระทำต้องทำด้วยคีย์บอร์ดได้ เพราะการลากด้วยเมาส์อย่างเดียวใช้ไม่ได้บนแท็บเล็ต</text>
+</svg>
+    </div>
+    <figcaption>ข้อจำกัดเชิงเทคนิคที่กระทบการออกแบบ การลากข้ามขอบ iframe จากแถบซ้ายเข้าผืนผ้าใบทำได้ยากและเปราะ จึงเสนอให้ใช้รูปแบบเลือกจากคลังก่อนแล้วจึงเลือกตำแหน่งวาง</figcaption>
+  </figure>
+</section>
+
+<!-- ============ D5 ============ -->
+<section id="d5">
+  <h2><span class="n">D5</span>Section AI และกรอบความปลอดภัย</h2>
+  <p>การให้ผู้ช่วยเขียนโค้ดได้อิสระคือสิ่งที่ทำให้หน้าเว็บสวยได้จริง แต่ก็เปิดความเสี่ยงสามอย่างพร้อมกันคือสคริปต์อันตราย สไตล์รั่วไปทั้งเว็บ และเนื้อหาที่เครื่องมือค้นหาอ่านไม่เห็น จึงเสนอให้แบ่งเป็นระดับแล้วให้ระดับที่ปลอดภัยกว่าเป็นค่าเริ่มต้น</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th class="mono">ระดับ</th><th>ให้เขียนอะไร</th><th>กรอบจำกัด</th><th>เก็บดัชนีได้</th><th>ใช้ได้ที่</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">T0</td><td>ไม่เขียนโค้ด ประกอบจาก Section และ Element ที่มี</td><td>ไม่ต้องมี</td><td>ได้เต็ม</td><td>ทุกหน้า เป็นค่าตั้งต้น</td></tr>
+      <tr><td class="mono">T1</td><td>HTML กับ CSS</td><td>กรองแท็กตามรายการอนุญาต จำกัดขอบเขต CSS ให้อยู่ใน Section ตัวเองอัตโนมัติ</td><td>ได้เต็ม</td><td>L0 · L1 · ช่องท้ายของ L2</td></tr>
+      <tr><td class="mono">T2</td><td>เพิ่ม JavaScript</td><td>อยู่ในกรอบแยก ไม่แชร์โดเมน ไม่เห็นคุกกี้ คุยผ่านช่องทางแคบ</td><td>ไม่ได้</td><td>L0 · L1 เท่านั้น</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <p><strong>สิ่งที่ต้องบอกลูกค้าตรง ๆ</strong> เนื้อหาที่ต้องการให้ค้นเจอต้องอยู่ที่ระดับ T1 ส่วน T2 เหมาะกับของที่ต้องโต้ตอบเช่นเครื่องคำนวณหรือแบบทดสอบ ซึ่งไม่ได้ต้องการให้ค้นเจออยู่แล้ว การอธิบายข้อนี้ในหน้าจอตอนเลือกระดับ จะลดปัญหาปลายทางได้มาก</p>
+  </div>
+
+  <h3>ด่านตรวจก่อนบันทึก</h3>
+  <ol>
+    <li>กรองโค้ดอันตรายออก ตามรายการแท็กและคุณสมบัติที่อนุญาต</li>
+    <li>ตรวจว่า CSS ไม่แตะตัวเลือกระดับเว็บ เช่นรากเอกสาร ตัวเนื้อหา หรือคลาสของธีม</li>
+    <li>ตรวจว่าใช้ค่าจากชุดสีกลาง ไม่ใช่ค่าสีดิบที่พิมพ์เอง</li>
+    <li>ตรวจลำดับหัวข้อและคำอธิบายรูป ไม่ให้เสียโครงสร้างการอ่าน</li>
+    <li>ตรวจน้ำหนักไฟล์และผลต่อความเร็วการโหลด</li>
+    <li>ตรวจว่าไม่ได้เขียนลงช่องที่ล็อกไว้</li>
+  </ol>
+  <p>ด่านนี้ใช้ร่วมกันทั้งสามโหมด ไม่ว่าคนเป็นคนวางหรือผู้ช่วยเป็นคนวาง</p>
+</section>
+
+<!-- ============ D6 ============ -->
+<section id="d6">
+  <h2><span class="n">D6</span>ชุดคำสั่งสำหรับผู้ช่วยภายนอก</h2>
+  <p>ระบบมีช่องทางให้ลูกค้าเชื่อมผู้ช่วยเข้ามาอยู่แล้ว งานนี้คือเพิ่มชุดคำสั่งฝั่งตกแต่งเข้าไปในช่องทางเดิม หลักสำคัญคืออ่านให้ครบก่อน แล้วค่อยเปิดให้เขียน</p>
+
+  <figure>
+    <div class="fh"><b>D6</b><span>เส้นทางการทำงานของผู้ช่วยภายนอก</span></div>
+    <div class="scroller">
+<svg viewBox="0 0 900 300" role="img" aria-label="ลำดับการทำงานของผู้ช่วยภายนอกผ่านชุดคำสั่ง">
+  <defs>
+    <marker id="c1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="var(--rule-strong)"/>
+    </marker>
+  </defs>
+  <g font-size="12">
+  <rect x="20" y="40" width="150" height="70" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="36" y="66" font-size="12.5" font-weight="600" fill="var(--ink)">ผู้ช่วยของลูกค้า</text>
+  <text x="36" y="86" font-size="11" fill="var(--ink-2)">เชื่อมผ่านช่องทางเดิม</text>
+  <text x="36" y="102" font-size="11" fill="var(--ink-2)">ด้วยสิทธิ์ที่กำหนด</text>
+
+  <rect x="200" y="20" width="176" height="52" fill="var(--free-bg)" stroke="var(--free)" stroke-width="1.5"/>
+  <text x="216" y="42" font-size="12" font-weight="600" fill="var(--free)">อ่านก่อน</text>
+  <text x="216" y="60" font-size="10.5" fill="var(--ink-2)">โครงหน้า · แผนที่ล็อก · คลัง · ชุดสี</text>
+
+  <rect x="200" y="86" width="176" height="52" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="216" y="108" font-size="12" font-weight="600" fill="var(--ink)">แล้วจึงเขียน</text>
+  <text x="216" y="126" font-size="10.5" fill="var(--ink-2)">เพิ่ม ย้าย แก้ ลบ · ลงฉบับร่างเท่านั้น</text>
+
+  <rect x="406" y="40" width="152" height="70" fill="var(--locked-bg)" stroke="var(--locked)" stroke-width="1.6"/>
+  <text x="422" y="66" font-size="12.5" font-weight="600" fill="var(--locked)">ด่านตรวจเดียวกัน</text>
+  <text x="422" y="86" font-size="11" fill="var(--ink-2)">ผิดที่ไหน บอกที่นั่น</text>
+  <text x="422" y="102" font-size="11" fill="var(--ink-2)">พร้อมบอกช่องที่เขียนได้</text>
+
+  <rect x="588" y="40" width="144" height="70" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="604" y="66" font-size="12.5" font-weight="600" fill="var(--ink)">ฉบับร่าง</text>
+  <text x="604" y="86" font-size="11" fill="var(--ink-2)">ลิงก์พรีวิว</text>
+  <text x="604" y="102" font-size="11" fill="var(--ink-2)">ส่วนต่างเทียบของเดิม</text>
+
+  <rect x="762" y="40" width="118" height="70" fill="var(--free-bg)" stroke="var(--free)" stroke-width="1.8"/>
+  <text x="778" y="70" font-size="12.5" font-weight="600" fill="var(--free)">คนอนุมัติ</text>
+  <text x="778" y="92" font-size="11" fill="var(--ink-2)">แล้วจึงขึ้นจริง</text>
+
+  <path d="M170 60 L200 50" fill="none" stroke="var(--rule-strong)" marker-end="url(#c1)"/>
+  <path d="M170 92 L200 104" fill="none" stroke="var(--rule-strong)" marker-end="url(#c1)"/>
+  <path d="M376 112 L392 112 L392 76 L406 76" fill="none" stroke="var(--rule-strong)" marker-end="url(#c1)"/>
+  <path d="M558 76 L588 76" fill="none" stroke="var(--rule-strong)" marker-end="url(#c1)"/>
+  <path d="M732 76 L762 76" fill="none" stroke="var(--rule-strong)" marker-end="url(#c1)"/>
+  <path d="M482 110 L482 138 L288 138 L288 138" fill="none" stroke="var(--locked)" stroke-dasharray="4 3" marker-end="url(#c1)"/>
+  <text x="300" y="158" font-size="11" fill="var(--locked)">ถ้าไม่ผ่าน ส่งเหตุผลกลับให้แก้เอง ไม่ใช่แค่ปฏิเสธ</text>
+
+  <line x1="20" y1="186" x2="880" y2="186" stroke="var(--rule)"/>
+  <text x="20" y="212" font-size="12.5" font-weight="600" fill="var(--ink)">สิทธิ์แยกสี่ระดับ</text>
+  <text x="20" y="234" font-size="12" fill="var(--ink-2)">อ่านอย่างเดียว เป็นค่าตั้งต้น · เขียนฉบับร่าง · เผยแพร่ แนะนำให้ปิดไว้ · เขียนโค้ดใน Section AI ต้องเปิดเป็นรายร้าน</text>
+  <text x="20" y="262" font-size="12.5" font-weight="600" fill="var(--ink)">บันทึกการแก้ไข</text>
+  <text x="20" y="284" font-size="12" fill="var(--ink-2)">เก็บทุกครั้งว่าผู้ช่วยตัวไหน รอบไหน เปลี่ยนอะไร เพื่อให้ตอบลูกค้าได้เมื่อหน้าเว็บเพี้ยน</text>
+  </g>
+</svg>
+    </div>
+    <figcaption>ข้อควรระวังเรื่องต้นทุน ถ้าคำสั่งอ่านหน้าคืนเอกสารทั้งก้อนทุกครั้ง ลูกค้าจะใช้โควตาหมดเร็วมาก ต้องออกแบบให้อ่านเฉพาะส่วนได้ตั้งแต่รอบแรก</figcaption>
+  </figure>
+</section>
+
+
+<!-- ============ D7 ============ -->
+<section id="d7">
+  <h2><span class="n">D7</span>ชั้นเรนเดอร์และความเร็ว</h2>
+  <p class="lead">หลังร้านอยู่กับ Angular ต่อได้ แต่หน้าร้านต้องแยกออกมาเป็นเทคใหม่ เพราะหน้าร้านปัจจุบันวาดด้วยจาวาสคริปต์ทั้งหมดหลังโหลด ทำให้เครื่องมือค้นหาและผู้ช่วยปัญญาประดิษฐ์ที่ไม่รันสคริปต์มองไม่เห็นเนื้อหา และคะแนนความเร็วบนมือถือขึ้นไม่ถึงเป้า</p>
+
+  <h3>ทำไมไม่เลือกวาดฝั่งเซิร์ฟเวอร์บนของเดิม</h3>
+  <ul>
+    <li>รุ่นที่ใช้อยู่เก่ากว่ารุ่นที่รองรับการวาดฝั่งเซิร์ฟเวอร์สมัยใหม่อยู่เก้ารุ่นใหญ่ การไล่อัปเกรดมีขนาดงานพอกับการเขียนหน้าร้านใหม่</li>
+    <li>ถึงอัปเกรดแล้ว น้ำหนักจาวาสคริปต์พื้นฐานยังสูงกว่าทางเลือกอื่นมาก ซึ่งกินคะแนนหมวดเวลาที่หน้าเว็บไม่ตอบสนอง ที่มีน้ำหนักสามในสิบของคะแนนรวมบนมือถือ</li>
+    <li>เมื่อต้องจ่ายค่าย้ายก้อนใหญ่อยู่แล้ว ควรจ่ายไปกับเทคที่ชนะเรื่องนี้โดยตรง</li>
+  </ul>
+
+  <h3>ขอบเขตใหม่</h3>
+  <p>ตัดสินใจย้ายหน้าร้านทั้งหมด ไม่ใช่เฉพาะหน้าที่ต้องการการค้นเจอ เพราะถ้าเหลือหน้าตะกร้าและหน้าสมาชิกไว้ที่ของเดิม จะกลายเป็นสองระบบที่ต้องแก้ปัญหาเดียวกันสองที่ตลอดอายุการใช้งาน</p>
+
+  <figure>
+    <div class="fh"><b>D7</b><span>การแบ่งงานระหว่างของเดิมกับของใหม่</span></div>
+    <div class="scroller">
+<svg viewBox="0 0 900 470" role="img" aria-label="แผนภาพแบ่งงานระหว่างระบบเดิมกับหน้าร้านใหม่">
+  <defs>
+    <marker id="d1m" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="var(--rule-strong)"/>
+    </marker>
+  </defs>
+  <g font-size="12">
+  <rect x="330" y="18" width="240" height="44" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.6"/>
+  <text x="450" y="39" font-size="13" font-weight="600" text-anchor="middle" fill="var(--ink)">ตัวกระจายคำขอ</text>
+  <text x="450" y="55" font-size="11" text-anchor="middle" fill="var(--ink-2)">ย้ายทีละเส้นทาง ไม่ต้องสลับทีเดียวทั้งระบบ</text>
+
+  <path d="M400 62 L400 92 L214 92 L214 118" fill="none" stroke="var(--rule-strong)" marker-end="url(#d1m)"/>
+  <path d="M500 62 L500 92 L676 92 L676 118" fill="none" stroke="var(--rule-strong)" marker-end="url(#d1m)"/>
+
+  <rect x="40" y="120" width="348" height="130" fill="var(--locked-bg)" stroke="var(--locked)" stroke-width="1.6"/>
+  <text x="58" y="145" font-size="13.5" font-weight="600" fill="var(--locked)">ระบบเดิม · หลังร้านอย่างเดียว</text>
+  <text x="58" y="168" font-size="11.5" fill="var(--ink)">จัดการสินค้า คำสั่งซื้อ ลูกค้า รายงาน ตั้งค่า</text>
+  <text x="58" y="188" font-size="11.5" fill="var(--ink)">หน้าจอแก้ไขเว็บ แถบซ้ายและแผงขวา</text>
+  <text x="58" y="212" font-size="11.5" fill="var(--ink-2)">ไม่ต้องอัปเกรดรุ่น ไม่ต้องวาดฝั่งเซิร์ฟเวอร์</text>
+  <text x="58" y="232" font-size="11.5" fill="var(--ink-2)">ทยอยปลดคอมโพเนนต์หน้าร้านออกจนหมด</text>
+
+  <rect x="512" y="120" width="348" height="130" fill="var(--free-bg)" stroke="var(--free)" stroke-width="1.6"/>
+  <text x="530" y="145" font-size="13.5" font-weight="600" fill="var(--free)">หน้าร้านใหม่ · วาดฝั่งเซิร์ฟเวอร์</text>
+  <text x="530" y="168" font-size="11.5" fill="var(--ink)">หน้าแรก สินค้า หมวดหมู่ บทความ แลนดิ้ง</text>
+  <text x="530" y="188" font-size="11.5" fill="var(--ink)">ตะกร้า ชำระเงิน สมาชิก ติดตาม ขอบคุณ</text>
+  <text x="530" y="212" font-size="11.5" fill="var(--ink-2)">ชุดบน วาดล่วงหน้าและแคช เน้นคะแนนความเร็ว</text>
+  <text x="530" y="232" font-size="11.5" fill="var(--ink-2)">ชุดล่าง ทำงานในเบราว์เซอร์ ไม่เก็บดัชนี</text>
+
+  <path d="M388 185 L512 185" fill="none" stroke="var(--ai)" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <text x="450" y="178" font-size="11" text-anchor="middle" fill="var(--ai)">สะพาน</text>
+
+  <rect x="200" y="288" width="500" height="92" fill="var(--ai-bg)" stroke="var(--ai)" stroke-width="1.6"/>
+  <text x="450" y="313" font-size="13" font-weight="600" text-anchor="middle" fill="var(--ai)">บริการวาดบล็อกให้หน้าจอแก้ไข</text>
+  <text x="450" y="336" font-size="11.5" text-anchor="middle" fill="var(--ink)">หน้าจอแก้ไขไม่วาดบล็อกเอง แต่ฝังหน้าพรีวิวของหน้าร้านใหม่เข้ามา</text>
+  <text x="450" y="356" font-size="11.5" text-anchor="middle" fill="var(--ink)">แล้วคุยกันด้วยข้อความ ส่งค่าที่แก้ไป รับเหตุการณ์เลือกและลากกลับมา</text>
+  <text x="450" y="373" font-size="11" text-anchor="middle" fill="var(--ink-2)">ผลคือบล็อกแต่ละชนิดเขียนที่เดียว ไม่ต้องทำสองชุด</text>
+
+  <path d="M214 250 L214 268 L340 268 L340 288" fill="none" stroke="var(--ai)" stroke-dasharray="4 3" marker-end="url(#d1m)"/>
+  <path d="M676 250 L676 268 L560 268 L560 288" fill="none" stroke="var(--ai)" stroke-dasharray="4 3" marker-end="url(#d1m)"/>
+
+  <line x1="40" y1="406" x2="860" y2="406" stroke="var(--rule)"/>
+  <text x="40" y="430" font-size="12.5" fill="var(--locked)">กับดักที่ต้องเลี่ยง ถ้าหน้าจอแก้ไขยังวาดบล็อกเองด้วย จะต้องเขียนบล็อกทุกชนิดสองครั้ง เจ็ดสิบสี่รายการคูณสอง</text>
+  <text x="40" y="452" font-size="12.5" fill="var(--ink-2)">ตัวจับลากต้องวาดอยู่ข้างในหน้าพรีวิว ไม่ใช่ซ้อนจากข้างนอก เพราะการคำนวณตำแหน่งข้ามขอบเปราะและแก้ยาก</text>
+  </g>
+</svg>
+    </div>
+    <figcaption>ข้อดีของการย้ายทีละเส้นทางคือของเดิมกับของใหม่อยู่ร่วมกันได้ตลอดช่วงเปลี่ยนผ่าน ไม่ต้องสลับทั้งระบบพร้อมกัน และถอยกลับได้ทันทีถ้าเส้นทางไหนมีปัญหา</figcaption>
+  </figure>
+
+  <h3>เลือกเทคอย่างไร</h3>
+  <p>เมื่อขอบเขตรวมหน้าตะกร้าและหน้าชำระเงินเข้ามาด้วย ตัวเลือกที่เน้นเนื้อหาล้วนจะไม่พอ เพราะการชำระเงินหลายขั้นตอนที่ต้องส่งสถานะข้ามหน้าเป็นงานแบบแอปพลิเคชัน ถ้าฝืนใช้จะจบที่ต้องมีแอปแยกอีกตัว ซึ่งคือปัญหาสองระบบแบบเดิมที่ต้องการเลี่ยง</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>ตัวเลือก</th><th>เพดานคะแนนความเร็ว</th><th>เหมาะเมื่อ</th><th>ข้อเสีย</th></tr></thead>
+    <tbody>
+      <tr><td><strong>แบบผสมสองโหมดในโครงเดียว</strong> เป็นข้อเสนอ</td><td>ถึงเป้าได้ ต้องออกแรงเรื่องน้ำหนักสคริปต์</td><td>มีทั้งหน้าเนื้อหาและหน้าแบบแอปในระบบเดียว ตรงกับขอบเขตที่ตกลงกัน</td><td>ต้องคุมวินัยเรื่องน้ำหนักสคริปต์อย่างเข้มงวด</td></tr>
+      <tr><td>แบบเน้นเนื้อหาล้วน</td><td>สูงสุด ส่งสคริปต์เป็นศูนย์ได้</td><td>ถ้าย้ายเฉพาะหน้าเนื้อหา ไม่รวมหน้าธุรกรรม</td><td>หน้าธุรกรรมต้องแยกไปอีกระบบ ขัดกับเป้าหมายลดภาระดูแล</td></tr>
+      <tr><td>แบบทดลองรุ่นใหม่</td><td>ทฤษฎีดีที่สุด</td><td>โครงการทดลอง</td><td>ระบบนิเวศเล็ก เสี่ยงเกินไปสำหรับแพลตฟอร์มที่มีลูกค้าจริง</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>เป้าหมายคะแนนและสิ่งที่การันตีได้จริง</h3>
+  <div class="note">
+    <p>คะแนนเกินเก้าสิบทุกร้านการันตีไม่ได้ เพราะร้านอัปภาพปกขนาดใหญ่มากและติดสคริปต์ภายนอกเองได้ สิ่งที่การันตีได้มีสามอย่าง หนึ่งคือคะแนนพื้นฐานของแพลตฟอร์มบนหน้าเปล่า สองคือระบบที่กันไม่ให้ร้านทำพังโดยไม่รู้ตัว สามคือการแจ้งเตือนเมื่อคะแนนของร้านตก</p>
+  </div>
+  <p>น้ำหนักคะแนนบนมือถือกระจุกอยู่ที่สามหมวด คือเวลาที่หน้าไม่ตอบสนองสามในสิบ เวลาที่เนื้อหาหลักปรากฏสองจุดห้าในสิบ และการกระโดดของเลย์เอาต์อีกสองจุดห้าในสิบ รวมแปดในสิบอยู่ที่การทำงานของสคริปต์และการขยับของหน้า ไม่ใช่แค่ความเร็วเซิร์ฟเวอร์</p>
+
+  <h4>ห้าเรื่องที่ตัดสินผลจริง เรียงตามผลกระทบ</h4>
+  <ol>
+    <li><strong>สคริปต์จากภายนอก</strong> ระบบรองรับตัววัดผลและแชตจากหลายเจ้า ร้านจริงติดกันสี่ถึงหกตัว นี่คือความต่างระหว่างคะแนนห้าสิบกับเก้าสิบ ทางแก้คือย้ายการวัดผลไปทำฝั่งเซิร์ฟเวอร์ ส่วนที่เหลือให้โหลดช้าลงจนกว่าผู้ใช้จะมีปฏิสัมพันธ์</li>
+    <li><strong>ฟอนต์ไทย</strong> ใหญ่กว่าฟอนต์ละตินสองถึงสี่เท่าและเป็นต้นเหตุหลักของการกระโดด ทางแก้คือเก็บไว้ที่เซิร์ฟเวอร์ตัวเอง ตัดเฉพาะอักขระที่ใช้ โหลดล่วงหน้าเฉพาะตัวที่ใช้กับเนื้อหาหลัก และปรับขนาดฟอนต์สำรองให้ตรงกันเพื่อไม่ให้หน้าขยับตอนสลับ จำกัดไม่เกินสองตระกูล</li>
+    <li><strong>รูปภาพ</strong> ต้องบังคับที่สายการผลิต ไม่ใช่ขอความร่วมมือจากผู้ใช้ แปลงรูปแบบอัตโนมัติ เตรียมหลายขนาด บังคับให้ทุกรูปมีความกว้างและความสูงเพื่อกันหน้าขยับ และให้รูปหลักโหลดก่อน ที่เหลือโหลดเมื่อเลื่อนถึง</li>
+    <li><strong>โควตาสคริปต์ต่อบล็อก</strong> แต่ละบล็อกประกาศสคริปต์ที่ตัวเองต้องใช้ แล้วโหลดเมื่อเลื่อนถึงเท่านั้น บล็อกที่ไม่มีปฏิสัมพันธ์ต้องไม่ส่งสคริปต์เลย</li>
+    <li><strong>บังคับด้วยระบบตรวจอัตโนมัติ</strong> วัดคะแนนห้าหน้าตัวแทนทุกครั้งที่จะรวมโค้ด และไม่ให้ผ่านถ้าต่ำกว่าเก้าสิบสอง เผื่อระยะไว้เหนือเป้าสองคะแนน</li>
+  </ol>
+
+  <h4>โควตาที่เสนอสำหรับหน้าเนื้อหา</h4>
+  <div class="tw">
+  <table>
+    <thead><tr><th>รายการ</th><th class="mono">เพดาน</th></tr></thead>
+    <tbody>
+      <tr><td>เอกสารหน้าเว็บหลังบีบอัด</td><td class="mono">100 KB</td></tr>
+      <tr><td>สคริปต์ที่โหลดตอนแรกหลังบีบอัด</td><td class="mono">50 KB</td></tr>
+      <tr><td>ฟอนต์รวมทุกน้ำหนัก</td><td class="mono">60 KB</td></tr>
+      <tr><td>รูปเนื้อหาหลัก</td><td class="mono">150 KB</td></tr>
+      <tr><td>เวลาตอบกลับจากเซิร์ฟเวอร์</td><td class="mono">200 ms</td></tr>
+      <tr><td>การกระโดดของเลย์เอาต์</td><td class="mono">0.05</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>ได้เรื่องการถูกผู้ช่วยค้นเจอมาด้วย</h3>
+  <p>ผู้ช่วยปัญญาประดิษฐ์ที่ไปเก็บข้อมูลเว็บส่วนใหญ่ไม่รันสคริปต์ หน้าร้านแบบปัจจุบันจึงมองไม่เห็นเนื้อหาเลย ไม่ใช่แค่เครื่องมือค้นหาที่เสียประโยชน์ เมื่อย้ายมาวาดฝั่งเซิร์ฟเวอร์แล้ว เติมอีกสามอย่างจะครบชุด</p>
+  <ul>
+    <li>ข้อมูลโครงสร้างที่สร้างจากชนิดบล็อกในหน้า แทนการประกาศเป็นบทความข่าวเหมือนกันหมดอย่างที่เป็นอยู่ หน้าสินค้าออกข้อมูลสินค้าและราคาและคะแนนรีวิว หน้าคำถามออกข้อมูลคำถาม บทความออกข้อมูลบทความ แล้วรวมเป็นก้อนเดียวต่อหน้า</li>
+    <li>ไฟล์แนะนำเนื้อหาสำหรับผู้ช่วย และช่องทางดึงข้อความสะอาดต่อหน้า</li>
+    <li>ชุดสีและฟอนต์ฝังเป็นตัวแปรในส่วนหัวของเอกสาร เร็วกว่าเดิมและปิดช่องโหว่การสั่งรันข้อความโค้ดไปในตัว</li>
+  </ul>
+</section>
+
+<!-- ============ D8 ============ -->
+<section id="d8">
+  <h2><span class="n">D8</span>การวัดผลโฆษณาระหว่างย้ายระบบ</h2>
+  <p class="lead">ความเสี่ยงข้อนี้สูงกว่างานความเร็ว เพราะถ้าพลาดแล้วตัวเลขเพี้ยน ลูกค้าจะยิงโฆษณาผิดทิศและเสียเงินจริง โดยรู้ตัวช้า</p>
+
+  <h3>ห้าอาการที่พังแบบเงียบ</h3>
+  <div class="tw">
+  <table>
+    <thead><tr><th style="width:30%">ความเสี่ยง</th><th>สิ่งที่เกิดขึ้น</th></tr></thead>
+    <tbody>
+      <tr><td><strong>นับการซื้อซ้ำ</strong> ลูกค้ารีเฟรชหน้าขอบคุณหรือกดย้อนกลับ</td><td>ยอดแปลงเกินจริง ผลตอบแทนโฆษณาดูสวยเกินจริง นำไปสู่การเพิ่มงบผิดช่องทาง</td></tr>
+      <tr><td><strong>การซื้อหายไป</strong> การส่งกลับจากผู้ให้บริการชำระเงินไม่สำเร็จ หรือลูกค้าปิดหน้าก่อนถึงหน้าขอบคุณ</td><td>ยอดแปลงขาด และถ้าเกิดพร้อมกับการย้ายหน้าร้าน จะแยกไม่ออกว่าเว็บแย่ลงหรือการวัดผลพัง</td></tr>
+      <tr><td><strong>นับซ้ำระหว่างฝั่งเบราว์เซอร์กับฝั่งเซิร์ฟเวอร์</strong></td><td>ตัวเลขเป็นสองเท่าทันทีถ้าไม่มีรหัสเหตุการณ์ร่วมให้แพลตฟอร์มรวมให้</td></tr>
+      <tr><td><strong>เหตุการณ์หายตอนเปลี่ยนรูปแบบการโหลดหน้า</strong> เดิมยิงตอนเปลี่ยนเส้นทางในหน้าเดียว ของใหม่เป็นการโหลดหน้าใหม่</td><td>เส้นทางการซื้อขาดเป็นช่วง หาสาเหตุยากเพราะไม่มีข้อผิดพลาดใดปรากฏ</td></tr>
+      <tr><td><strong>คำสั่งซื้อจากหน้าร้านจริง ตลาดกลาง และลิงก์ปิดการขาย หลุดเข้าไปในตัววัดผลโฆษณา</strong></td><td>อันตรายที่สุด เพราะผลตอบแทนโฆษณาพองขึ้นและดูเหมือนโฆษณาได้ผลดีขึ้น ทั้งที่ยอดนั้นไม่ได้มาจากโฆษณา</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note">
+    <p>ข้อสุดท้ายขอเน้น ตอนย้ายไปยิงจากฝั่งเซิร์ฟเวอร์ จะล่อใจมากที่จะยิงจากเหตุการณ์สร้างคำสั่งซื้อโดยตรง ห้ามทำ ต้องกรองเฉพาะคำสั่งซื้อที่มาจากช่องทางเว็บเท่านั้น</p>
+  </div>
+
+  <h3>ทางออกคือชั้นกลางชั้นเดียว</h3>
+  <p>แอปยิงเหตุการณ์ครั้งเดียว แล้วให้ชั้นกลางกระจายออกไปทั้งฝั่งเบราว์เซอร์และฝั่งเซิร์ฟเวอร์ โดยแนบรหัสเหตุการณ์เดียวกันไปทั้งสองทาง แพลตฟอร์มปลายทางจะรวมให้เองและไม่นับซ้ำ</p>
+
+  <figure>
+    <div class="fh"><b>D8</b><span>ชั้นกลางสำหรับกระจายเหตุการณ์</span></div>
+    <div class="scroller">
+<svg viewBox="0 0 900 400" role="img" aria-label="แผนภาพชั้นกลางที่กระจายเหตุการณ์ไปยังฝั่งเบราว์เซอร์และฝั่งเซิร์ฟเวอร์">
+  <defs>
+    <marker id="e1m" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="var(--rule-strong)"/>
+    </marker>
+  </defs>
+  <g font-size="12">
+  <rect x="320" y="18" width="260" height="46" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.6"/>
+  <text x="450" y="40" font-size="13" font-weight="600" text-anchor="middle" fill="var(--ink)">แอปยิงเหตุการณ์ครั้งเดียว</text>
+  <text x="450" y="57" font-size="11" text-anchor="middle" fill="var(--ink-2)">ไม่ต้องรู้ว่าปลายทางมีกี่เจ้า</text>
+
+  <path d="M450 64 L450 92" fill="none" stroke="var(--rule-strong)" marker-end="url(#e1m)"/>
+
+  <rect x="240" y="94" width="420" height="72" fill="var(--ai-bg)" stroke="var(--ai)" stroke-width="1.8"/>
+  <text x="450" y="118" font-size="13" font-weight="600" text-anchor="middle" fill="var(--ai)">ชั้นกลาง</text>
+  <text x="450" y="139" font-size="11.5" text-anchor="middle" fill="var(--ink)">สร้างรหัสเหตุการณ์ · ตรวจความยินยอม · แนบตัวระบุจากคุกกี้</text>
+  <text x="450" y="157" font-size="11.5" text-anchor="middle" fill="var(--ink)">กรองช่องทาง เฉพาะคำสั่งซื้อจากเว็บเท่านั้น</text>
+
+  <path d="M330 166 L330 196 L230 196 L230 220" fill="none" stroke="var(--rule-strong)" marker-end="url(#e1m)"/>
+  <path d="M570 166 L570 196 L670 196 L670 220" fill="none" stroke="var(--rule-strong)" marker-end="url(#e1m)"/>
+
+  <rect x="60" y="222" width="340" height="88" fill="var(--panel)" stroke="var(--rule-strong)" stroke-width="1.5"/>
+  <text x="78" y="246" font-size="12.5" font-weight="600" fill="var(--ink)">ฝั่งเบราว์เซอร์ · ตัวบาง</text>
+  <text x="78" y="267" font-size="11.5" fill="var(--ink-2)">ยังต้องมี เพราะตัวระบุผู้เข้าชมของแต่ละเจ้า</text>
+  <text x="78" y="285" font-size="11.5" fill="var(--ink-2)">อยู่ในคุกกี้ฝั่งเบราว์เซอร์เท่านั้น</text>
+  <text x="78" y="303" font-size="11.5" fill="var(--ink-2)">หน้าที่หลักคือเก็บและส่งต่อให้ชั้นกลาง</text>
+
+  <rect x="500" y="222" width="340" height="88" fill="var(--free-bg)" stroke="var(--free)" stroke-width="1.6"/>
+  <text x="518" y="246" font-size="12.5" font-weight="600" fill="var(--free)">ฝั่งเซิร์ฟเวอร์ · ตัวหลัก</text>
+  <text x="518" y="267" font-size="11.5" fill="var(--ink-2)">ยิงตอนคำสั่งซื้อถูกสร้าง ไม่ใช่ตอนถึงหน้าขอบคุณ</text>
+  <text x="518" y="285" font-size="11.5" fill="var(--ink-2)">มีตารางกันซ้ำต่อคำสั่งซื้อ รีเฟรชกี่ครั้งก็ยิงครั้งเดียว</text>
+  <text x="518" y="303" font-size="11.5" fill="var(--ink-2)">ไม่ถูกบล็อกโดยตัวปิดโฆษณาและข้อจำกัดคุกกี้</text>
+
+  <path d="M230 310 L230 336 L450 336" fill="none" stroke="var(--rule-strong)"/>
+  <path d="M670 310 L670 336 L450 336" fill="none" stroke="var(--rule-strong)"/>
+  <text x="450" y="358" font-size="12" text-anchor="middle" fill="var(--ai)">รหัสเหตุการณ์เดียวกัน ปลายทางจึงรวมให้เองและไม่นับซ้ำ</text>
+  <text x="450" y="382" font-size="11.5" text-anchor="middle" fill="var(--ink-2)">ผลพลอยได้ ยอดแปลงที่วัดได้มักเพิ่มขึ้นหนึ่งถึงสองส่วนในสิบ เพราะกู้เหตุการณ์ที่เคยหายกลับมา</text>
+  </g>
+</svg>
+    </div>
+    <figcaption>การย้ายมาวัดผลฝั่งเซิร์ฟเวอร์ไม่ใช่งานเทคนิคอย่างเดียว แต่เป็นสิ่งที่ขายลูกค้าได้ เพราะแก้ปัญหาการวัดผลที่หายไปจากข้อจำกัดของเบราว์เซอร์ ทำให้ตัวเลขแม่นขึ้นพร้อมกัน</figcaption>
+  </figure>
+
+  <h3>สิ่งที่ระดับแพลตฟอร์มต้องคิดเผื่อ</h3>
+  <ul>
+    <li><strong>หลายร้านหลายบัญชีโฆษณา</strong> กุญแจเชื่อมต่อของแต่ละเจ้าต้องเก็บแยกรายร้าน เข้ารหัส และมีหน้าจอให้ร้านใส่เอง งานนี้ใหญ่กว่าที่คิดเมื่อมีผู้เช่าหลายราย</li>
+    <li><strong>ความยินยอมและกฎหมายคุ้มครองข้อมูล</strong> ต้องส่งสถานะความยินยอมครบทุกหมวด และฝั่งเซิร์ฟเวอร์ต้องเคารพความยินยอมด้วย ไม่ใช่ยิงทะลุเพราะไม่ผ่านเบราว์เซอร์</li>
+    <li><strong>การจับคู่ผู้ใช้ให้แม่นขึ้น</strong> ส่งอีเมลและเบอร์โทรแบบเข้ารหัสทางเดียวจะเพิ่มอัตราการจับคู่ได้มาก แต่ต้องอยู่ใต้ความยินยอมเสมอ</li>
+  </ul>
+
+  <h3>ลำดับการย้ายที่ปลอดภัย</h3>
+  <div class="note">
+    <p><strong>กฎเหล็ก</strong> ห้ามเปลี่ยนหน้าร้านกับเปลี่ยนการวัดผลพร้อมกัน ถ้ายอดแปลงตกสองส่วนในสิบ จะไม่มีทางรู้ว่าเว็บแย่ลงหรือการวัดผลพัง แล้วจะเสียเวลาไล่หาเป็นเดือน</p>
+  </div>
+  <div class="tw">
+  <table>
+    <thead><tr><th class="mono">ขั้น</th><th>ทำอะไร</th><th>ทำบนอะไร</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">0</td><td>ติดตั้งชั้นกลางใหม่ ยิงคู่ไปยังบัญชีสำรองเพื่อเทียบตัวเลข</td><td>เว็บเดิม</td></tr>
+      <tr><td class="mono">1</td><td>เปิดฝั่งเซิร์ฟเวอร์แบบยังไม่นับจริง ส่งเข้าโหมดทดสอบ แล้วเทียบกับฝั่งเบราว์เซอร์</td><td>เว็บเดิม</td></tr>
+      <tr><td class="mono">2</td><td>ปรับจนตัวเลขสองฝั่งต่างกันไม่เกินสองในร้อย แล้วสลับเป็นของจริง</td><td>เว็บเดิม</td></tr>
+      <tr><td class="mono">3</td><td>การวัดผลนิ่งแล้ว จึงเริ่มย้ายหน้าร้าน</td><td>เริ่มของใหม่</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>ขั้นศูนย์ถึงสองให้ผลทางธุรกิจทันทีโดยยังไม่ต้องแตะหน้าร้านเลย จึงขออนุมัติงบภายในได้ง่ายกว่า และเป็นเหตุผลที่ควรเริ่มงานนี้ขนานไปกับงานฐานสามสัปดาห์แรก</p>
+</section>
+
+<!-- ============ BRIEF DESIGN ============ -->
+<section id="design">
+  <h2><span class="n">B1</span>โจทย์สำหรับทีมออกแบบ</h2>
+  <p class="lead">ส่วนนี้คัดลอกไปใช้เป็นโจทย์ตั้งต้นได้เลย เนื้อหาอ้างอิงจาก D3 และ D4</p>
+
+  <div class="brief">
+    <header><b>ออกแบบหน้าจอ Editor ใหม่ของ Ketshopweb CMS</b><em>โจทย์สำหรับงานออกแบบ</em></header>
+    <div class="body">
+
+      <h4>สิ่งที่กำลังออกแบบ</h4>
+      <p>หน้าจอแต่งเว็บไซต์ในระบบหลังร้านของแพลตฟอร์มอีคอมเมิร์ซไทย ผู้ใช้คือเจ้าของร้านและทีมการตลาด ส่วนใหญ่ไม่ใช่นักออกแบบและไม่เขียนโค้ด หลายคนทำงานบนแล็ปท็อปจอเล็กหรือแท็บเล็ต ผืนผ้าใบตรงกลางจะเป็นหน้าพรีวิวของหน้าร้านจริงที่ฝังเข้ามา ไม่ใช่ภาพจำลอง จึงต้องออกแบบตัวจับลากและกรอบการเลือกให้อ่านออกเมื่อวางทับเนื้อหาจริงที่มีสีพื้นหลากหลาย</p>
+
+      <h4>งานที่ผู้ใช้มาทำบ่อยที่สุด</h4>
+      <ol>
+        <li>เปลี่ยนแบนเนอร์หน้าแรกก่อนแคมเปญ</li>
+        <li>เพิ่มบล็อกสินค้าแนะนำ แล้วย้ายตำแหน่ง</li>
+        <li>แก้ข้อความและรูปในบล็อกที่มีอยู่</li>
+        <li>ดูว่าหน้าตาบนมือถือเป็นอย่างไร</li>
+        <li>ย้อนกลับเมื่อแก้แล้วไม่ถูกใจ</li>
+      </ol>
+
+      <h4>ปัญหาที่ต้องแก้ให้ได้</h4>
+      <ul>
+        <li>ผู้ใช้ไม่รู้ว่าตรงไหนแก้ได้ ตรงไหนแก้ไม่ได้ จนกว่าจะลองแล้วล้มเหลว</li>
+        <li>หน้าตะกร้าและหน้าสมัครสมาชิกแก้ได้เพียงบางอย่าง แต่หน้าจอไม่เคยบอกล่วงหน้าว่าอย่างไหนได้</li>
+        <li>เมื่อผู้ช่วยสร้างบล็อกให้ ผู้ใช้ต้องรู้ว่าอะไรเปลี่ยนไปบ้างก่อนจะยอมรับ</li>
+      </ul>
+
+      <h4>หน้าจอและสถานะที่ต้องออกแบบ</h4>
+      <ul>
+        <li>หน้าเลือกหน้าเว็บที่จะแต่ง แยกสามกลุ่มคือหน้าบนเมนู หน้านอกเมนู และหน้าของระบบ</li>
+        <li>หน้าจอหลักสามช่อง คือชั้นของหน้าและคลังทางซ้าย ผืนผ้าใบตรงกลาง คุณสมบัติทางขวา</li>
+        <li>สถานะขณะลาก ทั้งเงาของสิ่งที่ลาก เส้นบอกตำแหน่งวาง และการเลื่อนหน้าอัตโนมัติเมื่อลากถึงขอบ</li>
+        <li>สถานะเมื่อวางในที่ที่ล็อก ต้องบอกเหตุผลและบอกว่าวางตรงไหนได้แทน</li>
+        <li>สี่ระดับการล็อก L0 ถึง L3 ต้องมองออกทันทีจากผืนผ้าใบโดยไม่ต้องคลิก</li>
+        <li>แผงคุณสมบัติที่แยกให้เห็นว่าค่าไหนสืบทอดมาจากชุดสีกลาง ค่าไหนถูกตั้งทับเฉพาะจุดนี้</li>
+        <li>แผงผู้ช่วย พร้อมมุมมองส่วนต่างที่ยอมรับได้ทีละจุด</li>
+        <li>สถานะว่างเปล่า เช่นหน้าที่ยังไม่มีบล็อก และสถานะข้อผิดพลาดจากด่านตรวจ</li>
+        <li>สลับมุมมองคอมพิวเตอร์ แท็บเล็ต มือถือ ภายในผืนผ้าใบ</li>
+        <li>ไทม์ไลน์ประวัติเวอร์ชันและการย้อนกลับ</li>
+      </ul>
+
+      <h4>ข้อบังคับ</h4>
+      <ul>
+        <li>ทุกการกระทำต้องทำด้วยคีย์บอร์ดได้ ผู้ใช้จำนวนมากทำงานบนแท็บเล็ตที่ลากยาก</li>
+        <li>ผืนผ้าใบต้องได้พื้นที่มากที่สุดเสมอ แผงข้างยุบได้</li>
+        <li>สีแดงใช้สื่อความหมายว่าล็อกหรืออันตราย จึงห้ามใช้เป็นสีตกแต่งทั่วไป</li>
+        <li>รองรับภาษาไทยเป็นหลัก ข้อความไทยยาวกว่าอังกฤษราวหนึ่งเท่าตัว เผื่อพื้นที่ให้พอ</li>
+        <li>รองรับโหมดสว่างและมืด</li>
+      </ul>
+
+      <h4>สิ่งที่อยากได้กลับมา</h4>
+      <p>ผังหน้าจอความละเอียดปานกลางของหน้าจอหลัก พร้อมชุดสถานะการลากวางและการล็อก และแนวทางการสื่อสารว่าอะไรแก้ได้แก้ไม่ได้ ยังไม่ต้องลงรายละเอียดสีและฟอนต์ในรอบแรก</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRIEF POC ============ -->
+<section id="poc">
+  <h2><span class="n">B2</span>ขอบเขต POC และแผนย้ายระบบ</h2>
+  <p class="lead">แบ่งเป็นสองส่วน ส่วนแรกคือ POC สามสัปดาห์ที่เริ่มได้ทันทีโดยยังไม่ต้องเคาะเรื่องเทคหน้าร้าน ส่วนที่สองคือแผนย้ายเต็มรูปแบบ</p>
+
+  <dl class="kv">
+    <dt>สิ่งที่ต้องพิสูจน์</dt>
+    <dd>หนึ่ง หน้าเดิมแปลงเป็น Page Schema แล้วเรนเดอร์ออกมาเหมือนเดิมได้ สอง ลากวางบนโครงใหม่ทำได้ลื่นเท่าของเดิม สาม การล็อกที่อ่านจากข้อมูลกันการแก้ผิดที่ได้จริงทั้งจากคนและจากผู้ช่วย</dd>
+    <dt>ไม่อยู่ใน POC</dt>
+    <dd>ระบบสิทธิ์เต็มรูปแบบ หลายภาษา ประสิทธิภาพระดับใช้งานจริง และการย้ายข้อมูลลูกค้าเดิม</dd>
+    <dt>หน้าที่ใช้ทดสอบ</dt>
+    <dd>สามหน้าพอ คือหน้าแรกแทน L0 รายละเอียดสินค้าแทน L1 และตะกร้าแทน L2 สามหน้านี้ครอบคลุมทุกกรณีสำคัญ</dd>
+    <dt>ระยะเวลาที่เสนอ</dt>
+    <dd>สามสัปดาห์ ทีมสองถึงสามคน</dd>
+  </dl>
+
+  <h3>ลำดับงาน</h3>
+  <div class="tw">
+  <table>
+    <thead><tr><th class="mono">สัปดาห์</th><th>งาน</th><th>วัดผลอย่างไร</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="mono">1</td>
+        <td>ย้ายกฎการล็อกจากเงื่อนไขตายตัวในหน้าจอ ไปเป็นข้อมูลที่เซิร์ฟเวอร์บังคับ และแยกฉบับร่างออกจากฉบับจริง สองอย่างนี้คือรากของปัญหาทุกข้อ</td>
+        <td>เรียกบริการบันทึกตรงโดยข้ามหน้าจอ แล้วพยายามแก้บล็อกหลักของหน้าตะกร้า ต้องถูกปฏิเสธจากเซิร์ฟเวอร์ · บันทึกแล้วของจริงยังไม่เปลี่ยนจนกว่าจะสั่งเผยแพร่</td>
+      </tr>
+      <tr>
+        <td class="mono">2</td>
+        <td>ปรับหน้าจอแก้ไขให้อ่านระดับล็อกจากข้อมูลแทนเงื่อนไขตายตัว แสดงสี่ระดับให้เห็นบนผืนผ้าใบ และเพิ่มปุ่มเผยแพร่พร้อมมุมมองส่วนต่าง</td>
+        <td>ทำรายการงานเดิมครบทุกข้อบนหน้าแรก · หน้าสินค้าแทรกบล็อกในช่องที่เปิดได้แต่ย้ายบล็อกหลักไม่ได้ · เพิ่มหน้าใหม่เข้าระดับล็อกได้โดยไม่แก้โค้ดหน้าจอ
+      </tr>
+      <tr>
+        <td class="mono">3</td>
+        <td>ชุดคำสั่งสำหรับผู้ช่วย เฉพาะอ่านและเขียนฉบับร่าง ใช้ด่านตรวจเดียวกับสัปดาห์แรก พร้อมแปลงชุดสีจากข้อความโค้ดให้เป็นข้อมูลที่เครื่องอ่านได้</td>
+        <td>ต่อผู้ช่วยภายนอกแล้วสั่งเพิ่มบล็อกลงหน้าแรกได้ · สั่งแก้บล็อกหลักของหน้าตะกร้าแล้วถูกปฏิเสธพร้อมเหตุผลที่บอกช่องที่เขียนได้ · ผู้ช่วยอ่านชุดสีของร้านออก</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>แผนย้ายระบบเต็มรูปแบบ</h3>
+  <p>ใช้วิธีย้ายทีละเส้นทางผ่านตัวกระจายคำขอ ระบบเดิมกับระบบใหม่อยู่ร่วมกันได้ตลอดช่วงเปลี่ยนผ่าน ไม่ต้องสลับทีเดียวทั้งระบบ และถอยกลับได้ทันทีถ้าเส้นทางไหนมีปัญหา</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th class="mono">ช่วง</th><th>งาน</th><th class="mono">ประมาณ</th><th>ได้อะไร</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">M1–M3</td><td>ย้ายกฎล็อกลงเซิร์ฟเวอร์ และแยกฉบับร่างออกจากฉบับจริง</td><td class="mono">3 สัปดาห์</td><td>รากของทุกอย่าง เริ่มได้เลยวันนี้ ไม่ขึ้นกับการเลือกเทคหน้าร้าน</td></tr>
+      <tr><td class="mono">M4</td><td>ชั้นกลางสำหรับเหตุการณ์ และการวัดผลฝั่งเซิร์ฟเวอร์ ทำบนเว็บเดิม</td><td class="mono">3–4 สัปดาห์</td><td>ยอดแปลงวัดได้แม่นขึ้น เป็นผลทางธุรกิจที่เห็นก่อนใคร โดยยังไม่แตะหน้าร้าน</td></tr>
+      <tr><td class="mono">M5</td><td>ตั้งโครงหน้าร้านใหม่ บริการวาดบล็อกให้หน้าจอแก้ไข และย้ายหน้าเนื้อหาทั้งหมด</td><td class="mono">6–8 สัปดาห์</td><td>คะแนนความเร็วและการถูกค้นเจอ ครบทุกหน้าที่มีคุณค่า จุดคุ้มค่าสูงสุดของโครงการ</td></tr>
+      <tr><td class="mono">M6</td><td>ย้ายหน้าตะกร้าและหน้าชำระเงิน พร้อมการวัดผลที่พิสูจน์แล้วจาก M4</td><td class="mono">6–8 สัปดาห์</td><td>เลิกพึ่งระบบเดิมในเส้นทางการขาย</td></tr>
+      <tr><td class="mono">M7</td><td>ย้ายหน้าสมาชิก โปรไฟล์ และติดตามพัสดุ</td><td class="mono">4 สัปดาห์</td><td>ปิดหน้าร้านของระบบเดิมทั้งหมด เหลือหลังร้านอย่างเดียว</td></tr>
+      <tr><td class="mono">M8</td><td>เปิดให้ผู้ช่วยภายนอกเขียน และเปิด Section AI</td><td class="mono">—</td><td>ต่อยอดบนฐานที่นิ่งแล้ว</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note">
+    <p><strong>จุดตัดสินใจอยู่ที่ M5</strong> จบตรงนั้นก็ได้เป้าหมายเรื่องการถูกค้นเจอและคะแนนความเร็วครบแล้ว ส่วน M6 กับ M7 เป็นงานลดภาระดูแลระยะยาว สำคัญแต่ไม่เร่ง จึงวางแผนงบและกำลังคนแยกได้</p>
+  </div>
+  <p>ขนาดงานรวมของ M5 ถึง M7 มาจากจำนวนรายการในทะเบียนซึ่งมีเจ็ดสิบสี่รายการ รวมบล็อกใหญ่ ชิ้นย่อย หน้าทั้งหน้า ส่วนหัว ส่วนท้าย และแม่แบบสำเร็จอีกสามสิบแบบ ประมาณการนี้อยู่บนสมมติฐานทีมขนาดเล็กสองถึงสามคน</p>
+
+  <h3>ข้อเสนอเชิงเทคนิค</h3>
+  <ul>
+    <li><strong>ไม่ต้องเขียนใหม่</strong> ของเดิมเป็น Angular รุ่นใหม่อยู่แล้ว ไม่ใช่รุ่นเก่าอย่างที่เคยเข้าใจ จึงต่อยอดบนโครงเดิมได้ ไม่ต้องย้ายทีละส่วนและไม่ต้องทำหน้าต่างแยก</li>
+    <li><strong>การล็อกต้องบังคับที่เซิร์ฟเวอร์</strong> หน้าจอแสดงผลตามเท่านั้น ถ้ายังบังคับที่หน้าจออย่างเดียว การเปิดช่องทางให้ผู้ช่วยเท่ากับเปิดให้แก้หน้าชำระเงินโดยไม่มีอะไรกั้น</li>
+    <li><strong>ไลบรารีลากวางเดิมใช้ต่อได้</strong> รองรับการสัมผัสอยู่แล้ว สิ่งที่ต้องเพิ่มคือการทำงานด้วยคีย์บอร์ดและการวาดเฉพาะส่วนที่มองเห็นเมื่อหน้ายาว</li>
+    <li><strong>บล็อกต้องเขียนที่เดียว</strong> หน้าจอแก้ไขฝังหน้าพรีวิวของหน้าร้านใหม่เข้ามาแทนการวาดเอง ถ้าพลาดข้อนี้จะต้องเขียนบล็อกทุกชนิดสองครั้ง ซึ่งเป็นความเสี่ยงที่ทำให้โครงการล้มได้</li>
+    <li><strong>แยกโหมดตามชนิดหน้า</strong> หน้าเนื้อหาวาดล่วงหน้าและแคชเพื่อไล่คะแนนความเร็ว ส่วนหน้าธุรกรรมทำงานในเบราว์เซอร์และประกาศไม่ให้เก็บดัชนี จึงไม่ดึงคะแนนเฉลี่ยลง แต่ยังใช้คอมโพเนนต์และชุดสีชุดเดียวกัน</li>
+    <li><strong>หน้าบ้านเรนเดอร์ฝั่งเซิร์ฟเวอร์</strong> เพื่อให้เก็บดัชนีได้เต็ม พร้อมสร้างข้อมูลโครงสร้างตามชนิดของ Section โดยอัตโนมัติ เช่นบล็อกสินค้าออกข้อมูลสินค้าและราคา บล็อกคำถามที่พบบ่อยออกข้อมูลคำถาม</li>
+    <li><strong>ชุดสีและฟอนต์เก็บเป็นตัวแปรกลาง</strong> แล้วให้ทุกชิ้นอ้างถึง ส่วนการเขียนสไตล์เองย้ายมาเป็นทางออกฉุกเฉินที่จำกัดขอบเขตต่อบล็อก แทนที่จะมีผลทั้งเว็บ</li>
+  </ul>
+
+  <h3>ความเสี่ยงที่ควรพูดคุยตั้งแต่แรก</h3>
+  <ol>
+    <li><strong>ชุดสีที่เก็บเป็นข้อความโค้ดแล้วสั่งรัน</strong> ต้องแปลงเป็นข้อมูลก่อนจึงจะทำระบบอ้างอิงสีกลางได้ ระหว่างแปลงต้องรองรับของเดิมไปพร้อมกัน และเป็นการปิดช่องโหว่ไปในตัว</li>
+    <li><strong>สไตล์ที่ลูกค้าเขียนเองไว้เดิมจะพัง</strong> เมื่อโครงสร้างหน้าเปลี่ยน ควรมีโหมดเข้ากันได้กับของเดิมและช่วงที่วาดคู่กันไปก่อน</li>
+    <li><strong>ต้นทุนการเรียกใช้ของลูกค้า</strong> ถ้าอ่านหน้าทั้งก้อนทุกครั้ง โควตาจะหมดเร็ว ต้องออกแบบให้อ่านเฉพาะส่วนตั้งแต่ต้น</li>
+    <li><strong>ตัวเลขการวัดผลโฆษณาเพี้ยนระหว่างย้าย</strong> ความเสี่ยงสูงกว่างานความเร็ว เพราะกระทบเงินของลูกค้าโดยตรงและรู้ตัวช้า ทางกันคือแยกเวลาให้ชัด ย้ายการวัดผลให้นิ่งก่อนแล้วจึงย้ายหน้าร้าน</li>
+    <li><strong>ขนาดงานย้ายบล็อก</strong> เจ็ดสิบสี่รายการในทะเบียนบวกแม่แบบสำเร็จอีกสามสิบแบบ ถ้าทำเรียงทีละอันจะใช้เวลานานเกินไป ควรจัดกลุ่มตามความถี่ที่ลูกค้าใช้จริงแล้วย้ายกลุ่มที่ใช้มากก่อน และเก็บสถิติการใช้งานจริงก่อนเริ่มเพื่อจัดลำดับ</li>
+  </ol>
+</section>
+
+<!-- ============ OPEN ============ -->
+<section id="open">
+  <h2><span class="n">99</span>ที่ยังต้องตัดสินใจ</h2>
+  <ol>
+    <li><strong>โครงสร้างตารางฝั่งเซิร์ฟเวอร์</strong> ที่เก็บที่ได้มาเป็นฝั่งหน้าจออย่างเดียว ยังต้องขอโครงสร้างตารางของหน้า บล็อก ชิ้นย่อย เมนู และค่าตั้งค่า เพื่อวางแผนการย้ายข้อมูลและการบังคับล็อกที่เซิร์ฟเวอร์</li>
+    <li><strong>เทคหน้าร้าน</strong> ข้อเสนอคือโครงเดียวที่รองรับทั้งหน้าเนื้อหาแบบวาดล่วงหน้าและหน้าธุรกรรมแบบทำงานในเบราว์เซอร์ เพราะขอบเขตรวมหน้าตะกร้าและหน้าชำระเงินเข้ามาด้วย ตัวเลือกที่เน้นเนื้อหาล้วนจะทำให้ต้องมีระบบแยกอีกตัว</li>
+    <li><strong>สถิติการใช้งานบล็อกจริง</strong> ต้องการข้อมูลว่าร้านใช้บล็อกชนิดไหนมากที่สุด เพื่อจัดลำดับการย้าย ถ้าไม่มีข้อมูลนี้จะจัดลำดับด้วยการเดา</li>
+    <li><strong>คะแนนความเร็วตั้งต้นวันนี้</strong> ควรวัดเว็บลูกค้าจริงสองถึงสามร้านก่อนเริ่ม เพื่อให้มีฐานเปรียบเทียบและรู้ว่าคะแนนเสียไปกับอะไรมากที่สุด</li>
+    <li><strong>ใครรับผิดชอบเมื่อผู้ช่วยทำหน้าเว็บพัง</strong> ข้อเสนอคือให้เขียนได้แค่ฉบับร่าง และให้คนกดเผยแพร่เสมอ ส่วนการเผยแพร่อัตโนมัติเป็นตัวเลือกที่ต้องเปิดเอง</li>
+    <li><strong>Section AI บนหน้าชำระเงิน</strong> ข้อเสนอคือปิดถาวรสำหรับระดับที่มีสคริปต์ เพราะเป็นหน้าที่มีข้อมูลการชำระเงิน ความเสี่ยงไม่คุ้ม</li>
+    <li><strong>รูปแบบการขาย</strong> ช่องทางเชื่อมผู้ช่วยจะรวมในแพ็กเกจหรือขายแยก มีผลต่อการออกแบบโควตาและสิทธิ์ตั้งแต่ต้น</li>
+  </ol>
+</section>
+
+<footer class="end">
+  <p>แหล่งอ้างอิงหลัก คู่มือการใช้งานระบบ Ketshopweb เวอร์ชัน 8 หมวดตกแต่งเว็บไซต์ โดยเฉพาะบทความเรื่องการเลือกหน้าในการปรับแต่ง การเพิ่มลบย้าย Section ประวัติการแก้ไขและการกู้คืนเวอร์ชัน การจัดการ Header และ Footer การใส่ SEO แต่ละหน้า และการเชื่อมต่อผู้ช่วยภายนอก ดูได้ที่ <a href="https://ketshopweb.com/help/manual">ketshopweb.com/help/manual</a></p>
+  <p>เอกสารนี้เป็นร่างเพื่อพิจารณา โครงสร้างฐานข้อมูลใน D2 ยังไม่ได้ยืนยันกับ schema จริง</p>
+</footer>
+
+</main>
+</div>
+</div>
+</body>
+</html>

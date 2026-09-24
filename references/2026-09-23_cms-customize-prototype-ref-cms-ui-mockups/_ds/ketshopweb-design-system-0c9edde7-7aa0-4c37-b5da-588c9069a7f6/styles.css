@@ -1,0 +1,5 @@
+/* Ketshopweb Design System — single entry. Consumers link only this file. */
+@import url("design-system/tokens.css");
+@import url("design-system/fonts.css");
+@import url("design-system/components.css");
+@import url("design-system/document.css");

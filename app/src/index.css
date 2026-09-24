@@ -1,0 +1,60 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+/* DS tokens go in the base layer: its unlayered element rules (button color, :lang(th) font) would otherwise beat Tailwind utilities and the Font Awesome glyph font */
+@import "./ketshopweb-ds-tokens.css" layer(base);
+@import "@fontsource/prompt/300.css";
+@import "@fontsource/prompt/400.css";
+@import "@fontsource/prompt/500.css";
+@import "@fontsource/prompt/600.css";
+@import "@fontsource/prompt/700.css";
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+@import "@fontsource/poppins/800.css";
+
+/* Ketshopweb DS tokens (from mockup _ds) exposed to Tailwind: bg-ink-900, text-red-600, bg-success-100 … */
+@theme inline {
+  --font-heading: 'Prompt', 'Poppins', system-ui, sans-serif;
+  --font-display: 'Poppins', 'Prompt', system-ui, sans-serif;
+  --font-sans: 'Prompt', 'Poppins', system-ui, sans-serif;
+
+  --color-ink-0: var(--ink-0);     --color-ink-25: var(--ink-25);   --color-ink-50: var(--ink-50);
+  --color-ink-100: var(--ink-100); --color-ink-150: var(--ink-150); --color-ink-200: var(--ink-200);
+  --color-ink-300: var(--ink-300); --color-ink-400: var(--ink-400); --color-ink-500: var(--ink-500);
+  --color-ink-600: var(--ink-600); --color-ink-700: var(--ink-700); --color-ink-800: var(--ink-800);
+  --color-ink-900: var(--ink-900);
+  --color-red-50: var(--red-50);   --color-red-100: var(--red-100); --color-red-300: var(--red-300);
+  --color-red-600: var(--red-600); --color-red-700: var(--red-700);
+  --color-orange-50: var(--orange-50); --color-orange-100: var(--orange-100); --color-orange-500: var(--orange-500);
+  --color-orange-600: var(--orange-600); --color-orange-700: var(--orange-700);
+  --color-success-50: var(--success-50); --color-success-100: var(--success-100); --color-success-500: var(--success-500);
+  --color-success-600: var(--success-600); --color-success-700: var(--success-700);
+  --color-warning-100: var(--warning-100); --color-warning-500: var(--warning-500); --color-warning-600: var(--warning-600); --color-warning-700: var(--warning-700);
+  --color-info-100: var(--info-100); --color-info-500: var(--info-500); --color-info-700: var(--info-700);
+  --color-legacy: #1a1a1a;
+  --color-legacy-active: #E85440;
+  --color-cream: #FAF6F2;
+}
+
+html, body, #root { height: 100%; margin: 0; }
+body { font-family: var(--font-heading); font-size: 14px; line-height: 1.5; color: var(--ink-900); background: var(--ink-100); overflow: hidden; }
+button { cursor: pointer; }
+/* no visible scrollbars anywhere (areas still scroll with wheel / trackpad / touch) */
+* { scrollbar-width: none; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 2px; }
+
+.narrow-note { display: none; }
+@media (max-width: 999px) {
+  .narrow-note { display: grid; place-items: center; position: fixed; inset: 0; z-index: 200; padding: 24px 16px; background: var(--ink-50); color: var(--ink-700); text-align: center; line-height: 1.6; font-size: 15px; }
+  .narrow-note b { color: var(--ink-900); font-size: 17px; }
+}
+
+/* dotted canvas backgrounds from the mockup */
+.canvas-dots-ink { background: var(--ink-100) radial-gradient(var(--ink-200) 1px, transparent 1px) 0 0/16px 16px; }
+.canvas-dots-cream { background: #FAF6F2 radial-gradient(rgba(19,21,27,.08) 1px, transparent 1px) 0 0/18px 18px; }
+
+/* floating items at the bottom of a canvas step up while the designer dock is open, so it never covers them */
+.fb { transition: bottom .2s; }
+body.dock-on .fb { bottom: 66px !important; }

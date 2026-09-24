@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/ketshopweb-design-system-0c9edde7-7aa0-4c37-b5da-588c9069a7f6/design-system/tokens.css">
+  <link rel="stylesheet" href="_ds/ketshopweb-design-system-0c9edde7-7aa0-4c37-b5da-588c9069a7f6/design-system/fonts.css">
+  <link rel="stylesheet" href="assets/fa/css/all.min.css">
+  <script src="_ds/ketshopweb-design-system-0c9edde7-7aa0-4c37-b5da-588c9069a7f6/_ds_bundle.js"></script>
+</helmet>
+<!-- ===== MODERN THEME (same Page schema: Header / Marquee / Hero / Products / Footer — new skin) ===== -->
+<sc-if value="{{ isModern }}" hint-placeholder-val="{{ false }}">
+<div style="width:100%;background:#F7F4EF;font-family:'Prompt',sans-serif;color:#141414;position:relative;overflow:hidden">
+  <!-- HEADER: glass pill -->
+  <div style="position:relative;padding:10px 12px 0;outline:{{ ol.header.outline }};outline-offset:-2px">
+    <sc-if value="{{ ol.header.chip }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:8px;top:-9px;z-index:5;display:flex;gap:4px;align-items:center;font-size:10px;font-weight:600;font-family:var(--font-heading)">
+        <span style="background:{{ ol.header.chipBg }};color:#fff;padding:2px 7px;border-radius:5px">Header · Glass</span>
+        <span style="background:var(--warning-100);color:var(--warning-700);padding:2px 6px;border-radius:5px;display:inline-flex;gap:4px;align-items:center"><i class="fas fa-lock" style="font-size:8px"></i>L2</span>
+      </div>
+    </sc-if>
+    <div style="background:rgba(255,255,255,.75);backdrop-filter:blur(8px);border:1px solid rgba(20,20,20,.08);border-radius:999px;display:flex;align-items:center;justify-content:space-between;padding:8px 8px 8px 16px;box-shadow:0 8px 24px -12px rgba(20,20,20,.25)">
+      <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:12px;letter-spacing:-.02em">GIRLY<span style="color:#C8522E">.</span>CLOSET</div>
+      <div style="display:flex;gap:12px;font-size:8px;font-weight:500;color:#333;align-items:center"><span>New in</span><span>Collection</span><span>Sale</span><span>Journal</span></div>
+      <div style="display:flex;gap:6px;align-items:center"><span style="width:22px;height:22px;border-radius:50%;background:#fff;border:1px solid rgba(20,20,20,.1);display:grid;place-items:center;font-size:8px"><i class="fas fa-search"></i></span><span style="height:22px;padding:0 9px;border-radius:999px;background:#141414;color:#fff;display:flex;align-items:center;gap:4px;font-size:8px;font-weight:600"><i class="fas fa-shopping-bag" style="font-size:7px"></i>0</span></div>
+    </div>
+  </div>
+  <!-- MARQUEE: outlined type -->
+  <div style="position:relative;padding:12px 0 4px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:800;letter-spacing:.02em;white-space:nowrap;overflow:hidden;color:transparent;-webkit-text-stroke:.6px #141414;outline:{{ ol.marquee.outline }};outline-offset:-2px">AUTUMN EDIT 2026 &nbsp;✦&nbsp; FREE SHIPPING 999+ &nbsp;✦&nbsp; AUTUMN EDIT 2026 &nbsp;✦&nbsp; NEW DROP EVERY FRIDAY &nbsp;✦</div>
+  <!-- HERO: full-bleed editorial -->
+  <div style="position:relative;padding:8px 12px 14px;outline:{{ ol.hero.outline }};outline-offset:-2px">
+    <sc-if value="{{ ol.hero.chip }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:8px;top:-9px;z-index:5;display:flex;gap:4px;align-items:center;font-size:10px;font-weight:600;font-family:var(--font-heading)">
+        <span style="background:{{ ol.hero.chipBg }};color:#fff;padding:2px 7px;border-radius:5px">Hero · Editorial</span>
+        <span style="background:var(--success-100);color:var(--success-700);padding:2px 6px;border-radius:5px">L0</span>
+        <span style="background:var(--info-100);color:var(--info-700);padding:2px 6px;border-radius:5px">T1 · parallax</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ ol.hero.toolbar }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:10px;top:-14px;z-index:6;display:flex;gap:2px;background:var(--ink-900);border-radius:8px;padding:3px;box-shadow:var(--shadow-lg);color:#fff;font-size:11px">
+        <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px;background:linear-gradient(135deg,var(--red-600),var(--orange-500))"><i class="fas fa-magic" style="font-size:10px"></i></span>
+        <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px"><i class="fas fa-cog" style="font-size:10px"></i></span>
+        <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px"><i class="far fa-clone" style="font-size:10px"></i></span>
+        <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px"><i class="fas fa-ellipsis-h" style="font-size:10px"></i></span>
+      </div>
+    </sc-if>
+    <div style="position:relative;height:250px;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,#e3c4a6 0%,#b07a55 45%,#4a2d1e 100%)">
+      <div style="position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.35)"><i class="far fa-image" style="font-size:34px"></i></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;padding:16px 18px;background:linear-gradient(180deg,transparent,rgba(20,20,20,.65));color:#fff;display:flex;justify-content:space-between;align-items:flex-end;gap:10px">
+        <div><div style="font-size:7px;letter-spacing:.2em;font-weight:600;opacity:.85;margin-bottom:4px">NEW COLLECTION · 2026</div><div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:26px;line-height:.95;letter-spacing:-.03em">Autumn<br>Edit</div></div>
+        <span style="height:26px;padding:0 12px;border-radius:999px;background:#fff;color:#141414;display:flex;align-items:center;gap:6px;font-size:8px;font-weight:700;white-space:nowrap">Shop the edit <i class="fas fa-arrow-right" style="font-size:7px"></i></span>
+      </div>
+      <div style="position:absolute;right:14px;top:14px;display:flex;gap:4px"><span style="width:16px;height:3px;border-radius:2px;background:#fff"></span><span style="width:6px;height:3px;border-radius:2px;background:rgba(255,255,255,.5)"></span><span style="width:6px;height:3px;border-radius:2px;background:rgba(255,255,255,.5)"></span></div>
+    </div>
+  </div>
+  <!-- PRODUCTS: editorial grid -->
+  <div style="position:relative;padding:8px 12px 18px;outline:{{ ol.products.outline }};outline-offset:-2px">
+    <sc-if value="{{ ol.products.chip }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:8px;top:-9px;z-index:5;display:flex;gap:4px;align-items:center;font-size:10px;font-weight:600;font-family:var(--font-heading)">
+        <span style="background:{{ ol.products.chipBg }};color:#fff;padding:2px 7px;border-radius:5px">Product · Editorial grid</span>
+        <span style="background:var(--success-100);color:var(--success-700);padding:2px 6px;border-radius:5px">L0</span>
+        <span style="background:var(--info-100);color:var(--info-700);padding:2px 6px;border-radius:5px">T1 · hover reveal</span>
+      </div>
+    </sc-if>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px"><div><div style="font-size:7px;letter-spacing:.2em;font-weight:600;color:#888">CURATED</div><div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.03em;line-height:1">Recommended for you</div></div><span style="font-size:8px;font-weight:600;border-bottom:1px solid #141414">View all</span></div>
+    <div style="display:flex;align-items:center;border:1px solid rgba(20,20,20,.12);border-radius:999px;padding:5px 6px 5px 12px;gap:8px;margin-bottom:12px;background:#fff">
+      <i class="fas fa-magic" style="font-size:9px;color:#C8522E"></i><span style="flex:1;font-size:8px;color:#888">บอกลุคที่อยากได้… "ชุดไปทะเลโทนครีม"</span>
+      <span style="background:#141414;color:#fff;border-radius:999px;padding:4px 9px;font-size:7.5px;font-weight:600">ค้นหาด้วย AI</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="4">
+        <div style="position:relative">
+          <div style="aspect-ratio:3/4;border-radius:12px;background:{{ p.bg }};display:grid;place-items:center;color:rgba(0,0,0,.2);position:relative;overflow:hidden"><i class="fas fa-tshirt" style="font-size:20px"></i><span style="position:absolute;left:6px;top:6px;background:#fff;font-size:6px;padding:2px 6px;border-radius:999px;font-weight:700;letter-spacing:.04em">NEW</span><span style="position:absolute;right:6px;top:6px;width:16px;height:16px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:7px"><i class="far fa-heart"></i></span></div>
+          <div style="padding:6px 2px 0;font-size:7.5px;line-height:1.3;display:flex;justify-content:space-between;gap:4px"><span style="font-weight:500">{{ p.name }}</span><span style="font-family:'Poppins',sans-serif;font-weight:700">{{ p.price }}</span></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <!-- FOOTER: minimal -->
+  <div style="position:relative;background:#141414;color:#bdb7b0;padding:16px 14px 12px;font-size:7.5px;outline:{{ ol.footer.outline }};outline-offset:-2px">
+    <sc-if value="{{ ol.footer.chip }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:8px;top:-9px;z-index:5;display:flex;gap:4px;align-items:center;font-size:10px;font-weight:600;font-family:var(--font-heading)">
+        <span style="background:{{ ol.footer.chipBg }};color:#fff;padding:2px 7px;border-radius:5px">Footer · Minimal</span>
+        <span style="background:var(--warning-100);color:var(--warning-700);padding:2px 6px;border-radius:5px;display:inline-flex;gap:4px;align-items:center"><i class="fas fa-lock" style="font-size:8px"></i>L2</span>
+      </div>
+    </sc-if>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px"><div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.03em;color:#fff;line-height:1">GIRLY<span style="color:#C8522E">.</span></div><div style="display:flex;gap:14px"><div><div style="color:#fff;font-weight:600;margin-bottom:3px">Shop</div>New in · Collection · Sale</div><div><div style="color:#fff;font-weight:600;margin-bottom:3px">Help</div>จัดส่ง · คืนสินค้า · ติดต่อ</div></div></div>
+    <div style="border-top:1px solid rgba(255,255,255,.12);padding-top:8px;display:flex;justify-content:space-between;align-items:center"><span>© 2026 Girly Closet</span><span style="display:flex;gap:8px;font-size:9px;color:#fff"><i class="fab fa-instagram"></i><i class="fab fa-tiktok"></i><i class="fab fa-line"></i></span></div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ===== CLASSIC THEME (current storefront) ===== -->
+<sc-if value="{{ isClassic }}" hint-placeholder-val="{{ true }}">
+<div style="width:100%;background:#fff;font-family:'Prompt',sans-serif;color:#222;position:relative;overflow:hidden">
+  <!-- HEADER (topbar + nav) -->
+  <div style="position:relative;outline:{{ ol.header.outline }};outline-offset:-2px">
+    <sc-if value="{{ ol.header.chip }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:8px;top:6px;z-index:5;display:flex;gap:4px;align-items:center;font-size:10px;font-weight:600;font-family:var(--font-heading)">
+        <span style="background:{{ ol.header.chipBg }};color:#fff;padding:2px 7px;border-radius:5px">Header</span>
+        <span style="background:var(--warning-100);color:var(--warning-700);padding:2px 6px;border-radius:5px;display:inline-flex;gap:4px;align-items:center"><i class="fas fa-lock" style="font-size:8px"></i>L2 · แก้ค่าได้</span>
+      </div>
+    </sc-if>
+    <div style="background:#6b5343;color:#fff;font-size:9px;display:flex;justify-content:space-between;align-items:center;padding:5px 12px">
+      <div style="display:flex;gap:8px;align-items:center"><i class="fab fa-facebook-square"></i><i class="fab fa-line"></i><i class="fas fa-envelope"></i><i class="fas fa-phone-alt"></i><span>02-345-6789</span></div>
+      <div style="display:flex;gap:6px;align-items:center"><i class="fas fa-user" style="font-size:8px"></i>User Account <i class="fas fa-caret-down"></i></div>
+    </div>
+    <div style="background:#dfe7f3;display:flex;justify-content:space-between;align-items:center;padding:8px 14px;gap:10px">
+      <div style="font-family:Georgia,serif;font-size:15px;letter-spacing:.06em;font-weight:700">GIRLY CLOSET</div>
+      <div style="display:flex;gap:11px;font-size:8px;text-transform:uppercase;letter-spacing:.02em;color:#333;align-items:center">
+        <span>Home</span><span>Collection ▾</span><span>Product ▾</span><span>Promotion ▾</span><span>Blog</span><span>Contact ▾</span><span style="display:inline-flex;gap:3px;align-items:center"><i class="fas fa-shopping-bag"></i>(0)</span>
+      </div>
+    </div>
+  </div>
+  <!-- MARQUEE -->
+  <div style="position:relative;padding:8px 0;font-size:10px;letter-spacing:.28em;white-space:nowrap;overflow:hidden;color:#111;font-weight:500;outline:{{ ol.marquee.outline }};outline-offset:-2px">• SALE • LIMITED TIME • SALE • LIMITED TIME • SALE • LIMITED TIME • SALE •</div>
+  <!-- HERO -->
+  <div style="position:relative;padding:6px 8px 12px;outline:{{ ol.hero.outline }};outline-offset:-2px">
+    <sc-if value="{{ ol.hero.chip }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:8px;top:-9px;z-index:5;display:flex;gap:4px;align-items:center;font-size:10px;font-weight:600;font-family:var(--font-heading)">
+        <span style="background:{{ ol.hero.chipBg }};color:#fff;padding:2px 7px;border-radius:5px">Hero Banner</span>
+        <span style="background:var(--success-100);color:var(--success-700);padding:2px 6px;border-radius:5px">L0 · แก้ได้อิสระ</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ ol.hero.toolbar }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:10px;top:-14px;z-index:6;display:flex;gap:2px;background:var(--ink-900);border-radius:8px;padding:3px;box-shadow:var(--shadow-lg);color:#fff;font-size:11px">
+        <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px;background:linear-gradient(135deg,var(--red-600),var(--orange-500))"><i class="fas fa-magic" style="font-size:10px"></i></span>
+        <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px"><i class="fas fa-cog" style="font-size:10px"></i></span>
+        <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px"><i class="far fa-clone" style="font-size:10px"></i></span>
+        <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px"><i class="fas fa-arrow-up" style="font-size:10px"></i></span>
+        <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px"><i class="fas fa-arrow-down" style="font-size:10px"></i></span>
+        <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px"><i class="fas fa-ellipsis-h" style="font-size:10px"></i></span>
+      </div>
+    </sc-if>
+    <div style="position:relative;height:210px">
+      <div style="position:absolute;left:0;top:0;width:60%;height:100%;background:linear-gradient(160deg,#d9b493 0%,#b07a55 45%,#5e3b28 100%);display:grid;place-items:center;color:rgba(255,255,255,.7)"><i class="far fa-image" style="font-size:28px"></i></div>
+      <div style="position:absolute;right:0;top:20px;width:56%;height:170px;background:#faf8f5;box-shadow:0 6px 24px rgba(0,0,0,.12);padding:16px 14px;display:flex;flex-direction:column;gap:6px">
+        <span style="align-self:flex-start;background:#c8522e;color:#fff;font-size:6.5px;padding:2px 5px;letter-spacing:.05em;font-weight:600">GIRLY CLOSET</span>
+        <div style="font-family:Georgia,serif;font-size:19px;line-height:1.1;letter-spacing:.02em">NEW COLLECTION 2026</div>
+        <div style="font-size:6.5px;color:#555;line-height:1.5">อัปเดตลุคใหม่กับคอลเลกชันล่าสุด รวมไอเทมที่ต้องมี ไม่ว่าจะลุคชิล ลุคเที่ยว หรือวันสบายๆ ก็ครบจบในที่เดียว</div>
+        <div style="margin-top:auto;align-self:flex-end;font-size:8px;text-decoration:underline;font-weight:500">SHOP NOW</div>
+      </div>
+      <div style="position:absolute;left:28%;bottom:4px;display:flex;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:#222"></span><span style="width:5px;height:5px;border-radius:50%;background:#bbb"></span></div>
+    </div>
+  </div>
+  <div style="padding:8px 0;font-size:10px;letter-spacing:.28em;white-space:nowrap;overflow:hidden;color:#111;font-weight:500">• SALE • LIMITED TIME • SALE • LIMITED TIME • SALE • LIMITED TIME • SALE •</div>
+  <!-- PRODUCTS -->
+  <div style="position:relative;padding:12px 8px 16px;outline:{{ ol.products.outline }};outline-offset:-2px">
+    <sc-if value="{{ ol.products.chip }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:8px;top:-9px;z-index:5;display:flex;gap:4px;align-items:center;font-size:10px;font-weight:600;font-family:var(--font-heading)">
+        <span style="background:{{ ol.products.chipBg }};color:#fff;padding:2px 7px;border-radius:5px">Product · แนะนำ</span>
+        <span style="background:var(--success-100);color:var(--success-700);padding:2px 6px;border-radius:5px">L0</span>
+      </div>
+    </sc-if>
+    <div style="text-align:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;letter-spacing:-.01em;margin-bottom:10px">SHOP NOW</div>
+    <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:999px;padding:5px 6px 5px 12px;gap:8px;margin-bottom:12px;background:#fff">
+      <i class="fas fa-search" style="font-size:9px;color:#666"></i><span style="flex:1;font-size:8px;color:#999">สำรวจด้วย Ai</span>
+      <span style="border:1px solid #f0b400;border-radius:999px;padding:3px 8px;font-size:7.5px;font-weight:600;display:inline-flex;gap:4px;align-items:center;background:#fff"><i class="fas fa-magic" style="color:#7c3aed;font-size:7px"></i>ค้นหาด้วย Ai</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="4">
+        <div style="border:1px solid #eee;position:relative">
+          <span style="position:absolute;left:0;top:0;background:#111;color:#fff;font-size:6px;padding:2px 4px;font-weight:600;letter-spacing:.03em">RECOMMENDED</span>
+          <div style="height:86px;background:{{ p.bg }};display:grid;place-items:center;color:rgba(0,0,0,.25)"><i class="fas fa-tshirt" style="font-size:20px"></i></div>
+          <div style="padding:6px;font-size:7.5px;line-height:1.3"><div style="font-weight:500">{{ p.name }}</div><div style="color:#c8522e;font-weight:600;margin-top:2px">{{ p.price }}</div></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <!-- FOOTER -->
+  <div style="position:relative;background:#2d2a28;color:#cfc8c2;padding:14px 14px 10px;font-size:7.5px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:10px;outline:{{ ol.footer.outline }};outline-offset:-2px">
+    <sc-if value="{{ ol.footer.chip }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:8px;top:-9px;z-index:5;display:flex;gap:4px;align-items:center;font-size:10px;font-weight:600;font-family:var(--font-heading)">
+        <span style="background:{{ ol.footer.chipBg }};color:#fff;padding:2px 7px;border-radius:5px">Footer</span>
+        <span style="background:var(--warning-100);color:var(--warning-700);padding:2px 6px;border-radius:5px;display:inline-flex;gap:4px;align-items:center"><i class="fas fa-lock" style="font-size:8px"></i>L2</span>
+      </div>
+    </sc-if>
+    <div><div style="font-family:Georgia,serif;color:#fff;font-size:12px;margin-bottom:6px">GIRLY CLOSET</div><div style="line-height:1.5">เสื้อผ้าแฟชั่นผู้หญิง ส่งไวทั่วไทย<br>02-345-6789 · hello@girlycloset.co</div></div>
+    <div><div style="color:#fff;font-weight:600;margin-bottom:4px">Shop</div>New in<br>Collection<br>Sale</div>
+    <div><div style="color:#fff;font-weight:600;margin-bottom:4px">Help</div>การจัดส่ง<br>คืนสินค้า<br>ติดต่อเรา</div>
+    <div><div style="color:#fff;font-weight:600;margin-bottom:4px">Follow</div><div style="display:flex;gap:6px;font-size:10px"><i class="fab fa-facebook"></i><i class="fab fa-instagram"></i><i class="fab fa-line"></i></div></div>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:560,&quot;height&quot;:720},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;classic&quot;,&quot;modern&quot;],&quot;default&quot;:&quot;classic&quot;,&quot;tsType&quot;:&quot;'classic'|'modern'&quot;},&quot;overlays&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;selected&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;&quot;,&quot;header&quot;,&quot;hero&quot;,&quot;products&quot;,&quot;footer&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;var(--red-600)&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const overlays = !!this.props.overlays;
+    const selected = this.props.selected ?? '';
+    const hot = this.props.accent ?? 'var(--red-600)';
+    const mk = (key, lockColor) => {
+      const sel = selected === key;
+      return {
+        outline: overlays ? (sel ? `2px solid ${hot}` : '1px dashed rgba(19,21,27,.25)') : 'none',
+        chip: overlays,
+        chipBg: sel ? hot : 'var(--ink-700)',
+        toolbar: overlays && sel,
+      };
+    };
+    const ol = { header: mk('header'), marquee: { outline: overlays ? '1px dashed rgba(19,21,27,.25)' : 'none' }, hero: mk('hero'), products: mk('products'), footer: mk('footer') };
+    const products = [
+      { name: 'Aloe Water Jelly 50ml', price: '฿590', bg: '#f6dfe6' },
+      { name: 'Hydra Gel Cream', price: '฿690', bg: '#f3f3f3' },
+      { name: 'Happy Frog Mask Set', price: '฿290', bg: '#e6f0fb' },
+      { name: 'Scrunchie Bag Mini', price: '฿1,290', bg: '#ecebf5' },
+    ];
+    const theme = this.props.theme ?? 'classic';
+    return { ol, products, isModern: theme === 'modern', isClassic: theme !== 'modern' };
+  }
+}
+</script>
+</body>
+</html>

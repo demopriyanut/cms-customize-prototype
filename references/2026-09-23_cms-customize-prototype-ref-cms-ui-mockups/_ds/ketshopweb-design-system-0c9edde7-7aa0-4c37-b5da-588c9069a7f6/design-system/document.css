@@ -1,0 +1,566 @@
+/* =====================================================================
+   KETSHOPWEB — FORMAL DOCUMENT CSS
+   Companion to: design-system/document-pattern.md
+   Scope: Proposal / Quotation / Contract / SOW / API Doc (print → PDF)
+   Requires: fonts.css (Prompt, Poppins, TH Sarabun New) + tokens.css
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. @page + print setup — A4 portrait, 12/12/13/13mm margin
+   --------------------------------------------------------------------- */
+@page {
+  size: A4 portrait;
+  margin: 12mm 13mm 12mm 13mm;
+}
+
+/* ---------------------------------------------------------------------
+   2. Document root (.doc) — shared screen + print base
+   --------------------------------------------------------------------- */
+.doc {
+  /* Body TH by default (most formal docs are Thai) */
+  font-family: "TH Sarabun New", "Sarabun", "Prompt", sans-serif;
+  font-size: 16pt;            /* TH body */
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--ink-800, #1E2129);
+  background: #FFFFFF;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "tnum" off;  /* tnum only on numbers (see .doc-num) */
+}
+
+/* EN body override */
+.doc[lang="en"],
+.doc .en,
+.doc [lang="en"] {
+  /* Per spec update: body uses TH Sarabun New for both TH + EN */
+  font-family: "TH Sarabun New", "Sarabun", "Prompt", sans-serif;
+  font-size: 16pt;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* ---------------------------------------------------------------------
+   3. On-screen preview — render as A4 page(s) with shadow + light canvas
+   Use <div class="doc-viewport"><section class="doc-page">…</section></div>
+   --------------------------------------------------------------------- */
+.doc-viewport {
+  background: var(--ink-100, #EEF0F4);
+  min-height: 100vh;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.doc-page {
+  /* Fixed A4 on-screen */
+  width: 210mm;
+  min-height: 297mm;
+  padding: 12mm 13mm 12mm 13mm;
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(19, 21, 27, .08), 0 16px 40px rgba(19, 21, 27, .12);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  /* so inline .doc styles resolve */
+  font-family: "TH Sarabun New", "Sarabun", "Prompt", sans-serif;
+  font-size: 16pt;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--ink-800, #1E2129);
+}
+
+/* Print: no viewport chrome, one page = one @page */
+@media print {
+  html, body { background: #FFFFFF !important; }
+  .doc-viewport { background: #FFFFFF; padding: 0; gap: 0; }
+  .doc-page {
+    width: auto; min-height: auto;
+    padding: 0;            /* @page margin handles it */
+    box-shadow: none;
+    page-break-after: always;
+    break-after: page;
+  }
+  .doc-page:last-child { page-break-after: auto; break-after: auto; }
+  .no-print { display: none !important; }
+}
+
+/* ---------------------------------------------------------------------
+   4. Header (§3) — logo left, meta right, 0.5pt divider
+   --------------------------------------------------------------------- */
+.doc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12mm;
+  padding-bottom: 1mm;
+  margin-bottom: 6mm;
+  border-bottom: 0.5pt solid var(--ink-150, #E4E7EC);
+}
+.doc-header__brand { display: flex; flex-direction: column; gap: 2mm; }
+.doc-header__logo {
+  height: 11mm; width: auto; display: block;
+}
+.doc-header__company {
+  font-family: "Prompt", sans-serif;
+  font-size: 11pt;
+  font-weight: 400;
+  color: var(--ink-600, #454B57);
+  margin: 0;
+}
+.doc-header__meta {
+  font-family: "Prompt", sans-serif;
+  font-size: 10pt;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink-500, #636B7A);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------
+   5. Footer (§4) — optional, 0.5pt top divider
+   --------------------------------------------------------------------- */
+.doc-footer {
+  display: flex; justify-content: space-between; gap: 12mm;
+  padding-top: 3mm;
+  margin-top: 10mm;
+  border-top: 0.5pt solid var(--ink-150, #E4E7EC);
+  font-family: "Prompt", sans-serif;
+  font-size: 9pt;
+  color: var(--ink-400, #8B93A1);
+}
+.doc-footer__confidential { font-style: italic; }
+
+/* ---------------------------------------------------------------------
+   6. Type scale (§6)
+   --------------------------------------------------------------------- */
+.doc-title {
+  font-family: "Prompt", sans-serif;
+  font-size: 20pt;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ket-red, #B12629);
+  margin: 0 0 6mm;
+  letter-spacing: -0.01em;
+}
+.doc-title__status {
+  font-weight: 600;
+  font-size: 14pt;
+  color: var(--ket-red, #B12629);
+  margin-left: 4mm;
+  letter-spacing: 0;
+}
+.doc-title__status--review { color: var(--ink-500, #636B7A); }
+.doc-subtitle {
+  font-family: "Prompt", sans-serif;
+  font-size: 12pt;
+  font-weight: 400;
+  color: var(--ink-600, #454B57);
+  margin: 0 0 3mm;
+}
+.doc-date {
+  font-family: "Prompt", sans-serif;
+  font-size: 10pt;
+  color: var(--ink-500, #636B7A);
+  margin: 0 0 10mm;
+}
+
+/* Headings */
+.doc h1, .doc .doc-h1 {
+  font-family: "Prompt", sans-serif;
+  font-size: 16pt;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--ink-900, #13151B);
+  margin: 12mm 0 4mm;
+  page-break-after: avoid; break-after: avoid;
+}
+.doc h2, .doc .doc-h2 {
+  font-family: "Prompt", sans-serif;
+  font-size: 13pt;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink-800, #1E2129);
+  margin: 8mm 0 3mm;
+  page-break-after: avoid; break-after: avoid;
+}
+.doc h3, .doc .doc-h3 {
+  font-family: "Prompt", sans-serif;
+  font-size: 12pt;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink-700, #30343D);
+  margin: 5mm 0 2mm;
+  page-break-after: avoid; break-after: avoid;
+}
+/* first heading after title shouldn't double-space */
+.doc-title + h1, .doc-title + .doc-h1,
+.doc-date + h1, .doc-date + .doc-h1,
+.doc-subtitle + h1, .doc-subtitle + .doc-h1 { margin-top: 4mm; }
+
+/* Paragraphs */
+.doc p {
+  font-family: "TH Sarabun New", "Sarabun", "Prompt", sans-serif;
+  font-size: 16pt;
+  font-weight: 600;
+  line-height: 1.1;
+  margin: 0 0 4mm;
+  text-align: left;
+  font-variant-numeric: normal;
+}
+.doc p.doc-lead {
+  /* .doc p default is 18pt; .doc-lead keeps size, differentiates by color */
+  color: var(--ink-700, #30343D);
+}
+
+/* Inline */
+.doc strong, .doc b { font-weight: 600; color: var(--ink-900, #13151B); }
+.doc em, .doc i { font-style: italic; }
+.doc[lang="th"] em, .doc .th em {
+  /* per spec: no italic in Thai — fall back to bold */
+  font-style: normal; font-weight: 600; color: var(--ink-900, #13151B);
+}
+
+/* Caption / footnote */
+.doc-caption, .doc .caption {
+  font-family: "Prompt", sans-serif;
+  font-size: 9pt;
+  font-style: italic;
+  color: var(--ink-500, #636B7A);
+  line-height: 1.4;
+  margin: 2mm 0 4mm;
+}
+
+/* Label (งวด / หมวด) */
+.doc-label {
+  font-family: "Prompt", sans-serif;
+  font-size: 10pt;
+  font-weight: 600;
+  color: var(--ink-600, #454B57);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hyperlink */
+.doc a {
+  color: var(--ket-red, #B12629);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------
+   7. Lists (§11) — bullets use ● ket-red, numbered as 1. / 1.1
+   --------------------------------------------------------------------- */
+.doc ul, .doc ol { margin: 0 0 4mm; padding-left: 5mm; }
+.doc ul { list-style: none; }
+.doc ul > li {
+  position: relative;
+  padding-left: 5mm;
+  margin-bottom: 2mm;
+  font-family: "TH Sarabun New", "Sarabun", "Prompt", sans-serif;
+  line-height: 1.2;
+}
+.doc ul > li::before {
+  content: "\25CF";  /* ● */
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--ket-red, #B12629);
+  font-size: 0.45em;
+  /* Center the bullet vertically against the first line of text.
+     Line box height ≈ parent font-size × line-height (1.2 em).
+     The glyph is ~0.45em tall → leave ~0.375em of padding above. */
+  line-height: 1.2em;
+  padding-left: 0;
+  /* pull the bullet into vertical center of the first line */
+  transform: translateY(0.45em);
+}
+.doc ol { list-style: decimal; padding-left: 8mm; }
+.doc ol > li {
+  margin-bottom: 2mm;
+  color: var(--ink-800, #1E2129);
+  font-family: "TH Sarabun New", "Sarabun", "Prompt", sans-serif;
+  line-height: 1.2;
+}
+.doc ol > li::marker { color: var(--ink-800, #1E2129); font-weight: 500; }
+
+/* ---------------------------------------------------------------------
+   8. Tables (§10) — header ket-red, 0.5pt borders, no rounded corners
+   --------------------------------------------------------------------- */
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 5mm 0;
+  font-family: "Prompt", sans-serif;
+  font-size: 10pt;
+  line-height: 1.4;
+  color: var(--ink-800, #1E2129);
+  page-break-inside: auto;
+}
+.doc-table thead { display: table-header-group; } /* repeat on page break */
+.doc-table tr { page-break-inside: avoid; break-inside: avoid; }
+
+.doc-table th {
+  background: var(--ket-red, #B12629);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 10pt;
+  text-align: left;
+  padding: 3mm;
+  border: 0.5pt solid var(--ket-red, #B12629);
+  vertical-align: middle;
+  /* Chrome/Safari print fidelity */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.doc-table td {
+  padding: 2.5mm 3mm;
+  border: 0.5pt solid var(--ink-150, #E4E7EC);
+  vertical-align: top;
+  line-height: 1.3;
+}
+/* Thai cells: bump to 13pt TH Sarabun */
+.doc-table td.th,
+.doc-table td[lang="th"],
+.doc-table.th td {
+  font-family: "TH Sarabun New", "Sarabun", "Prompt", sans-serif;
+  font-size: 13pt;
+}
+/* Zebra rows (optional) */
+.doc-table--zebra tbody tr:nth-child(even) td { background: var(--ink-50, #F7F8FA); }
+/* Number column */
+.doc-table .num, .doc-table td.num, .doc-table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" on;
+  white-space: nowrap;
+}
+/* Total / summary row */
+.doc-table tr.total td,
+.doc-table tfoot tr td {
+  background: var(--red-50, #FDF3F3);
+  color: var(--red-700, #921E21);
+  font-weight: 600;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ---------------------------------------------------------------------
+   9. Pricing (§14)
+   --------------------------------------------------------------------- */
+.doc-price {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" on;
+  font-family: "Prompt", sans-serif;
+}
+.doc-price--total {
+  font-size: 20pt;
+  font-weight: 500;
+  color: var(--ket-red, #B12629);
+}
+.doc-num {  /* generic numeric alignment */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" on;
+}
+
+/* Disclaimer block — light, set quietly under the price table */
+.doc-disclaimer {
+  font-size: 15pt;
+  font-weight: 400;
+  color: var(--ink-600, #454B57);
+  margin: 3mm 0 0;
+}
+
+/* ---------------------------------------------------------------------
+   10. Code / API (§13)
+   --------------------------------------------------------------------- */
+.doc code,
+.doc :not(pre) > code {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 10pt;
+  background: var(--ink-50, #F7F8FA);
+  padding: 0.5mm 1.5mm;
+  border-radius: 1mm;
+  color: var(--ink-900, #13151B);
+}
+.doc pre {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 9pt;
+  line-height: 1.5;
+  background: var(--ink-900, #13151B);
+  color: #FFFFFF;
+  padding: 4mm;
+  margin: 4mm 0;
+  overflow-x: auto;
+  border-radius: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.doc pre code {
+  background: transparent; padding: 0; color: inherit; font-size: inherit;
+}
+
+/* HTTP method badges */
+.doc-method {
+  display: inline-block;
+  font-family: "Prompt", sans-serif;
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #FFFFFF;
+  padding: 1mm 2.5mm;
+  margin-right: 2mm;
+  vertical-align: middle;
+  text-transform: uppercase;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.doc-method--get    { background: var(--info-600, #1570EF); }
+.doc-method--post   { background: var(--success-500, #12B76A); }
+.doc-method--put,
+.doc-method--patch  { background: var(--warning-500, #F79009); }
+.doc-method--delete { background: var(--ket-red, #B12629); }
+
+.doc-endpoint {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 11pt;
+  color: var(--ink-900, #13151B);
+  vertical-align: middle;
+}
+
+/* ---------------------------------------------------------------------
+   11. Watermark (§9) — draft / confidential
+   Absolute inside .doc-page; opacity 5–8%.
+   --------------------------------------------------------------------- */
+.doc-watermark {
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  z-index: 0;
+}
+.doc-watermark span {
+  font-family: "Prompt", sans-serif;
+  font-weight: 700;
+  font-size: 120pt;
+  letter-spacing: 0.05em;
+  color: var(--ket-red, #B12629);
+  opacity: 0.07;
+  transform: rotate(-30deg);
+  white-space: nowrap;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.doc-page > :not(.doc-watermark) { position: relative; z-index: 1; }
+
+/* ---------------------------------------------------------------------
+   12. Utilities
+   --------------------------------------------------------------------- */
+.doc-divider {
+  border: 0; border-top: 0.5pt solid var(--ink-150, #E4E7EC);
+  margin: 6mm 0;
+}
+.doc-section { margin-top: 12mm; }
+.doc-section:first-of-type { margin-top: 0; }
+.doc-spacer-sm { height: 4mm; }
+.doc-spacer-md { height: 8mm; }
+.doc-spacer-lg { height: 12mm; }
+.doc-avoid-break { page-break-inside: avoid; break-inside: avoid; }
+
+/* Cover block (§12.1 item 1) — centered block on first page */
+.doc-cover {
+  text-align: center;
+  margin: 20mm 0 14mm;
+  page-break-after: avoid;
+}
+.doc-cover .doc-title { margin-bottom: 4mm; }
+.doc-cover .doc-subtitle { margin-bottom: 3mm; }
+.doc-cover .doc-date { margin-bottom: 0; }
+
+/* Payment terms pill (for period labels in tables) */
+.doc-period {
+  display: inline-block;
+  font-family: "Prompt", sans-serif;
+  font-size: 9pt;
+  font-weight: 600;
+  color: var(--ink-700, #30343D);
+  background: var(--ink-50, #F7F8FA);
+  padding: 0.5mm 2mm;
+  margin-right: 2mm;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ---------------------------------------------------------------------
+   12. Contact card (§ author / prepared-by) — bordered "who made this" block
+   --------------------------------------------------------------------- */
+.doc-contact-card {
+  margin: 4mm 0 0;
+  padding: 4.5mm 6mm;
+  border: 0.5pt solid var(--ink-150, #E4E7EC);
+  border-left: 2.5pt solid var(--ket-red, #B12629);
+  background: #FFFFFF;
+  page-break-inside: avoid;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.doc-contact-card__label {
+  font-family: "Prompt", sans-serif;
+  font-size: 9pt;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ket-red, #B12629);
+  margin: 0 0 1.5mm;
+  line-height: 1.2;
+}
+.doc-contact-card__name {
+  /* Per spec: contact name uses TH Sarabun (matches body) */
+  font-family: "TH Sarabun New", "Sarabun", "Prompt", sans-serif;
+  font-size: 18pt;
+  font-weight: 700;
+  color: var(--ink-900, #13151B);
+  margin: 0 0 0.5mm;
+  line-height: 1.15;
+}
+.doc-contact-card__role {
+  font-family: "TH Sarabun New", "Sarabun", "Prompt", sans-serif;
+  font-size: 14pt;
+  font-weight: 400;
+  color: var(--ink-600, #454B57);
+  margin: 0 0 3mm;
+  line-height: 1.2;
+}
+.doc-contact-card__lines {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 4mm;
+  row-gap: 0.3mm;
+  align-items: baseline;
+}
+.doc-contact-card__lines dt {
+  font-family: "Prompt", sans-serif;
+  font-size: 9pt;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-500, #636B7A);
+  margin: 0;
+  line-height: 1.6;
+}
+.doc-contact-card__lines dd {
+  font-family: "TH Sarabun New", "Sarabun", "Prompt", sans-serif;
+  font-size: 14pt;
+  font-weight: 600;
+  color: var(--ink-800, #1E2129);
+  margin: 0;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+}
+.doc-contact-card__lines dd a {
+  color: var(--ket-red, #B12629);
+  text-decoration: none;
+}
+.doc-contact-card__lines dd a:hover { text-decoration: underline; }

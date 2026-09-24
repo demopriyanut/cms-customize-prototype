@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ketshopweb CMS · ปรับแต่ง — Prototype V1–V3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/ds/ketshopweb-ds-tokens.css">
+<link rel="stylesheet" href="assets/fa/css/all.min.css">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:var(--font-heading);font-size:13px;color:var(--ink-900);background:var(--ink-100);overflow:hidden}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+  button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--orange-500);outline-offset:2px}
+  #app{display:flex;height:100vh}
+  #sidebar{flex:none}
+  #view{flex:1;min-width:0;height:100vh;position:relative;display:flex;flex-direction:column}
+  .clickable{cursor:pointer}
+  .sb-item{width:100%;text-align:left}
+  .sb-item:hover{background:rgba(255,255,255,.06)}
+  .sb-item.on:hover{background:var(--red-600)}
+  [data-sec]{cursor:pointer}
+  .empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--ink-500);padding:24px}
+  .empty b{color:var(--ink-900)}
+
+  /* ---- bottom-centre version dock (prototype chrome, not part of the design) ---- */
+  #dock{position:fixed;left:calc(var(--sbw,0px) + (100vw - var(--sbw,0px)) / 2);bottom:14px;transform:translateX(-50%);z-index:100;font-family:var(--font-heading)}
+  .dock-bar{display:flex;align-items:center;gap:4px;background:var(--ink-900);color:#fff;border-radius:999px;padding:5px;box-shadow:0 12px 32px -8px rgba(10,11,15,.45),0 0 0 1px rgba(255,255,255,.06)}
+  .dock-btn{height:32px;border-radius:999px;padding:0 12px;display:flex;align-items:center;gap:8px;font-weight:600;font-size:12.5px;white-space:nowrap}
+  .dock-btn:hover{background:rgba(255,255,255,.08)}
+  .dock-vers{display:flex;gap:2px;background:rgba(255,255,255,.08);border-radius:999px;padding:3px}
+  .dock-v{height:26px;min-width:30px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600;color:rgba(255,255,255,.7)}
+  .dock-v:hover{color:#fff}
+  .dock-v.on{background:#fff;color:var(--ink-900)}
+  .dock-sep{width:1px;height:20px;background:rgba(255,255,255,.15);margin:0 2px}
+  .dock-pop{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);width:420px;max-height:70vh;overflow:auto;background:#fff;color:var(--ink-900);border-radius:16px;box-shadow:var(--shadow-3xl);border:1px solid var(--ink-150);padding:8px}
+  .pop-head{display:flex;align-items:center;justify-content:space-between;padding:8px 10px 10px;border-bottom:1px solid var(--ink-100);margin-bottom:6px}
+  .pop-row{display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px}
+  .pop-row.on{background:var(--ink-50)}
+  .pop-ico{width:30px;height:30px;border-radius:8px;background:var(--ink-100);display:grid;place-items:center;color:var(--ink-600);flex:none}
+  .pop-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+  .chip{height:24px;padding:0 9px;border-radius:999px;border:1px solid var(--ink-200);font-size:11.5px;font-weight:600;display:inline-flex;align-items:center;gap:5px;background:#fff}
+  .chip:hover{border-color:var(--ink-400)}
+  .chip.on{background:var(--ink-900);border-color:var(--ink-900);color:#fff}
+  .chip[disabled]{color:var(--ink-300);border-style:dashed;cursor:not-allowed}
+  .kbd{font-family:var(--font-display);font-size:10.5px;padding:1px 5px;border-radius:4px;background:var(--ink-100);color:var(--ink-600)}
+  .fb{transition:bottom .2s}
+  body.dock-on .fb{bottom:66px !important}
+  .toast{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);white-space:nowrap;background:#fff;color:var(--ink-900);border:1px solid var(--ink-150);box-shadow:var(--shadow-xl);border-radius:10px;padding:9px 14px;font-size:12.5px}
+  .pg-row:hover{background:var(--ink-50) !important}
+  .pg-card:hover{box-shadow:var(--shadow-md) !important}
+  .dock-mini{width:44px;height:30px;border-radius:999px 999px 0 0;background:var(--ink-900);color:#fff;display:grid;place-items:center;position:fixed;bottom:0;box-shadow:var(--shadow-lg)}
+
+  /* ---- index ---- */
+  .idx{flex:1;overflow:auto;padding:40px 48px 120px;background:var(--ink-50)}
+  .idx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:24px}
+  .idx-card{background:#fff;border:1px solid var(--ink-150);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .idx-card.ready{border-color:var(--ink-200);box-shadow:var(--shadow-sm)}
+  .tag{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="sidebar"></aside>
+  <main id="view"></main>
+</div>
+<div id="dock"></div>
+
+<script>
+/* =====================================================================
+   Ketshopweb CMS · ปรับแต่ง — prototype สำหรับเทียบไอเดีย
+   1 เวอร์ชัน = หลังบ้านทั้งชุด (sidebar + ทุกหน้า) ในแนวคิดเดียว
+   V1 = แนว A ปลอดภัย · V2 = แนว B กล้า · V3 = แนว C ลูกผสม  (จาก "Ketshopweb CMS Mockups.dc.html")
+   แถบล่างกลาง = เครื่องมือของผู้ออกแบบไว้สลับเทียบเวอร์ชัน ไม่ใช่ส่วนของระบบ
+   ===================================================================== */
+
+const IMG = 'assets/img/';
+
+const VERSIONS = [
+  { id:'v1', label:'V1', name:'ปลอดภัย', track:'แนว A', sidebar:'safe', sbName:'sidebar ดำจัดกลุ่ม 240px',
+    desc:'โครงหน้าจอเดิม · panel ขวา Sections / คุณสมบัติ / ประวัติ · ผู้ช่วย Ket เป็นช่องเล็กท้าย panel' },
+  { id:'v2', label:'V2', name:'กล้า', track:'แนว B', sidebar:'bold', sbName:'sidebar ดำเดิม ย่อเป็นไอคอน 72px ได้',
+    desc:'พื้นครีม · panel ลอย · หน้าเลือกแบบ prompt ใหญ่กลางจอ · แชทผู้ช่วย Ket ขวาแบบ Lovable' },
+  { id:'v3', label:'V3', name:'ลูกผสม', track:'แนว C', sidebar:'safe', sbName:'sidebar ดำจัดกลุ่ม 240px',
+    desc:'โครง 3 ช่องเดิม + ลูกเล่นจาก B · ผู้ช่วย Ket เป็น tab ใน panel ขวา · toolbar ลอยบน canvas' },
+];
+const SCREENS = [
+  { id:'entry',         short:'หน้าเลือก',    name:'หน้าเลือก · ปรับแต่งเว็บไซต์', sb:'Page Layouts',  icon:'far fa-window-restore' },
+  { id:'page',          short:'แต่งหน้าเว็บ', name:'แต่งหน้าเว็บ · Page Layout',   sb:'Page Layouts',  icon:'fas fa-th-large' },
+  { id:'menu',          short:'Menu',         name:'Menu',                        sb:'Menu',          icon:'fas fa-stream' },
+  { id:'header',        short:'Header',       name:'Header',                      sb:'Header',        icon:'fas fa-heading' },
+  { id:'footer',        short:'Footer',       name:'Footer',                      sb:'Footer',        icon:'fas fa-shoe-prints' },
+  { id:'system-design', short:'System Design',name:'System Design · สี & ฟอนต์',  sb:'System Design', icon:'fas fa-palette' },
+];
+const REF = {
+  v1:{ entry:'1d', page:'1b', menu:'1f', header:'1h', footer:'1j', 'system-design':'1l' },
+  v2:{ entry:'1e', page:'1c', menu:'1g', header:'1i', footer:'1k', 'system-design':'1m' },
+  v3:{ entry:'3f', page:'3a', menu:'3b', header:'3c', footer:'3d', 'system-design':'3e' },
+};
+const RENDER = {
+  v1:{ entry:()=>entryA(), page:()=>plA() },
+  v2:{ entry:()=>entryB(), page:()=>plB() },
+  v3:{ entry:()=>entryC(), page:()=>plC() },
+};
+const ready = (v, s) => !!(RENDER[v] && RENDER[v][s]);
+
+/* ---------- state ---------- */
+const S = { v:null, screen:null, missing:null, tab:'front', sel:'hero', device:'desktop', panel:{}, diff:{hero:null, prod:null},
+  compare:'after', pop:false, mini:false, v2Collapsed:null, toast:null };
+
+/* ---------- lock levels (from mockup data) ---------- */
+const L = {
+  L0:{bg:'var(--success-100)',fg:'var(--success-700)'},
+  L1:{bg:'var(--info-100)',fg:'var(--info-700)'},
+  L2:{bg:'var(--warning-100)',fg:'var(--warning-700)'},
+  L3:{bg:'var(--ink-150)',fg:'var(--ink-700)'},
+};
+const SECTIONS = [
+  { key:'header',   name:'Header',             meta:'Header_ห้ามลบ · 3 elements', lock:'L2', icon:'far fa-window-maximize', thumb:'#dfe7f3' },
+  { key:'marquee',  name:'ข้อความวิ่ง · SALE',  meta:'Marquee',                    lock:'L0', icon:'fas fa-text-width',      thumb:'#fff' },
+  { key:'hero',     name:'Hero Banner',        meta:'Slider · 2 สไลด์',            lock:'L0', icon:'far fa-image',           thumb:'linear-gradient(160deg,#d9b493,#5e3b28)' },
+  { key:'marquee2', name:'ข้อความวิ่ง · SALE',  meta:'Marquee',                    lock:'L0', icon:'fas fa-text-width',      thumb:'#fff' },
+  { key:'products', name:'Product · แนะนำ',     meta:'Product_ห้ามลบ · 4 ชิ้น',     lock:'L0', icon:'fas fa-th-large',        thumb:'#f6dfe6' },
+  { key:'benefit',  name:'benefit',            meta:'รูปภาพ · 1 element',          lock:'L0', icon:'far fa-image',           thumb:'#bfbfbf' },
+  { key:'footer',   name:'Footer',             meta:'Footer_ห้ามลบ',              lock:'L2', icon:'fas fa-window-minimize', thumb:'#2d2a28' },
+];
+const PRODUCTS = [
+  { name:'Aloe Water Jelly 50ml', price:'฿590',   bg:'#f6dfe6' },
+  { name:'Hydra Gel Cream',       price:'฿690',   bg:'#f3f3f3' },
+  { name:'Happy Frog Mask Set',   price:'฿290',   bg:'#e6f0fb' },
+  { name:'Scrunchie Bag Mini',    price:'฿1,290', bg:'#ecebf5' },
+];
+const DEVICE_W = { desktop:620, tablet:480, mobile:360 };
+
+/* ---------- pages shown on the entry screens (mockup data) ---------- */
+const pg = (name, path, lock, when, status, thumb, sel) => ({ name, path, lock, when, status, thumb, sel });
+const PAGES_ON = [
+  pg('หน้าแรก', '/home', 'L0', 'แก้ 2 นาทีที่แล้ว', 'ฉบับร่าง', 'linear-gradient(160deg,#d9b493,#5e3b28)', true),
+  pg('COLLECTION', '/collection', 'L1', 'เมื่อวาน', 'เผยแพร่แล้ว', '#f6dfe6'),
+  pg('PRODUCT', '/product', 'L1', '3 วันก่อน', 'เผยแพร่แล้ว', '#e6f0fb'),
+  pg('PROMOTION', '/promotion', 'L0', '5 วันก่อน', 'เผยแพร่แล้ว', '#fde9c9'),
+  pg('BLOG', '/blog', 'L1', '1 สัปดาห์', 'เผยแพร่แล้ว', '#ecebf5'),
+  pg('CONTACT', '/contact', 'L0', '2 สัปดาห์', 'เผยแพร่แล้ว', '#e8f5ee'),
+];
+const PAGES_OFF = [
+  pg('Landing 11.11', '/sale-1111', 'L0', 'แก้ 1 ชม.ที่แล้ว', 'ฉบับร่าง', '#13151B'),
+  pg('About us', '/about', 'L0', '1 เดือน', 'เผยแพร่แล้ว', '#f3f3f3'),
+  pg('Size guide', '/size-guide', 'L0', '2 เดือน', 'เผยแพร่แล้ว', '#fff7ed'),
+];
+const PAGES_SYS = [
+  pg('รายละเอียดสินค้า', '/product/:id', 'L1', 'เมื่อวาน', 'เผยแพร่แล้ว', '#e6f0fb'),
+  pg('ตะกร้า', '/cart', 'L2', '—', 'เผยแพร่แล้ว', '#f7f8fa'),
+  pg('ชำระเงิน', '/checkout', 'L2', '—', 'เผยแพร่แล้ว', '#f7f8fa'),
+  pg('สมัครสมาชิก / เข้าสู่ระบบ', '/register', 'L2', '—', 'เผยแพร่แล้ว', '#f7f8fa'),
+  pg('ขอบคุณ (Thank you)', '/thankyou', 'L3', 'ระบบ', 'เผยแพร่แล้ว', '#eef0f4'),
+];
+const PAGE_GROUPS = [
+  { key:'on',  label:'หน้าบนเมนู',  count:7,  note:'แก้ได้ตามระดับ',     icon:'fa fa-bars',  pages:PAGES_ON },
+  { key:'off', label:'หน้านอกเมนู', count:3,  note:'Landing / Sale page', icon:'far fa-file', pages:PAGES_OFF },
+  { key:'sys', label:'หน้าของระบบ', count:12, note:'L2 แก้ค่า · L3 ล็อก', icon:'fas fa-lock', pages:PAGES_SYS },
+];
+const pageDot = p => p.status === 'ฉบับร่าง' ? 'var(--warning-500)' : 'var(--success-500)';
+
+/* =====================================================================
+   SIDEBARS — CmsSidebar variant "safe" (V1, V3) and "bold" (V2)
+   ===================================================================== */
+const FRONT = [
+  { label:'ออกแบบ · Design', items:[['Page Layouts','fas fa-th-large'],['Header','fas fa-heading'],['Footer','fas fa-shoe-prints'],['Menu','fas fa-stream'],['System Design','fas fa-palette','ใหม่'],['เทมเพลต','far fa-clone','ย้าย']] },
+  { label:'เนื้อหา · Content', items:[['Product Display','fas fa-store'],['Blog Manager','fas fa-pen-nib'],['Coupon Display','fas fa-ticket-alt'],['Event Popup','far fa-window-restore'],['Sidebar','fas fa-columns'],['Media','far fa-images','⇄']] },
+  { label:'เว็บไซต์ & SEO', items:[['SEO','fas fa-search-location','ย้าย'],['Conversion Tools','fas fa-chart-pie','ย้าย'],['Google Map','fas fa-map-marked-alt','ย้าย'],['Cookie · PDPA banner','fas fa-cookie-bite','⇄'],['Language','fas fa-globe-asia']] },
+  { label:'ขั้นสูง · Advanced', items:[['Button','far fa-hand-pointer'],['Advance CSS','fas fa-code'],['Maintenance','fas fa-tools']] },
+];
+const MANAGE = [
+  { label:'ภาพรวม · Overview', items:[['Overview','fas fa-tachometer-alt'],['Dashboard','fas fa-chart-line','▾']] },
+  { label:'ขาย · Sales', items:[['E-commerce','fas fa-receipt','▾'],['Marketing','fas fa-bullhorn','▾'],['Delivery Manager','fas fa-shipping-fast','▾']] },
+  { label:'สินค้า & ลูกค้า', items:[['Product Manager','fas fa-box-open','▾'],['Warehouse','fas fa-boxes','▾'],['Users','fas fa-user-friends','▾']] },
+  { label:'ระบบ · System', items:[['Media','far fa-images','⇄'],['Email','far fa-envelope'],['Extension','fas fa-plug'],['History Logs','fas fa-history']] },
+  { label:'ตั้งค่าร้าน · Setting', items:[['ทั่วไป','fas fa-sliders-h'],['การขาย · ขนส่ง · ชำระเงิน','far fa-credit-card'],['การแจ้งเตือน','fas fa-bell'],['PDPA · นโยบาย','fas fa-shield-alt','⇄']] },
+];
+const curVersion = () => VERSIONS.find(v => v.id === S.v) || null;
+const curScreen = () => SCREENS.find(s => s.id === S.screen) || null;
+const v2Collapsed = () => S.v2Collapsed !== null ? S.v2Collapsed : (S.screen === 'entry' || S.screen === 'page');
+function sidebarWidth(){ const v = curVersion(); if (!v) return 0; return v.sidebar === 'bold' && v2Collapsed() ? 72 : 240; }
+function activeItem(){ if (S.missing) return S.missing; const s = curScreen(); return s ? s.sb : null; }
+
+function renderSidebar(){
+  const el = document.getElementById('sidebar');
+  const v = curVersion();
+  document.body.style.setProperty('--sbw', sidebarWidth() + 'px');
+  if (!v) { el.innerHTML = ''; return; }
+  el.innerHTML = v.sidebar === 'safe' ? sidebarSafe() : (v2Collapsed() ? sidebarBoldNarrow() : sidebarBoldWide());
+}
+function sidebarSafe(){
+  const active = activeItem(); const groups = S.tab === 'front' ? FRONT : MANAGE;
+  const tg = on => on ? 'background:var(--ink-0);color:var(--ink-900);font-weight:600' : 'background:transparent;color:var(--ink-400);font-weight:500';
+  return `
+  <div style="width:240px;height:100vh;background:var(--ink-900);display:flex;flex-direction:column;font-family:var(--font-heading);font-size:13px;color:var(--ink-300)">
+    <div style="height:56px;display:flex;align-items:center;padding:0 20px;flex:none;border-bottom:1px solid var(--ink-800)"><img src="${IMG}Logo-Light-Color.png" alt="Ketshopweb" style="height:24px;width:auto"></div>
+    <div style="padding:14px 14px 6px">
+      <div role="tablist" style="display:flex;background:var(--ink-800);border-radius:var(--radius-md);padding:3px;font-size:12px">
+        <button role="tab" aria-selected="${S.tab==='back'}" data-tab="back" style="flex:1;text-align:center;padding:5px 0;border-radius:6px;${tg(S.tab==='back')}">จัดการ</button>
+        <button role="tab" aria-selected="${S.tab==='front'}" data-tab="front" style="flex:1;text-align:center;padding:5px 0;border-radius:6px;${tg(S.tab==='front')}">ปรับแต่ง</button>
+      </div>
+    </div>
+    <nav style="flex:1;overflow:auto;padding:4px 10px">
+      ${groups.map(g => `
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-500);font-weight:600;padding:6px 10px 2px;font-family:var(--font-display)">${g.label}</div>
+        ${g.items.map(([label, icon, hint]) => { const on = S.tab === 'front' && label === active; return `
+          <button class="sb-item${on?' on':''}" data-sb="${label}" style="height:30px;display:flex;align-items:center;padding:0 10px;gap:10px;border-radius:var(--radius-md);background:${on?'var(--red-600)':'transparent'};color:${on?'#fff':'var(--ink-300)'};font-weight:${on?600:400}">
+            <span style="width:18px;font-size:13px;text-align:center;flex:none;opacity:.9"><i class="${icon}"></i></span>
+            <span style="flex:1">${label}</span>
+            <span style="font-size:10px;color:${on?'rgba(255,255,255,.7)':'var(--ink-500)'}">${hint||''}</span>
+          </button>`; }).join('')}
+      `).join('')}
+    </nav>
+    <div style="padding:8px 14px 10px;border-top:1px solid var(--ink-800);display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;border-radius:50%;background:var(--ink-0);overflow:hidden;flex:none"><img src="${IMG}mascot-hello.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 20%"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--ink-100)">ผู้ช่วย Ket</div><div style="font-size:11px;color:var(--ink-500)">พร้อมช่วยเสมอ · ⌘K</div></div>
+      <span style="font-size:11px;color:var(--ink-500)">8.7.4</span>
+    </div>
+  </div>`;
+}
+function sidebarBoldWide(){
+  const active = activeItem(); const groups = S.tab === 'front' ? FRONT : MANAGE; const back = S.tab === 'back';
+  return `
+  <div style="width:240px;height:100vh;background:#1a1a1a;display:flex;flex-direction:column;font-family:var(--font-heading);font-size:14px;color:rgba(255,255,255,.7)">
+    <div style="height:60px;display:flex;align-items:center;padding:0 12px 0 20px;flex:none;border-bottom:1px solid rgba(255,255,255,.08);gap:8px"><img src="${IMG}Logo-Light-Color.png" alt="Ketshopweb" style="height:26px;width:auto"><button data-collapse="1" title="ย่อเมนู" style="margin-left:auto;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:rgba(255,255,255,.55);background:rgba(255,255,255,.06)"><i class="fas fa-angle-double-left" style="font-size:13px"></i></button></div>
+    <div style="padding:10px 14px 4px">
+      <div role="tablist" style="display:flex;background:rgba(255,255,255,.1);border-radius:10px;padding:3px;font-size:13px;font-weight:600">
+        <button role="tab" aria-selected="${back}" data-tab="back" style="flex:1;text-align:center;padding:5px 0;border-radius:8px;${back?'background:#fff;color:#1a1a1a':'color:rgba(255,255,255,.6)'}">จัดการ</button>
+        <button role="tab" aria-selected="${!back}" data-tab="front" style="flex:1;text-align:center;padding:5px 0;border-radius:8px;${!back?'background:#fff;color:#1a1a1a':'color:rgba(255,255,255,.6)'}">ปรับแต่ง</button>
+      </div>
+    </div>
+    <nav style="flex:1;overflow:auto;padding:4px 12px">
+      ${groups.map(g => `
+        <div style="font-size:10.5px;letter-spacing:.06em;color:rgba(255,255,255,.4);font-weight:600;padding:6px 10px 2px;line-height:1.3">${g.label}</div>
+        ${g.items.map(([label, icon, hint]) => { const on = !back && label === active; return `
+          <button class="sb-item${on?' on-bold':''}" data-sb="${label}" style="height:31px;display:flex;align-items:center;padding:0 10px;gap:12px;border-radius:9px;background:${on?'#E85440':'transparent'};color:${on?'#fff':'rgba(255,255,255,.7)'};font-weight:${on?600:400}">
+            <span style="width:22px;font-size:15px;text-align:center;flex:none"><i class="${icon}"></i></span>
+            <span style="flex:1;white-space:nowrap;font-size:13.5px">${label}</span>
+            <span style="font-size:10px;color:rgba(255,255,255,.4)">${hint||''}</span>
+          </button>`; }).join('')}
+      `).join('')}
+    </nav>
+    <div style="padding:10px 14px 12px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px">
+      <div style="position:relative;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--red-600),var(--orange-500));padding:2px;flex:none"><div style="width:100%;height:100%;border-radius:50%;background:#1a1a1a;overflow:hidden"><img src="${IMG}mascot-laptop.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 22%"></div><span style="position:absolute;right:-1px;top:-1px;width:11px;height:11px;border-radius:50%;background:var(--success-500);border:2px solid #1a1a1a"></span></div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#fff">ผู้ช่วย Ket</div><div style="font-size:11px;color:rgba(255,255,255,.45)">พร้อมช่วยเสมอ · ⌘K</div></div>
+    </div>
+  </div>`;
+}
+function sidebarBoldNarrow(){
+  const active = activeItem(); const groups = S.tab === 'front' ? FRONT : MANAGE; const back = S.tab === 'back';
+  return `
+  <div style="width:72px;height:100vh;background:#1a1a1a;display:flex;flex-direction:column;align-items:center;font-family:var(--font-heading)">
+    <div style="height:60px;display:flex;align-items:center;justify-content:center;flex:none;width:100%;border-bottom:1px solid rgba(255,255,255,.08)"><img src="${IMG}Logo-Circle-Light.svg" alt="Ketshopweb" style="width:32px;height:32px"></div>
+    <button data-collapse="0" title="ขยายเมนู" style="margin:10px 0 6px;width:40px;height:32px;border-radius:8px;display:grid;place-items:center;color:rgba(255,255,255,.55);background:rgba(255,255,255,.06);flex:none"><i class="fas fa-angle-double-right" style="font-size:13px"></i></button>
+    <div role="tablist" style="width:48px;background:rgba(255,255,255,.1);border-radius:10px;padding:3px;display:flex;flex-direction:column;gap:2px;font-size:10px;font-weight:600;margin-bottom:6px;flex:none">
+      <button role="tab" aria-selected="${back}" data-tab="back" title="จัดการ" style="text-align:center;padding:5px 0;border-radius:7px;${back?'background:#fff;color:#1a1a1a':'color:rgba(255,255,255,.6)'}"><i class="fas fa-store"></i></button>
+      <button role="tab" aria-selected="${!back}" data-tab="front" title="ปรับแต่ง" style="text-align:center;padding:5px 0;border-radius:7px;${!back?'background:#fff;color:#1a1a1a':'color:rgba(255,255,255,.6)'}"><i class="fas fa-paint-brush"></i></button>
+    </div>
+    <nav style="flex:1;overflow:auto;width:100%;padding:0 12px;display:flex;flex-direction:column;gap:2px">
+      ${groups.map(g => `
+        <div style="height:1px;background:rgba(255,255,255,.1);margin:6px 4px;flex:none"></div>
+        ${g.items.map(([label, icon]) => { const on = !back && label === active; return `
+          <button data-sb="${label}" title="${label}" style="height:40px;flex:none;display:grid;place-items:center;border-radius:10px;font-size:17px;background:${on?'#E85440':'transparent'};color:${on?'#fff':'rgba(255,255,255,.7)'}"><i class="${icon}"></i></button>`; }).join('')}
+      `).join('')}
+    </nav>
+    <div style="padding:8px 0 12px;flex:none"><div title="ผู้ช่วย Ket" style="position:relative;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--red-600),var(--orange-500));padding:2px;box-shadow:var(--shadow-md)"><div style="width:100%;height:100%;border-radius:50%;background:#1a1a1a;overflow:hidden"><img src="${IMG}mascot-laptop.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 22%"></div><span style="position:absolute;right:-1px;top:-1px;width:12px;height:12px;border-radius:50%;background:var(--success-500);border:2px solid #1a1a1a"></span></div></div>
+  </div>`;
+}
+
+/* =====================================================================
+   ENTRY · หน้าเลือก — 1d (V1) / 1e (V2) / 3f (V3)
+   ===================================================================== */
+const lockTag = lock => `<span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:${L[lock].bg};color:${L[lock].fg}">${lock}</span>`;
+function entryTopbar(extra){
+  return `<div style="height:56px;background:#fff;border-bottom:1px solid var(--ink-150);display:flex;align-items:center;padding:0 24px;gap:12px;flex:none">
+    <span style="font-weight:700;font-size:15px">ปรับแต่งเว็บไซต์</span><span style="color:var(--ink-400)">/</span><span style="color:var(--ink-600)">เลือกหน้า</span>
+    <div style="flex:1"></div>${extra}</div>`;
+}
+function pageGroupsList(withEdit){
+  return `<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:${withEdit?14:16}px;flex:1;min-height:0">
+    ${PAGE_GROUPS.map(g => `
+      <div style="background:#fff;border:1px solid var(--ink-150);border-radius:14px;display:flex;flex-direction:column;overflow:hidden">
+        <div style="padding:${withEdit?'10px':'12px'} 14px;border-bottom:1px solid var(--ink-100);display:flex;align-items:center;gap:8px"><i class="${g.icon}" style="color:var(--ink-500)"></i><span style="font-weight:700">${g.label}</span><span style="font-family:var(--font-display);color:var(--ink-400)">${g.count}</span><span style="margin-left:auto;font-size:11px;color:var(--ink-500)">${g.note}</span></div>
+        <div style="padding:${withEdit?6:8}px;display:flex;flex-direction:column;gap:${withEdit?3:4}px;overflow:auto">
+          ${g.pages.map(p => `
+            <button data-page="${p.name}" style="width:100%;text-align:left;display:flex;align-items:center;gap:10px;padding:${withEdit?'7px 8px':'8px'};border-radius:10px;border:1px solid transparent;background:${p.sel?'var(--red-50)':'transparent'}" class="pg-row">
+              <span style="width:44px;height:${withEdit?30:32}px;border-radius:5px;background:${p.thumb};border:1px solid var(--ink-150);flex:none"></span>
+              <span style="flex:1;min-width:0"><span style="display:block;font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</span><span style="display:block;font-size:11px;color:var(--ink-500)">${p.path} · ${p.when}</span></span>
+              ${lockTag(p.lock)}
+              <span style="width:8px;height:8px;border-radius:50%;background:${pageDot(p)};flex:none" title="${p.status}"></span>
+              ${withEdit ? `<span style="font-size:11px;font-weight:600;border:1px solid var(--ink-200);border-radius:6px;padding:3px 8px">แก้ไข</span>` : ''}
+            </button>`).join('')}
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+function entryA(){
+  return `
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;background:var(--ink-50)">
+    ${entryTopbar(`<div style="height:36px;border:1px solid var(--ink-200);border-radius:var(--radius-md);display:flex;align-items:center;padding:0 14px;gap:8px;background:#fff;font-weight:500"><i class="fas fa-external-link-alt" style="font-size:11px;color:var(--ink-500)"></i>ดูเว็บไซต์</div>
+      <div style="display:flex;align-items:center;gap:8px;padding-left:8px"><span style="width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#f4c98e,#8a5a2b 70%)"></span><span>admin shop</span><i class="fas fa-chevron-down" style="font-size:10px;color:var(--ink-400)"></i></div>`)}
+    <div style="flex:1;overflow:auto;padding:24px 24px 90px;display:flex;flex-direction:column;gap:20px">
+      <div style="background:#fff;border:1px solid var(--ink-150);border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:18px">
+        <img src="${IMG}mascot-hello.png" alt="" style="width:64px;height:78px;object-fit:cover;object-position:center 15%;border-radius:12px">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:16px">สวัสดีครับ admin! วันนี้จะแต่งอะไรดี</div>
+          <div style="font-size:12px;color:var(--ink-500);margin-bottom:10px">ผู้ช่วย Ket แก้ลงฉบับร่างเท่านั้น คุณเป็นคนกดเผยแพร่เสมอ</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="flex:1;height:42px;border:1px solid var(--ink-200);border-radius:var(--radius-lg);display:flex;align-items:center;padding:0 14px;gap:10px;color:var(--ink-400)"><i class="fas fa-magic" style="color:var(--red-600)"></i>เช่น "เปลี่ยนแบนเนอร์หน้าแรกเป็นแคมเปญ 11.11"</div>
+            <span style="height:42px;padding:0 18px;border-radius:var(--radius-lg);background:var(--red-600);color:#fff;display:flex;align-items:center;font-weight:600">เริ่ม</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;width:220px">
+          <span style="border:1px solid var(--ink-200);border-radius:8px;padding:6px 10px;display:flex;gap:8px;align-items:center"><i class="far fa-image" style="color:var(--ink-500)"></i>เปลี่ยนแบนเนอร์ก่อนแคมเปญ</span>
+          <span style="border:1px solid var(--ink-200);border-radius:8px;padding:6px 10px;display:flex;gap:8px;align-items:center"><i class="fas fa-th-large" style="color:var(--ink-500)"></i>เพิ่มบล็อกสินค้าแนะนำ</span>
+          <span style="border:1px solid var(--ink-200);border-radius:8px;padding:6px 10px;display:flex;gap:8px;align-items:center"><i class="fas fa-mobile-alt" style="color:var(--ink-500)"></i>ดูหน้าตาบนมือถือ</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-weight:700;font-size:15px">เลือกหน้าที่จะแต่ง</span>
+        <div style="height:34px;width:260px;border:1px solid var(--ink-200);border-radius:var(--radius-md);background:#fff;display:flex;align-items:center;padding:0 10px;gap:8px;color:var(--ink-400);margin-left:10px"><i class="fas fa-search"></i>ค้นหาหน้า…</div>
+        <div style="flex:1"></div>
+        <span style="height:34px;border:1px solid var(--ink-200);border-radius:var(--radius-md);background:#fff;display:flex;align-items:center;padding:0 12px;gap:8px;font-weight:600"><i class="fas fa-magic" style="color:var(--red-600);font-size:11px"></i>สร้างหน้าจาก prompt</span>
+        <span style="height:34px;border-radius:var(--radius-md);background:var(--ink-900);color:#fff;display:flex;align-items:center;padding:0 12px;gap:8px;font-weight:600"><i class="fas fa-plus" style="font-size:11px"></i>สร้างหน้าใหม่</span>
+      </div>
+      ${pageGroupsList(false)}
+    </div>
+  </div>`;
+}
+function entryB(){
+  const g = S.panel.entryB || 'on';
+  const list = PAGE_GROUPS.find(x => x.key === g).pages.slice(0, 5);  // mockup 1e แสดง 5 การ์ด
+  return `
+  <div style="flex:1;min-width:0;position:relative;overflow:auto;display:flex;flex-direction:column;align-items:center;padding:40px 48px 90px;background:#FAF6F2 radial-gradient(ellipse 60% 40% at 50% 0%,rgba(230,52,34,.10),transparent 70%)">
+    <div style="position:absolute;right:24px;top:20px;display:flex;align-items:center;gap:8px"><span style="height:38px;background:#fff;border-radius:999px;padding:0 14px;display:flex;align-items:center;gap:8px;font-weight:600;box-shadow:var(--shadow-sm)"><i class="fas fa-external-link-alt" style="font-size:11px;color:var(--ink-500)"></i>ดูเว็บไซต์</span><span style="width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#f4c98e,#8a5a2b 70%);box-shadow:var(--shadow-sm)"></span></div>
+    <img src="${IMG}mascot-hero.png" alt="" style="width:150px;height:150px;object-fit:cover;object-position:50% 30%;border-radius:50%;box-shadow:0 20px 40px -16px rgba(177,38,41,.35);border:4px solid #fff;flex:none">
+    <div style="font-weight:700;font-size:28px;letter-spacing:-.01em;margin-top:16px">จะให้ผมช่วยแต่งอะไรดีครับ?</div>
+    <div style="color:var(--ink-500);margin-top:4px;font-size:13.5px">พิมพ์สั่งได้เลย หรือเลือกหน้าด้านล่างเพื่อลากวางเอง — ทุกอย่างลงฉบับร่างก่อนเสมอ</div>
+    <div style="width:min(760px,100%);margin-top:22px;background:#fff;border-radius:20px;box-shadow:var(--shadow-xl);border:1px solid rgba(19,21,27,.06);padding:16px 18px 12px;display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:15px;color:var(--ink-400)">เช่น "ทำหน้า Landing สำหรับโปร 11.11 ใช้สินค้าหมวด Dresses ที่ลด 30%+ โทนสีตามแบรนด์"</div>
+      <div style="display:flex;align-items:center;gap:8px;color:var(--ink-500);font-size:12px">
+        <span style="display:flex;align-items:center;gap:6px;border:1px solid var(--ink-200);border-radius:999px;padding:4px 10px"><i class="far fa-window-restore"></i>หน้าใหม่ <i class="fas fa-chevron-down" style="font-size:9px"></i></span>
+        <span style="display:flex;align-items:center;gap:6px;border:1px solid var(--ink-200);border-radius:999px;padding:4px 10px"><i class="fas fa-layer-group"></i>T0 ประกอบจากบล็อก <i class="fas fa-chevron-down" style="font-size:9px"></i></span>
+        <i class="fas fa-paperclip" style="margin-left:6px"></i><i class="far fa-image"></i>
+        <span style="margin-left:auto;height:36px;padding:0 16px;border-radius:12px;background:linear-gradient(135deg,var(--red-600),var(--orange-500));color:#fff;display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px">สร้างฉบับร่าง <i class="fas fa-arrow-right" style="font-size:11px"></i></span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;font-size:12px;color:var(--ink-600);flex-wrap:wrap;justify-content:center"><span style="background:#fff;border-radius:999px;padding:5px 12px;box-shadow:var(--shadow-xs)">เปลี่ยนแบนเนอร์ก่อนแคมเปญ</span><span style="background:#fff;border-radius:999px;padding:5px 12px;box-shadow:var(--shadow-xs)">เพิ่มบล็อกสินค้าแนะนำ</span><span style="background:#fff;border-radius:999px;padding:5px 12px;box-shadow:var(--shadow-xs)">แก้ข้อความใน Footer</span><span style="background:#fff;border-radius:999px;padding:5px 12px;box-shadow:var(--shadow-xs)">ย้อนกลับเวอร์ชันเมื่อวาน</span></div>
+    <div style="width:100%;margin-top:34px;display:flex;align-items:center;gap:10px">
+      <span style="font-weight:700;font-size:15px">หน้าทั้งหมด</span>
+      <span role="tablist" style="display:flex;gap:2px;background:rgba(19,21,27,.06);border-radius:999px;padding:3px;font-size:12px;font-weight:600">${PAGE_GROUPS.map(x => `<button role="tab" aria-selected="${x.key===g}" data-panel="entryB:${x.key}" style="padding:5px 12px;border-radius:999px;${x.key===g?'background:#fff;box-shadow:var(--shadow-xs)':'color:var(--ink-500)'}">${x.label} ${x.count}</button>`).join('')}</span>
+      <div style="flex:1"></div>
+      <span style="height:34px;background:#fff;border-radius:999px;display:flex;align-items:center;padding:0 14px;gap:8px;font-weight:600;box-shadow:var(--shadow-xs)"><i class="fas fa-plus" style="font-size:11px"></i>สร้างหน้าใหม่</span>
+    </div>
+    <div style="width:100%;margin-top:14px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px">
+      ${list.map(p => `
+        <button data-page="${p.name}" style="text-align:left;background:#fff;border-radius:14px;box-shadow:var(--shadow-sm);border:1px solid rgba(19,21,27,.06);overflow:hidden" class="pg-card">
+          <span style="display:block;height:110px;background:${p.thumb};position:relative"><span style="position:absolute;left:8px;top:8px">${lockTag(p.lock)}</span><span style="position:absolute;right:8px;top:8px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:rgba(255,255,255,.9);color:${pageDot(p)}">● ${p.status}</span></span>
+          <span style="display:block;padding:10px 12px"><span style="display:block;font-weight:600;font-size:12.5px">${p.name}</span><span style="display:block;font-size:11px;color:var(--ink-500)">${p.path} · ${p.when}</span></span>
+        </button>`).join('')}
+    </div>
+  </div>`;
+}
+function entryC(){
+  return `
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;background:#FAF6F2">
+    ${entryTopbar(`<span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-500)"><span style="width:8px;height:8px;border-radius:50%;background:var(--warning-500)"></span>2 หน้ามีฉบับร่างรอเผยแพร่</span>
+      <span style="height:36px;border:1px solid var(--ink-200);border-radius:var(--radius-md);background:#fff;display:flex;align-items:center;padding:0 14px;gap:8px;font-weight:500"><i class="fas fa-external-link-alt" style="font-size:11px;color:var(--ink-500)"></i>ดูเว็บไซต์</span>
+      <span style="height:36px;border-radius:var(--radius-md);background:var(--ink-900);color:#fff;display:flex;align-items:center;padding:0 12px;gap:8px;font-weight:600"><i class="fas fa-plus" style="font-size:11px"></i>สร้างหน้าใหม่</span>`)}
+    <div style="flex:1;overflow:auto;padding:22px 24px 90px;display:flex;flex-direction:column;gap:18px">
+      <div style="background:#fff;border-radius:18px;box-shadow:var(--shadow-md);border:1px solid rgba(19,21,27,.06);padding:18px 22px;display:flex;align-items:center;gap:20px;background-image:radial-gradient(ellipse 40% 80% at 100% 50%,rgba(230,52,34,.08),transparent 70%)">
+        <img src="${IMG}mascot-hero.png" alt="" style="width:96px;height:96px;object-fit:cover;object-position:50% 30%;border-radius:50%;border:3px solid #fff;box-shadow:var(--shadow-md)">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+          <div><div style="font-weight:700;font-size:18px">สวัสดีครับ admin — จะให้ช่วยแต่งอะไรดี?</div><div style="font-size:12px;color:var(--ink-500)">พิมพ์สั่ง หรือวางรูปเว็บที่ชอบให้ผมล้อโครงตาม · ทุกอย่างลงฉบับร่างก่อน คุณกดเผยแพร่เอง</div></div>
+          <div style="border:1px solid var(--ink-200);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:#fff"><div style="font-size:13.5px;color:var(--ink-400)">เช่น "เปลี่ยนแบนเนอร์หน้าแรกเป็นแคมเปญ 11.11 โทนดำ-ทอง"</div><div style="display:flex;align-items:center;gap:8px;color:var(--ink-500);font-size:12px"><span style="display:flex;align-items:center;gap:6px;border:1px solid var(--ink-200);border-radius:999px;padding:3px 10px"><i class="far fa-window-restore"></i>หน้าแรก <i class="fas fa-chevron-down" style="font-size:9px"></i></span><span style="display:flex;align-items:center;gap:6px;border:1px solid var(--ink-200);border-radius:999px;padding:3px 10px"><i class="fas fa-layer-group"></i>T0 บล็อกเดิม</span><span style="display:flex;align-items:center;gap:6px;border:1px dashed var(--ink-300);border-radius:999px;padding:3px 10px"><i class="far fa-image"></i>วางรูป reference</span><span style="margin-left:auto;height:34px;padding:0 14px;border-radius:10px;background:linear-gradient(135deg,var(--red-600),var(--orange-500));color:#fff;display:flex;align-items:center;gap:8px;font-weight:600;font-size:12.5px">สร้างฉบับร่าง <i class="fas fa-arrow-right" style="font-size:10px"></i></span></div></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-weight:700;font-size:14px">เลือกหน้าที่จะแต่ง</span><div style="height:32px;width:240px;border:1px solid var(--ink-200);border-radius:var(--radius-md);background:#fff;display:flex;align-items:center;padding:0 10px;gap:8px;color:var(--ink-400);margin-left:6px;font-size:12px"><i class="fas fa-search"></i>ค้นหาหน้า…</div><div style="flex:1"></div><span style="font-size:12px;color:var(--ink-500)"><span style="color:var(--success-500)">●</span> เผยแพร่แล้ว &nbsp; <span style="color:var(--warning-600)">●</span> มีฉบับร่าง</span></div>
+      ${pageGroupsList(true)}
+    </div>
+  </div>`;
+}
+
+/* =====================================================================
+   STOREFRONT preview (classic theme) — from Storefront.dc.html
+   ===================================================================== */
+function storefront({ overlays=true, accent='var(--red-600)', width=620 } = {}){
+  const after = S.compare === 'after';
+  const heroTitle = (after && S.diff.hero === 'ok') ? 'AUTUMN EDIT 2026' : 'NEW COLLECTION 2026';
+  const showNewProd = after && S.diff.prod === 'ok';
+  const o = key => {
+    const sel = S.sel === key;
+    return { outline: overlays ? (sel ? `2px solid ${accent}` : '1px dashed rgba(19,21,27,.25)') : 'none', chipBg: sel ? accent : 'var(--ink-700)', sel };
+  };
+  const chip = (key, label, lock, top='-9px') => overlays ? `
+    <div style="position:absolute;left:8px;top:${top};z-index:5;display:flex;gap:4px;align-items:center;font-size:10px;font-weight:600;font-family:var(--font-heading)">
+      <span style="background:${o(key).chipBg};color:#fff;padding:2px 7px;border-radius:5px">${label}</span>
+      ${lock === 'L2' ? `<span style="background:var(--warning-100);color:var(--warning-700);padding:2px 6px;border-radius:5px;display:inline-flex;gap:4px;align-items:center"><i class="fas fa-lock" style="font-size:8px"></i>L2 · แก้ค่าได้</span>`
+                      : `<span style="background:var(--success-100);color:var(--success-700);padding:2px 6px;border-radius:5px">L0${key==='hero'?' · แก้ได้อิสระ':''}</span>`}
+    </div>` : '';
+  const toolbar = key => (overlays && o(key).sel && SECTIONS.find(s=>s.key===key).lock !== 'L2') ? `
+    <div style="position:absolute;right:10px;top:-14px;z-index:6;display:flex;gap:2px;background:var(--ink-900);border-radius:8px;padding:3px;box-shadow:var(--shadow-lg);color:#fff;font-size:11px">
+      <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px;background:linear-gradient(135deg,var(--red-600),var(--orange-500))" title="ปรับด้วยผู้ช่วย"><i class="fas fa-magic" style="font-size:10px"></i></span>
+      <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px" title="ตั้งค่า"><i class="fas fa-cog" style="font-size:10px"></i></span>
+      <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px" title="ทำซ้ำ"><i class="far fa-clone" style="font-size:10px"></i></span>
+      <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px" title="ย้ายขึ้น"><i class="fas fa-arrow-up" style="font-size:10px"></i></span>
+      <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px" title="ย้ายลง"><i class="fas fa-arrow-down" style="font-size:10px"></i></span>
+      <span style="width:24px;height:24px;display:grid;place-items:center;border-radius:6px"><i class="fas fa-ellipsis-h" style="font-size:10px"></i></span>
+    </div>` : '';
+  const marquee = key => `<div data-sec="${key}" style="position:relative;padding:8px 0;font-size:10px;letter-spacing:.28em;white-space:nowrap;overflow:hidden;color:#111;font-weight:500;outline:${o(key).outline};outline-offset:-2px">• SALE • LIMITED TIME • SALE • LIMITED TIME • SALE • LIMITED TIME • SALE •</div>`;
+  return `
+  <div style="width:${width}px;background:#fff;font-family:'Prompt',sans-serif;color:#222;position:relative;transition:width .2s">
+    <div data-sec="header" style="position:relative;outline:${o('header').outline};outline-offset:-2px">
+      ${chip('header','Header','L2','6px')}
+      <div style="background:#6b5343;color:#fff;font-size:9px;display:flex;justify-content:space-between;align-items:center;padding:5px 12px">
+        <div style="display:flex;gap:8px;align-items:center"><i class="fab fa-facebook-square"></i><i class="fab fa-line"></i><i class="fas fa-envelope"></i><i class="fas fa-phone-alt"></i><span>02-345-6789</span></div>
+        <div style="display:flex;gap:6px;align-items:center"><i class="fas fa-user" style="font-size:8px"></i>User Account <i class="fas fa-caret-down"></i></div>
+      </div>
+      <div style="background:#dfe7f3;display:flex;justify-content:space-between;align-items:center;padding:8px 14px;gap:10px;flex-wrap:wrap">
+        <div style="font-family:Georgia,serif;font-size:15px;letter-spacing:.06em;font-weight:700">GIRLY CLOSET</div>
+        <div style="display:flex;gap:11px;font-size:8px;text-transform:uppercase;letter-spacing:.02em;color:#333;align-items:center;flex-wrap:wrap">
+          <span>Home</span><span>Collection ▾</span><span>Product ▾</span><span>Promotion ▾</span><span>Blog</span><span>Contact ▾</span><span style="display:inline-flex;gap:3px;align-items:center"><i class="fas fa-shopping-bag"></i>(0)</span>
+        </div>
+      </div>
+    </div>
+    ${marquee('marquee')}
+    <div data-sec="hero" style="position:relative;padding:6px 8px 12px;outline:${o('hero').outline};outline-offset:-2px">
+      ${chip('hero','Hero Banner','L0')}${toolbar('hero')}
+      <div style="position:relative;height:210px">
+        <div style="position:absolute;left:0;top:0;width:60%;height:100%;background:linear-gradient(160deg,#d9b493 0%,#b07a55 45%,#5e3b28 100%);display:grid;place-items:center;color:rgba(255,255,255,.7)"><i class="far fa-image" style="font-size:28px"></i></div>
+        <div style="position:absolute;right:0;top:20px;width:56%;height:170px;background:#faf8f5;box-shadow:0 6px 24px rgba(0,0,0,.12);padding:16px 14px;display:flex;flex-direction:column;gap:6px">
+          <span style="align-self:flex-start;background:#c8522e;color:#fff;font-size:6.5px;padding:2px 5px;letter-spacing:.05em;font-weight:600">GIRLY CLOSET</span>
+          <div style="font-family:Georgia,serif;font-size:19px;line-height:1.1;letter-spacing:.02em">${heroTitle}</div>
+          <div style="font-size:6.5px;color:#555;line-height:1.5">อัปเดตลุคใหม่กับคอลเลกชันล่าสุด รวมไอเทมที่ต้องมี ไม่ว่าจะลุคชิล ลุคเที่ยว หรือวันสบายๆ ก็ครบจบในที่เดียว</div>
+          <div style="margin-top:auto;align-self:flex-end;font-size:8px;text-decoration:underline;font-weight:500">SHOP NOW</div>
+        </div>
+        <div style="position:absolute;left:28%;bottom:4px;display:flex;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:#222"></span><span style="width:5px;height:5px;border-radius:50%;background:#bbb"></span></div>
+      </div>
+    </div>
+    ${showNewProd ? `
+    <div style="position:relative;margin:4px 8px;padding:12px 8px;outline:2px dashed var(--success-500);outline-offset:-2px;background:var(--success-50)">
+      <div style="position:absolute;left:8px;top:-9px;display:flex;gap:4px;font-size:10px;font-weight:600"><span style="background:var(--success-600);color:#fff;padding:2px 7px;border-radius:5px">+ Product แนะนำ · ฉบับร่าง</span><span style="background:var(--success-100);color:var(--success-700);padding:2px 6px;border-radius:5px">T0</span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:6px">${PRODUCTS.map(p=>`<div style="height:54px;background:${p.bg};display:grid;place-items:center;color:rgba(0,0,0,.25)"><i class="fas fa-tshirt"></i></div>`).join('')}</div>
+    </div>` : ''}
+    ${marquee('marquee2')}
+    <div data-sec="products" style="position:relative;padding:12px 8px 16px;outline:${o('products').outline};outline-offset:-2px">
+      ${chip('products','Product · แนะนำ','L0')}${toolbar('products')}
+      <div style="text-align:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;letter-spacing:-.01em;margin-bottom:10px">SHOP NOW</div>
+      <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:999px;padding:5px 6px 5px 12px;gap:8px;margin-bottom:12px;background:#fff">
+        <i class="fas fa-search" style="font-size:9px;color:#666"></i><span style="flex:1;font-size:8px;color:#999">สำรวจด้วย Ai</span>
+        <span style="border:1px solid #f0b400;border-radius:999px;padding:3px 8px;font-size:7.5px;font-weight:600;display:inline-flex;gap:4px;align-items:center;background:#fff"><i class="fas fa-magic" style="color:#7c3aed;font-size:7px"></i>ค้นหาด้วย Ai</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(${width<400?2:4},minmax(0,1fr));gap:8px">
+        ${PRODUCTS.map(p=>`
+        <div style="border:1px solid #eee;position:relative">
+          <span style="position:absolute;left:0;top:0;background:#111;color:#fff;font-size:6px;padding:2px 4px;font-weight:600;letter-spacing:.03em">RECOMMENDED</span>
+          <div style="height:86px;background:${p.bg};display:grid;place-items:center;color:rgba(0,0,0,.25)"><i class="fas fa-tshirt" style="font-size:20px"></i></div>
+          <div style="padding:6px;font-size:7.5px;line-height:1.3"><div style="font-weight:500">${p.name}</div><div style="color:#c8522e;font-weight:600;margin-top:2px">${p.price}</div></div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div data-sec="footer" style="position:relative;background:#2d2a28;color:#cfc8c2;padding:14px 14px 10px;font-size:7.5px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:10px;outline:${o('footer').outline};outline-offset:-2px">
+      ${overlays ? `<div style="position:absolute;left:8px;top:-9px;z-index:5;display:flex;gap:4px;align-items:center;font-size:10px;font-weight:600;font-family:var(--font-heading)"><span style="background:${o('footer').chipBg};color:#fff;padding:2px 7px;border-radius:5px">Footer</span><span style="background:var(--warning-100);color:var(--warning-700);padding:2px 6px;border-radius:5px;display:inline-flex;gap:4px;align-items:center"><i class="fas fa-lock" style="font-size:8px"></i>L2</span></div>` : ''}
+      <div><div style="font-family:Georgia,serif;color:#fff;font-size:12px;margin-bottom:6px">GIRLY CLOSET</div><div style="line-height:1.5">เสื้อผ้าแฟชั่นผู้หญิง ส่งไวทั่วไทย<br>02-345-6789 · hello@girlycloset.co</div></div>
+      <div><div style="color:#fff;font-weight:600;margin-bottom:4px">Shop</div>New in<br>Collection<br>Sale</div>
+      <div><div style="color:#fff;font-weight:600;margin-bottom:4px">Help</div>การจัดส่ง<br>คืนสินค้า<br>ติดต่อเรา</div>
+      <div><div style="color:#fff;font-weight:600;margin-bottom:4px">Follow</div><div style="display:flex;gap:6px;font-size:10px"><i class="fab fa-facebook"></i><i class="fab fa-instagram"></i><i class="fab fa-line"></i></div></div>
+    </div>
+  </div>`;
+}
+
+/* ---------- shared bits ---------- */
+const lockPill = (lock, long) => `<span style="font-size:10px;font-weight:600;padding:2px 6px;border-radius:5px;background:${L[lock].bg};color:${L[lock].fg};white-space:nowrap">${lock}${long ? (lock==='L2'?' แก้ค่า':' อิสระ') : ''}</span>`;
+const selSec = () => SECTIONS.find(s => s.key === S.sel) || SECTIONS[2];
+
+function deviceToggle(style){
+  const d = [['desktop','fas fa-desktop'],['tablet','fas fa-tablet-alt'],['mobile','fas fa-mobile-alt']];
+  if (style === 'square') return `<div style="height:36px;background:var(--ink-100);border-radius:var(--radius-md);padding:3px;display:flex;gap:2px;color:var(--ink-500)">${d.map(([k,i])=>`<button data-device="${k}" title="${k}" style="width:34px;display:grid;place-items:center;border-radius:6px;${S.device===k?'background:#fff;color:var(--ink-900);box-shadow:var(--shadow-xs)':''}"><i class="${i}"></i></button>`).join('')}</div>`;
+  return `<span style="display:flex;gap:2px;background:var(--ink-100);border-radius:999px;padding:3px;color:var(--ink-500)">${d.map(([k,i])=>`<button data-device="${k}" title="${k}" style="width:30px;height:26px;display:grid;place-items:center;border-radius:999px;${S.device===k?'background:var(--ink-900);color:#fff':''}"><i class="${i}" style="font-size:11px"></i></button>`).join('')}</span>`;
+}
+function tabs(key, list, activeStyle){
+  const cur = S.panel[key] || list[0][0];
+  return `<div role="tablist" style="display:flex;border-bottom:1px solid var(--ink-150);padding:0 8px;font-weight:500;color:var(--ink-500);font-size:13px">${list.map(([id,label])=>{
+    const on = id === cur;
+    return `<button role="tab" aria-selected="${on}" data-panel="${key}:${id}" style="padding:14px 10px 12px;display:flex;gap:6px;align-items:center;${on?'color:var(--ink-900);font-weight:600;border-bottom:2px solid var(--red-600);margin-bottom:-1px':''}">${label}</button>`;
+  }).join('')}</div>`;
+}
+const panelOf = (key, def) => S.panel[key] || def;
+const notInMockup = what => `<div class="empty" style="font-size:12.5px;line-height:1.6"><div><i class="far fa-lightbulb" style="font-size:20px;color:var(--ink-300)"></i><br><b>${what}</b><br>ยังไม่มีใน mockup — พื้นที่ว่างสำหรับลอง idea</div></div>`;
+
+function sectionList(){
+  return SECTIONS.map(s => { const sel = s.key === S.sel; return `
+    <button data-sec="${s.key}" style="width:100%;text-align:left;display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--radius-md);border:1px solid ${sel?'var(--red-300)':'var(--ink-150)'};background:${sel?'var(--red-50)':'#fff'}">
+      <i class="fas fa-grip-vertical" style="color:var(--ink-300);font-size:11px"></i>
+      <span style="width:40px;height:28px;border-radius:4px;background:${s.thumb};flex:none;border:1px solid var(--ink-150)"></span>
+      <span style="flex:1;min-width:0"><span style="display:block;font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</span><span style="display:block;font-size:11px;color:var(--ink-500)">${s.meta}</span></span>
+      ${lockPill(s.lock, true)}
+      <i class="far fa-eye" style="color:var(--ink-400)"></i><i class="fas fa-ellipsis-h" style="color:var(--ink-400)"></i>
+    </button>`; }).join('');
+}
+
+function diffCard({ accept='var(--ink-900)', compact=false } = {}){
+  const row = (id, thumb, title, desc) => {
+    const st = S.diff[id];
+    return `<div style="padding:10px;display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--ink-100);${st==='no'?'opacity:.45':''}${st==='ok'?';background:var(--success-50)':''}">
+      ${thumb}
+      <div style="flex:1;min-width:0"><div style="font-weight:600;${st==='no'?'text-decoration:line-through':''}">${title}</div><div style="font-size:11px;color:var(--ink-500)">${desc}</div></div>
+      <button data-diff="${id}:ok" title="ยอมรับ" style="width:26px;height:26px;border-radius:7px;display:grid;place-items:center;border:1px solid ${st==='ok'?'var(--success-600)':'var(--success-100)'};background:${st==='ok'?'var(--success-600)':'var(--success-50)'};color:${st==='ok'?'#fff':'var(--success-600)'}"><i class="fas fa-check" style="font-size:10px"></i></button>
+      <button data-diff="${id}:no" title="ไม่รับ" style="width:26px;height:26px;border-radius:7px;display:grid;place-items:center;border:1px solid var(--ink-150);color:var(--ink-500);${st==='no'?'background:var(--ink-100)':''}"><i class="fas fa-times" style="font-size:10px"></i></button>
+    </div>`;
+  };
+  const heroThumb = `<span style="width:36px;height:26px;border-radius:4px;background:linear-gradient(160deg,#d9b493,#5e3b28);flex:none"></span>`;
+  const addThumb = `<span style="width:36px;height:26px;border-radius:4px;background:var(--success-50);border:1px dashed var(--success-500);display:grid;place-items:center;color:var(--success-600);flex:none"><i class="fas fa-plus" style="font-size:9px"></i></span>`;
+  return `<div style="border:1px solid var(--ink-150);border-radius:12px;overflow:hidden;background:#fff">
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--ink-100);background:var(--ink-50)"><span style="font-size:11px;font-weight:700;color:var(--ink-600);letter-spacing:.04em">DIFF · 2 การเปลี่ยนแปลง</span><span style="margin-left:auto;font-size:11px;color:var(--ink-500)">ฉบับร่าง</span></div>
+    ${row('hero', heroThumb, 'Hero Banner · แก้ไข', compact ? 'สีพื้น + หัวข้อ "AUTUMN EDIT"' : '<span style="text-decoration:line-through">#dfe7f3</span> → #B07A55 · หัวข้อ "AUTUMN EDIT 2026"')}
+    ${row('prod', addThumb, compact ? 'เพิ่ม Product แนะนำ' : 'เพิ่ม Section · Product แนะนำ', compact ? 'ใต้ Hero · T0' : 'ตำแหน่ง: ใต้ Hero · T0 ประกอบจากบล็อกที่มี')}
+    <div style="display:flex;gap:8px;padding:10px;background:var(--ink-50)"><button data-diff="all:ok" style="flex:1;height:32px;border-radius:8px;background:${accept};color:#fff;font-weight:600;font-size:12px">ยอมรับทั้งหมด</button><button data-compare="toggle" style="height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--ink-200);font-size:12px;background:#fff">${compact?'ก่อน/หลัง':'ดูก่อน/หลัง'}</button></div>
+  </div>`;
+}
+function tierChips(labels){
+  return `<div style="display:flex;gap:6px;margin-bottom:8px;font-size:11px;font-weight:600"><span style="border-radius:999px;padding:3px 10px;background:var(--ink-900);color:#fff">${labels[0]}</span><span style="border-radius:999px;padding:3px 10px;border:1px solid var(--ink-200);color:var(--ink-600)">${labels[1]}</span><span style="border-radius:999px;padding:3px 10px;border:1px solid var(--ink-200);color:var(--ink-400)">${labels[2]} <i class="fas fa-lock" style="font-size:9px"></i></span></div>`;
+}
+const draftCount = () => 3;
+const legend = (all) => `<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--success-500);margin-right:4px"></span>L0 อิสระ</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--info-500);margin-right:4px"></span>L1 เฉพาะช่อง</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--warning-500);margin-right:4px"></span>L2 แก้ค่า</span>${all?`<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--ink-500);margin-right:4px"></span>L3 ล็อก</span>`:''}`;
+
+/* =====================================================================
+   PAGE LAYOUT · A — 1b
+   ===================================================================== */
+function plA(){
+  const tab = panelOf('a','sections');
+  return `
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--ink-100)">
+    <div style="height:56px;background:#fff;border-bottom:1px solid var(--ink-150);display:flex;align-items:center;padding:0 16px;gap:10px;flex:none">
+      <div data-nav="entry" title="กลับไปหน้าเลือก" style="cursor:pointer;height:36px;border:1px solid var(--ink-200);border-radius:var(--radius-md);display:flex;align-items:center;padding:0 12px;gap:8px;background:#fff"><i class="far fa-window-restore" style="color:var(--ink-500)"></i><span style="font-weight:600">หน้าแรก</span><span style="color:var(--ink-400)">/home</span>${lockPill('L0')}<i class="fas fa-chevron-down" style="font-size:10px;color:var(--ink-400)"></i></div>
+      ${deviceToggle('square')}
+      <span style="font-family:var(--font-display);font-size:12px;color:var(--ink-500);padding:0 4px">100%</span>
+      <span style="width:1px;height:22px;background:var(--ink-150)"></span>
+      <div style="height:36px;display:flex;align-items:center;padding:0 10px;gap:6px;color:var(--ink-700)"><i class="fas fa-globe" style="color:var(--ink-500)"></i>TH <i class="fas fa-chevron-down" style="font-size:10px;color:var(--ink-400)"></i></div>
+      <button data-panel="a:history" style="height:36px;display:flex;align-items:center;padding:0 10px;gap:6px;color:var(--ink-700)"><i class="fas fa-history" style="color:var(--ink-500)"></i>ประวัติ</button>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-500)"><span style="width:8px;height:8px;border-radius:50%;background:var(--warning-500)"></span>ฉบับร่าง · บันทึกอัตโนมัติ 2 นาทีที่แล้ว</div>
+      <div style="height:36px;border:1px solid var(--ink-200);border-radius:var(--radius-md);display:flex;align-items:center;padding:0 14px;gap:8px;background:#fff;font-weight:500"><i class="fas fa-external-link-alt" style="font-size:11px;color:var(--ink-500)"></i>ดูเว็บไซต์</div>
+      <div style="height:36px;display:flex;border-radius:var(--radius-md);overflow:hidden;color:#fff;font-weight:600"><span style="background:var(--red-600);padding:0 16px;display:flex;align-items:center;gap:8px"><i class="fas fa-paper-plane" style="font-size:11px"></i>เผยแพร่</span><span style="background:var(--red-700);width:30px;display:grid;place-items:center"><i class="fas fa-chevron-down" style="font-size:10px"></i></span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding-left:8px"><span style="width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#f4c98e,#8a5a2b 70%)"></span><i class="fas fa-chevron-down" style="font-size:10px;color:var(--ink-400)"></i></div>
+    </div>
+    <div style="flex:1;display:flex;min-height:0">
+      <div style="flex:1;position:relative;overflow:auto;display:flex;justify-content:center;padding:36px 24px 90px;background:var(--ink-100) radial-gradient(var(--ink-200) 1px,transparent 1px) 0 0/16px 16px">
+        <div style="box-shadow:var(--shadow-xl);border-radius:6px;align-self:flex-start;background:#fff;flex:none">${storefront({ width:DEVICE_W[S.device] })}</div>
+      </div>
+      <div class="fb" style="position:absolute;left:16px;bottom:16px;display:flex;gap:4px;background:#fff;border:1px solid var(--ink-150);border-radius:var(--radius-md);padding:4px;box-shadow:var(--shadow-sm);color:var(--ink-600)">
+        <span style="width:30px;height:30px;display:grid;place-items:center"><i class="fas fa-undo"></i></span><span style="width:30px;height:30px;display:grid;place-items:center;color:var(--ink-300)"><i class="fas fa-redo"></i></span>
+        <span style="width:1px;background:var(--ink-150);margin:4px 2px"></span>
+        <span style="height:30px;display:flex;align-items:center;padding:0 8px;font-size:11px;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:var(--success-500)"></span>L0 แก้ได้อิสระ <span style="width:8px;height:8px;border-radius:2px;background:var(--warning-500);margin-left:6px"></span>L2 แก้ค่าได้</span>
+      </div>
+      <div class="fb" style="position:absolute;right:336px;bottom:16px;display:flex;align-items:center;gap:8px;background:var(--ink-900);color:#fff;border-radius:999px;padding:6px 12px 6px 6px;font-size:12px;box-shadow:var(--shadow-lg)"><span style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden"><img src="${IMG}mascot-hello.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 20%"></span>กด <b style="font-family:var(--font-display)">⌘K</b> เพื่อสั่งผู้ช่วย Ket</div>
+      <div style="width:320px;background:#fff;border-left:1px solid var(--ink-150);flex:none;display:flex;flex-direction:column;min-height:0">
+        ${tabs('a', [['sections','Sections <span style="font-family:var(--font-display);color:var(--ink-400);font-weight:500">7</span>'],['props','คุณสมบัติ'],['history','ประวัติ']])}
+        ${tab === 'sections' ? `
+          <div style="padding:12px 12px 8px;display:flex;gap:8px">
+            <div style="flex:1;height:36px;border:1px solid var(--ink-200);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600"><i class="fas fa-plus" style="font-size:11px"></i>Add Section</div>
+            <div style="height:36px;padding:0 12px;border-radius:var(--radius-md);display:flex;align-items:center;gap:6px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--red-600),var(--orange-500))"><i class="fas fa-magic" style="font-size:11px"></i>สร้างด้วย AI</div>
+          </div>
+          <div style="flex:1;overflow:auto;padding:4px 12px;display:flex;flex-direction:column;gap:6px">${sectionList()}</div>`
+        : notInMockup(tab === 'props' ? `คุณสมบัติของ “${selSec().name}”` : 'ประวัติเวอร์ชัน')}
+        <div style="border-top:1px solid var(--ink-150);padding:12px;background:var(--ink-50)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="width:26px;height:26px;border-radius:50%;background:#fff;overflow:hidden;border:1px solid var(--ink-150)"><img src="${IMG}mascot-hello.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 20%"></span><span style="font-weight:600;font-size:12.5px">ผู้ช่วย Ket</span><span style="font-size:11px;color:var(--ink-500)">แก้ลงฉบับร่างเท่านั้น</span></div>
+          <div style="background:#fff;border:1px solid var(--ink-200);border-radius:var(--radius-lg);padding:10px 12px;font-size:12.5px;color:var(--ink-400);display:flex;align-items:center;gap:8px">บอกว่าอยากปรับอะไรในหน้านี้…<span style="margin-left:auto;width:26px;height:26px;border-radius:7px;background:var(--red-600);color:#fff;display:grid;place-items:center"><i class="fas fa-arrow-up" style="font-size:10px"></i></span></div>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;font-size:11px"><span style="border:1px solid var(--ink-200);border-radius:999px;padding:2px 8px;background:#fff">เปลี่ยนแบนเนอร์</span><span style="border:1px solid var(--ink-200);border-radius:999px;padding:2px 8px;background:#fff">เพิ่มสินค้าแนะนำ</span><span style="border:1px solid var(--ink-200);border-radius:999px;padding:2px 8px;background:#fff">ดูบนมือถือ</span></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =====================================================================
+   PAGE LAYOUT · B — 1c  (side menu kept full-width instead of the 72px rail)
+   ===================================================================== */
+function plB(){
+  const tab = panelOf('b','chat');
+  return `
+  <div style="flex:1;position:relative;min-width:0;display:flex;background:#FAF6F2">
+    <div style="flex:1;position:relative;overflow:auto;display:flex;justify-content:center;padding:84px 24px 90px 272px;background:radial-gradient(rgba(19,21,27,.08) 1px,transparent 1px) 0 0/18px 18px">
+      <div style="box-shadow:0 24px 60px -20px rgba(94,22,24,.25),var(--shadow-lg);border-radius:12px;align-self:flex-start;background:#fff;overflow:hidden;flex:none">${storefront({ accent:'var(--orange-600)', width:S.device==='desktop' ? (v2Collapsed() ? 640 : 540) : DEVICE_W[S.device] })}</div>
+    </div>
+    <div style="position:absolute;left:272px;top:18px;display:flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:5px 6px 5px 14px;box-shadow:var(--shadow-lg);border:1px solid rgba(19,21,27,.06)">
+      <span data-nav="entry" title="กลับไปหน้าเลือก" style="cursor:pointer;font-weight:600;display:flex;align-items:center;gap:8px"><i class="far fa-window-restore" style="color:var(--ink-500)"></i>หน้าแรก${lockPill('L0')}<i class="fas fa-chevron-down" style="font-size:10px;color:var(--ink-400)"></i></span>
+      <span style="width:1px;height:20px;background:var(--ink-150);margin:0 8px"></span>
+      ${deviceToggle('pill')}
+      <span style="font-family:var(--font-display);font-size:12px;color:var(--ink-500);padding:0 10px">100%</span>
+    </div>
+    <div style="position:absolute;right:378px;top:18px;display:flex;align-items:center;gap:8px">
+      <span style="height:38px;background:#fff;border-radius:999px;padding:0 14px;display:flex;align-items:center;gap:8px;font-weight:600;box-shadow:var(--shadow-sm)"><i class="fas fa-external-link-alt" style="font-size:11px;color:var(--ink-500)"></i>ดูเว็บไซต์</span>
+      <span style="height:38px;background:var(--ink-900);color:#fff;border-radius:999px;padding:0 18px;display:flex;align-items:center;gap:8px;font-weight:600;box-shadow:var(--shadow-md)"><i class="fas fa-paper-plane" style="font-size:11px"></i>เผยแพร่</span>
+    </div>
+    <div style="position:absolute;left:18px;top:84px;width:236px;background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);border:1px solid rgba(19,21,27,.06);padding:12px;display:flex;flex-direction:column;gap:4px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 6px 8px"><span style="font-weight:700;font-size:13px">Layers</span><span style="display:flex;gap:8px;color:var(--ink-500)"><i class="fas fa-search"></i><i class="fas fa-plus"></i></span></div>
+      ${SECTIONS.map(s => { const sel = s.key === S.sel; return `
+        <button data-sec="${s.key}" style="width:100%;text-align:left;display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:10px;background:${sel?'var(--orange-50)':'transparent'};color:${sel?'var(--orange-700)':'var(--ink-800)'};font-weight:${sel?600:500}">
+          <i class="${s.icon}" style="width:14px;text-align:center;font-size:11px;opacity:.8"></i>
+          <span style="flex:1;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</span>
+          <span style="font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px;background:${L[s.lock].bg};color:${L[s.lock].fg}">${s.lock}</span>
+        </button>`; }).join('')}
+      <div style="margin-top:6px;border:1px dashed var(--ink-300);border-radius:10px;padding:8px;text-align:center;font-size:12px;color:var(--ink-500)"><i class="fas fa-plus" style="font-size:10px"></i> เพิ่ม Section จากคลัง</div>
+    </div>
+    <div class="fb" style="position:absolute;right:378px;bottom:16px;display:flex;align-items:center;gap:8px">
+      <span style="display:flex;gap:2px;color:var(--ink-600);background:#fff;border-radius:999px;padding:3px;box-shadow:var(--shadow-sm)"><span style="width:30px;height:30px;display:grid;place-items:center"><i class="fas fa-undo"></i></span><span style="width:30px;height:30px;display:grid;place-items:center;color:var(--ink-300)"><i class="fas fa-redo"></i></span><span style="width:30px;height:30px;display:grid;place-items:center"><i class="fas fa-history"></i></span></span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-600);background:#fff;border-radius:999px;padding:8px 12px;box-shadow:var(--shadow-sm)"><span style="width:8px;height:8px;border-radius:50%;background:var(--warning-500)"></span>ฉบับร่าง · ${draftCount()} การเปลี่ยนแปลงรอเผยแพร่</span>
+    </div>
+    <div class="fb" style="position:absolute;left:18px;bottom:16px;display:flex;gap:10px;font-size:11px;color:var(--ink-600);background:#fff;border-radius:999px;padding:6px 12px;box-shadow:var(--shadow-sm)">${legend(true)}</div>
+    <div style="width:360px;background:#fff;border-left:1px solid var(--ink-150);flex:none;display:flex;flex-direction:column;min-height:0">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--ink-150);display:flex;align-items:center;gap:10px">
+        <span style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--red-600),var(--orange-500));padding:2px"><span style="display:block;width:100%;height:100%;border-radius:50%;background:#fff;overflow:hidden"><img src="${IMG}mascot-laptop.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 22%"></span></span>
+        <div style="flex:1"><div style="font-weight:700">ผู้ช่วย Ket</div><div style="font-size:11px;color:var(--ink-500)">เขียนลงฉบับร่าง · คุณเป็นคนกดเผยแพร่</div></div>
+        <span style="display:flex;gap:2px;background:var(--ink-100);border-radius:999px;padding:3px;font-size:11px;font-weight:600">${[['chat','แชท'],['history','ประวัติ']].map(([id,l])=>`<button data-panel="b:${id}" style="padding:3px 10px;border-radius:999px;${tab===id?'background:#fff;box-shadow:var(--shadow-xs)':'color:var(--ink-500)'}">${l}</button>`).join('')}</span>
+      </div>
+      ${tab === 'chat' ? `
+      <div style="flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:14px;font-size:12.5px;line-height:1.55">
+        <div style="align-self:flex-end;max-width:86%;background:var(--ink-900);color:#fff;border-radius:16px 16px 4px 16px;padding:10px 14px">เปลี่ยนแบนเนอร์หน้าแรกให้เป็นโทน Autumn แล้วเพิ่มบล็อกสินค้าแนะนำใต้แบนเนอร์</div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <span style="width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid var(--ink-150);overflow:hidden;flex:none"><img src="${IMG}mascot-idea.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 22%"></span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+            <div>ผมเตรียมให้ 2 จุดครับ — ไม่แตะ Header/Footer เพราะเป็น <b>L2</b> ดูส่วนต่างแล้วกดยอมรับได้ทีละจุด</div>
+            ${diffCard()}
+            <div style="font-size:11px;color:var(--ink-500);display:flex;gap:6px;align-items:center"><i class="fas fa-shield-alt"></i>ผ่านด่านตรวจ: ไม่มีสคริปต์ · ใช้สีจาก Token · ไม่แตะช่องที่ล็อก</div>
+          </div>
+        </div>
+      </div>` : notInMockup('ประวัติการสั่งผู้ช่วย')}
+      <div style="padding:12px 16px 16px;border-top:1px solid var(--ink-150)">
+        ${tierChips(['T0 ประกอบจากบล็อก','T1 HTML/CSS','T2 JS'])}
+        <div style="border:1px solid var(--ink-200);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow-xs)">
+          <div style="color:var(--ink-400)">สั่งต่อได้เลย เช่น "ทำเวอร์ชันมือถือให้กระชับขึ้น"</div>
+          <div style="display:flex;align-items:center;gap:10px;color:var(--ink-500)"><i class="fas fa-paperclip"></i><i class="far fa-image"></i><span style="font-size:11px">อ้างอิง: ${selSec().name}</span><span style="margin-left:auto;width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--red-600),var(--orange-500));color:#fff;display:grid;place-items:center"><i class="fas fa-arrow-up" style="font-size:11px"></i></span></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =====================================================================
+   PAGE LAYOUT · C — 3a
+   ===================================================================== */
+function plC(){
+  const tab = panelOf('c','ai');
+  return `
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;background:#FAF6F2">
+    <div style="height:56px;background:#fff;border-bottom:1px solid var(--ink-150);display:flex;align-items:center;padding:0 16px;gap:10px;flex:none">
+      <div data-nav="entry" title="กลับไปหน้าเลือก" style="cursor:pointer;height:36px;border:1px solid var(--ink-200);border-radius:var(--radius-md);display:flex;align-items:center;padding:0 12px;gap:8px;background:#fff"><i class="far fa-window-restore" style="color:var(--ink-500)"></i><span style="font-weight:600">หน้าแรก</span>${lockPill('L0')}<i class="fas fa-chevron-down" style="font-size:10px;color:var(--ink-400)"></i></div>
+      <div style="height:36px;display:flex;align-items:center;padding:0 10px;gap:6px;color:var(--ink-700)"><i class="fas fa-globe" style="color:var(--ink-500)"></i>TH <i class="fas fa-chevron-down" style="font-size:10px;color:var(--ink-400)"></i></div>
+      <div style="height:36px;display:flex;align-items:center;padding:0 10px;gap:6px;color:var(--ink-700)"><i class="fas fa-history" style="color:var(--ink-500)"></i>ประวัติ</div>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-500)"><span style="width:8px;height:8px;border-radius:50%;background:var(--warning-500)"></span>ฉบับร่าง · ${draftCount()} การเปลี่ยนแปลง</div>
+      <div style="height:36px;border:1px solid var(--ink-200);border-radius:var(--radius-md);display:flex;align-items:center;padding:0 14px;gap:8px;background:#fff;font-weight:500"><i class="fas fa-external-link-alt" style="font-size:11px;color:var(--ink-500)"></i>ดูเว็บไซต์</div>
+      <div style="height:36px;display:flex;border-radius:var(--radius-md);overflow:hidden;color:#fff;font-weight:600"><span style="background:var(--red-600);padding:0 16px;display:flex;align-items:center;gap:8px"><i class="fas fa-paper-plane" style="font-size:11px"></i>เผยแพร่</span><span style="background:var(--red-700);width:30px;display:grid;place-items:center"><i class="fas fa-chevron-down" style="font-size:10px"></i></span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding-left:8px"><span style="width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#f4c98e,#8a5a2b 70%)"></span></div>
+    </div>
+    <div style="flex:1;display:flex;min-height:0">
+      <div style="flex:1;position:relative;min-width:0;display:flex;flex-direction:column">
+        <div style="flex:1;overflow:auto;display:flex;justify-content:center;padding:76px 24px 90px;background:radial-gradient(rgba(19,21,27,.08) 1px,transparent 1px) 0 0/18px 18px">
+          <div style="box-shadow:0 24px 60px -20px rgba(94,22,24,.25),var(--shadow-lg);border-radius:10px;align-self:flex-start;background:#fff;overflow:hidden;flex:none">${storefront({ width:DEVICE_W[S.device] })}</div>
+        </div>
+        <div style="position:absolute;left:50%;top:16px;transform:translateX(-50%);display:flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:5px 6px;box-shadow:var(--shadow-lg);border:1px solid rgba(19,21,27,.06)">
+          ${deviceToggle('pill')}
+          <span style="font-family:var(--font-display);font-size:12px;color:var(--ink-500);padding:0 10px">100%</span>
+          <span style="width:1px;height:20px;background:var(--ink-150)"></span>
+          <span style="display:flex;gap:2px;color:var(--ink-600)"><span style="width:30px;height:30px;display:grid;place-items:center"><i class="fas fa-undo"></i></span><span style="width:30px;height:30px;display:grid;place-items:center;color:var(--ink-300)"><i class="fas fa-redo"></i></span></span>
+          <span style="width:1px;height:20px;background:var(--ink-150)"></span>
+          <span style="display:flex;gap:2px;background:var(--ink-100);border-radius:999px;padding:3px;font-size:11px;font-weight:600">${[['before','ก่อน'],['after','หลัง']].map(([id,l])=>`<button data-compare="${id}" style="padding:4px 10px;border-radius:999px;${S.compare===id?'background:#fff;box-shadow:var(--shadow-xs)':'color:var(--ink-500)'}">${l}</button>`).join('')}</span>
+        </div>
+        <div class="fb" style="position:absolute;left:16px;bottom:16px;display:flex;gap:10px;font-size:11px;color:var(--ink-600);background:#fff;border-radius:999px;padding:6px 12px;box-shadow:var(--shadow-sm)">${legend(false)}</div>
+      </div>
+      <div style="width:340px;background:#fff;border-left:1px solid var(--ink-150);flex:none;display:flex;flex-direction:column;min-height:0">
+        ${(() => { const cur = tab; const list = [['sections','Sections <span style="font-family:var(--font-display);color:var(--ink-400)">7</span>'],['props','คุณสมบัติ'],['ai',`<span style="width:18px;height:18px;border-radius:50%;background:#fff;border:1px solid var(--ink-150);overflow:hidden;display:inline-block"><img src="${IMG}mascot-hello.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 20%"></span>ผู้ช่วย Ket`]]; S.panel.c = cur; return tabs('c', list); })()}
+        ${tab === 'ai' ? `
+        <div style="flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px;font-size:12.5px;line-height:1.55">
+          <div style="align-self:flex-end;max-width:88%;background:var(--ink-900);color:#fff;border-radius:16px 16px 4px 16px;padding:10px 14px">เปลี่ยนแบนเนอร์เป็นโทน Autumn แล้วเพิ่มบล็อกสินค้าแนะนำใต้แบนเนอร์</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div>ผมเตรียมให้ 2 จุด — ไม่แตะ Header/Footer (<b>L2</b>) กดยอมรับทีละจุดได้ครับ</div>
+            ${diffCard({ accept:'var(--red-600)', compact:true })}
+          </div>
+        </div>
+        <div style="padding:12px 14px 14px;border-top:1px solid var(--ink-150)">
+          ${tierChips(['T0 บล็อกเดิม','T1 HTML/CSS','T2'])}
+          <div style="border:1px solid var(--ink-200);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px;color:var(--ink-400)">สั่งต่อ…<span style="margin-left:auto;width:28px;height:28px;border-radius:8px;background:var(--red-600);color:#fff;display:grid;place-items:center"><i class="fas fa-arrow-up" style="font-size:10px"></i></span></div>
+        </div>`
+        : tab === 'sections' ? `<div style="flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:6px">${sectionList()}</div>`
+        : notInMockup(`คุณสมบัติของ “${selSec().name}”`)}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =====================================================================
+   INDEX — หน้ารวมเวอร์ชัน (เครื่องมือผู้ออกแบบ ไม่ใช่หน้าของระบบ)
+   ===================================================================== */
+function renderIndex(){
+  return `
+  <div class="idx">
+    <div style="font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--ink-500);font-family:var(--font-display)">KETSHOPWEB CMS · ปรับแต่ง · PROTOTYPE</div>
+    <h1 style="margin:6px 0 6px;font-size:26px;font-weight:700">หน้ารวมเวอร์ชัน</h1>
+    <div style="color:var(--ink-600);max-width:720px;line-height:1.6">1 เวอร์ชัน = หลังบ้านทั้งชุด (sidebar + ทุกหน้า) ในแนวคิดเดียว · เข้าไปแล้วเดินในระบบได้เหมือนผู้ใช้จริง · สลับเทียบเวอร์ชันที่แถบ<b>ล่างกลาง</b> หรือกด <span class="kbd">[</span> <span class="kbd">]</span> — สลับแล้วยังอยู่หน้าเดิม</div>
+    <div style="margin-top:10px;font-size:11.5px;color:var(--ink-500);line-height:1.6">อิงจาก <b>Ketshopweb CMS Mockups.dc.html</b> แนว A / B / C และ Blueprint v0.3 · ร้านตัวอย่าง GIRLY CLOSET เป็นข้อมูลจำลองจาก mockup · ไม่ต่อ backend</div>
+    <div class="idx-grid">
+      ${VERSIONS.map(v => `
+      <div class="idx-card ready">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:40px;height:40px;border-radius:10px;background:var(--ink-900);color:#fff;display:grid;place-items:center;font-weight:700;font-family:var(--font-display)">${v.label}</span>
+          <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:16px">${v.name} <span style="font-weight:500;font-size:12px;color:var(--ink-500)">· ${v.track}</span></div><div style="font-size:11.5px;color:var(--ink-500)">${v.sbName}</div></div>
+        </div>
+        <div style="font-size:12.5px;color:var(--ink-600);line-height:1.55">${v.desc}</div>
+        <button data-open="${v.id}/entry" style="height:38px;border-radius:10px;background:var(--red-600);color:#fff;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px">เข้า ${v.label} · เริ่มที่กด "ปรับแต่ง" <i class="fas fa-arrow-right" style="font-size:11px"></i></button>
+        <div style="display:flex;flex-direction:column;gap:4px;margin-top:2px">
+          ${SCREENS.map(s => ready(v.id, s.id) ? `
+            <button data-open="${v.id}/${s.id}" style="text-align:left;display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid var(--ink-150);border-radius:9px;background:#fff">
+              <i class="${s.icon}" style="width:16px;text-align:center;color:var(--ink-500)"></i><span style="flex:1;font-weight:600">${s.name}</span><span style="font-family:var(--font-display);font-size:11px;color:var(--ink-400)">${REF[v.id][s.id]}</span><i class="fas fa-arrow-right" style="font-size:10px;color:var(--ink-400)"></i>
+            </button>` : `
+            <div style="display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px dashed var(--ink-200);border-radius:9px;color:var(--ink-400)">
+              <i class="${s.icon}" style="width:16px;text-align:center"></i><span style="flex:1">${s.name}</span><span style="font-family:var(--font-display);font-size:11px">${REF[v.id][s.id]}</span><span class="tag" style="background:var(--ink-100);color:var(--ink-500)">รอบถัดไป</span>
+            </div>`).join('')}
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderPlaceholder(title, line){
+  return `<div class="empty"><div style="max-width:400px;line-height:1.6">
+    <i class="far fa-folder-open" style="font-size:26px;color:var(--ink-300)"></i><br>
+    <b style="font-size:15px">${title}</b><br>${line}
+  </div></div>`;
+}
+
+/* =====================================================================
+   DOCK — bottom-centre version switcher (designer tool)
+   ===================================================================== */
+function renderDock(){
+  const dock = document.getElementById('dock');
+  document.body.classList.toggle('dock-on', !S.mini);
+  if (S.mini){
+    dock.innerHTML = `<button class="dock-mini" data-dock="expand" title="เปิดแถบเวอร์ชัน" style="left:50%;transform:translateX(-50%)"><i class="fas fa-chevron-up" style="font-size:11px"></i></button>`;
+    return;
+  }
+  const v = curVersion(); const s = curScreen();
+  dock.innerHTML = `
+    <div class="dock-bar" role="toolbar" aria-label="สลับเวอร์ชันไอเดีย">
+      <button class="dock-btn" data-dock="pop" aria-expanded="${S.pop}"><i class="fas fa-layer-group" style="font-size:12px;opacity:.8"></i>${v ? v.label + ' · ' + v.name : 'หน้ารวมเวอร์ชัน'}<i class="fas fa-chevron-${S.pop?'down':'up'}" style="font-size:9px;opacity:.6"></i></button>
+      <span class="dock-sep"></span>
+      <div class="dock-vers">${VERSIONS.map(x => `<button class="dock-v${v && x.id===v.id?' on':''}" data-ver="${x.id}" title="${x.label} · ${x.name} (${x.track})">${x.label}</button>`).join('')}</div>
+      ${v ? `<span style="font-size:11.5px;color:rgba(255,255,255,.6);padding:0 8px 0 4px;white-space:nowrap">${s ? s.short + ' · ' + REF[v.id][s.id] : (S.missing || '')}</span>` : ''}
+      <span class="dock-sep"></span>
+      <button class="dock-btn" data-go="index" title="หน้ารวมเวอร์ชัน" style="padding:0 10px"><i class="fas fa-th-large" style="font-size:12px"></i></button>
+      <button class="dock-btn" data-dock="mini" title="ซ่อนแถบ" style="padding:0 10px"><i class="fas fa-chevron-down" style="font-size:11px"></i></button>
+    </div>
+    ${S.pop ? `
+    <div class="dock-pop" role="dialog" aria-label="เลือกเวอร์ชัน">
+      <div class="pop-head"><b>เลือกเวอร์ชัน</b><span style="font-size:11px;color:var(--ink-500)"><span class="kbd">[</span> <span class="kbd">]</span> สลับ · <span class="kbd">Esc</span> ปิด</span></div>
+      ${VERSIONS.map(x => `
+        <button class="pop-row${v && x.id===v.id?' on':''}" data-ver="${x.id}" style="width:100%;text-align:left">
+          <span class="pop-ico" style="background:var(--ink-900);color:#fff;font-weight:700;font-family:var(--font-display);font-size:12px">${x.label}</span>
+          <span style="flex:1;min-width:0"><span style="display:block;font-weight:600">${x.name} <span style="font-weight:400;color:var(--ink-500);font-size:11.5px">· ${x.track}</span></span><span style="display:block;font-size:11.5px;color:var(--ink-500);line-height:1.45;margin-top:2px">${x.desc}</span></span>
+        </button>`).join('')}
+      <button class="pop-row${!v?' on':''}" data-go="index" style="width:100%;text-align:left;align-items:center"><span class="pop-ico"><i class="fas fa-th-large"></i></span><b>หน้ารวมเวอร์ชัน</b></button>
+    </div>` : ''}
+    ${S.toast ? `<div class="toast" role="status">${S.toast}</div>` : ''}`;
+}
+let toastTimer;
+function toast(msg){ S.toast = msg; renderDock(); clearTimeout(toastTimer); toastTimer = setTimeout(() => { S.toast = null; renderDock(); }, 2400); }
+
+/* =====================================================================
+   ROUTER + EVENTS
+   ===================================================================== */
+function parseHash(){
+  const [vid, sid] = location.hash.replace(/^#\/?/, '').split('/');
+  S.missing = null;
+  const v = VERSIONS.find(x => x.id === vid);
+  if (!v) { S.v = null; S.screen = null; return; }
+  S.v = v.id;
+  if (sid && sid.startsWith('x:')) { S.screen = null; S.missing = decodeURIComponent(sid.slice(2)); return; }
+  S.screen = SCREENS.some(x => x.id === sid) ? sid : 'entry';
+}
+function render(){
+  renderSidebar();
+  const view = document.getElementById('view');
+  const v = curVersion(); const s = curScreen();
+  if (!v) view.innerHTML = renderIndex();
+  else if (S.tab === 'back') view.innerHTML = renderPlaceholder('ฝั่ง “จัดการ”', 'ไม่อยู่ในขอบเขต prototype นี้ — สนเฉพาะหน้าตกแต่งเว็บ · กด “ปรับแต่ง” เพื่อกลับ');
+  else if (S.missing) view.innerHTML = renderPlaceholder(S.missing, 'ยังไม่มี mockup ของเมนูนี้ — ว่างไว้สำหรับลอง idea');
+  else if (!ready(v.id, s.id)) view.innerHTML = renderPlaceholder(`${v.label} · ${s.name}`, `มี mockup แล้ว (${REF[v.id][s.id]}) — ทำเป็น prototype ในรอบถัดไป`);
+  else view.innerHTML = RENDER[v.id][s.id]();
+  renderDock();
+}
+function go(hash){ S.pop = false; if (location.hash === hash) render(); else location.hash = hash; }
+function openVersion(vid){ const tail = S.missing ? 'x:' + encodeURIComponent(S.missing) : (S.screen || 'entry'); go(`#/${vid}/${tail}`); }
+function stepVersion(dir){
+  const i = VERSIONS.findIndex(x => x.id === S.v);
+  const next = VERSIONS[(i + dir + VERSIONS.length) % VERSIONS.length];
+  if (i < 0) return go(`#/${next.id}/entry`);
+  openVersion(next.id);
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-go],[data-open],[data-ver],[data-tab],[data-sb],[data-collapse],[data-nav],[data-page],[data-sec],[data-device],[data-panel],[data-diff],[data-compare],[data-dock]');
+  if (!t) { if (S.pop && !e.target.closest('#dock')) { S.pop = false; renderDock(); } return; }
+  const d = t.dataset;
+  if (d.go === 'index') return go('#/');
+  if (d.open) { S.tab = 'front'; return go('#/' + d.open); }
+  if (d.ver) return openVersion(d.ver);
+  if (d.tab) {
+    S.tab = d.tab;
+    if (d.tab === 'front') return go(`#/${S.v}/entry`);
+    return render();
+  }
+  if (d.sb) {
+    S.tab = 'front';
+    const s = SCREENS.find(x => x.sb === d.sb);
+    return go(`#/${S.v}/${s ? (s.id === 'page' ? 'entry' : s.id) : 'x:' + encodeURIComponent(d.sb)}`);
+  }
+  if (d.collapse) { S.v2Collapsed = d.collapse === '1'; return render(); }
+  if (d.nav === 'entry') return go(`#/${S.v}/entry`);
+  if (d.page) {
+    if (d.page === 'หน้าแรก') return go(`#/${S.v}/page`);
+    return toast(`prototype นี้เปิดแต่งได้เฉพาะ “หน้าแรก” — “${d.page}” ยังไม่มีใน mockup`);
+  }
+  if (d.sec) { S.sel = d.sec; return render(); }
+  if (d.device) { S.device = d.device; return render(); }
+  if (d.panel) { const [k, v] = d.panel.split(':'); S.panel[k] = v; return render(); }
+  if (d.diff) { const [k, v] = d.diff.split(':'); if (k === 'all') { S.diff.hero = 'ok'; S.diff.prod = 'ok'; } else S.diff[k] = S.diff[k] === v ? null : v; S.compare = 'after'; return render(); }
+  if (d.compare) { S.compare = d.compare === 'toggle' ? (S.compare === 'after' ? 'before' : 'after') : d.compare; return render(); }
+  if (d.dock === 'pop') { S.pop = !S.pop; return renderDock(); }
+  if (d.dock === 'mini') { S.mini = true; S.pop = false; return renderDock(); }
+  if (d.dock === 'expand') { S.mini = false; return renderDock(); }
+});
+document.addEventListener('keydown', e => {
+  const tg = e.target; if (tg && tg.closest && tg.closest('input,textarea')) return;
+  if (e.key === ']') stepVersion(1);
+  else if (e.key === '[') stepVersion(-1);
+  else if (e.key === 'Escape' && S.pop) { S.pop = false; renderDock(); }
+});
+window.addEventListener('hashchange', () => { S.v2Collapsed = null; parseHash(); render(); });
+parseHash(); render();
+</script>
+</body>
+</html>
