@@ -27,13 +27,14 @@ npm run dev
 | `legacy/round-1-html/` | prototype รอบแรก (HTML ไฟล์เดียว) เก็บไว้อ้างอิง |
 | `CLAUDE.md` | กติกาของงาน — Claude ทุก session อ่านอัตโนมัติ |
 | `STATUS.md` | ทำอะไรแล้ว ใครรับผิดชอบอะไร อะไรค้าง |
-| `WORKLOG.md` | บันทึกส่งต่องานระหว่าง session |
+| `WORKLOG.md` | บันทึกสรุปงานที่รวมแล้ว (1 บรรทัดต่อ PR) |
+| `jobs/<branch>.md` | บันทึกงานละเอียดของแต่ละ branch (สร้างจาก `jobs/_template.md`) |
 
 ## ทำงานร่วมกัน
 
 1. ก่อนเริ่ม: `git pull` แล้วอ่าน `STATUS.md` + `WORKLOG.md`
-2. แตก branch ของตัวเอง `ชื่อ/เรื่อง` (เช่น `nui/v2-header`) และจดชื่อไว้ในตารางคนรับผิดชอบของ `STATUS.md`
-3. จบงาน: เขียน `WORKLOG.md` · `npm run build` ให้ผ่าน · push · เปิด Pull Request เข้า `main`
+2. แตก branch ของตัวเอง (ชื่อคน หรือ `ชื่อ/เรื่อง`) · จดชื่อในตารางคนรับผิดชอบของ `STATUS.md` · สร้าง `jobs/<branch>.md` จาก `jobs/_template.md`
+3. ระหว่างทำ: จดใน `jobs/<branch>.md` · จบงาน: ติ๊ก `STATUS.md` · สรุป 1 บรรทัดใน `WORKLOG.md` · `npm run build` ให้ผ่าน · push · เปิด Pull Request เข้า `main`
 4. ลิงก์ Artifact อัปเดตจาก `main` เท่านั้น (`npm run build:artifact` แล้วสั่ง Claude เผยแพร่ที่ลิงก์เดิม)
 
 ใช้ Claude Code ได้ทั้งบนเครื่องตัวเอง และบนเว็บที่ claude.ai/code — ทุก session อ่านกติกาจาก `CLAUDE.md` เหมือนกัน
