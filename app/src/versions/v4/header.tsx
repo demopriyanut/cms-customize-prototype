@@ -58,7 +58,7 @@ function Toggles({ look, hd, color, row }: { look: Look; hd: H; color: string; r
 function LayoutPicker({ look, hd, accent }: { look: Look; hd: H; accent: string }) {
   const cur = hd.h.data.layout
   const pick = (k: string, name: string) => hd.setData('layout', k, 'Layout ' + name)
-  const note = cur === 'stacked' && <div className="text-caption text-ink-500 mt-2"><i className="fas fa-magic text-orange-600 mr-1" />ตอนนี้ใช้แบบ Editorial จากผู้ช่วย Ket (โลโก้กลาง · เมนูใต้โลโก้) — เลือกการ์ดเพื่อกลับเป็นแบบมาตรฐานของระบบ</div>
+  const note = cur === 'stacked' && <div className="text-caption text-ink-500 mt-2"><i className="fas fa-magic text-ai mr-1" aria-hidden />ตอนนี้ใช้แบบ Editorial จากผู้ช่วย Ket (โลโก้กลาง · เมนูใต้โลโก้) — เลือกการ์ดเพื่อกลับเป็นแบบมาตรฐานของระบบ</div>
   if (look === 'b') return (
     <div>
       <div className="flex gap-1.5">{NAV_LAYOUTS.map(n => { const on = cur === n.key; return (
@@ -74,14 +74,14 @@ function LayoutPicker({ look, hd, accent }: { look: Look; hd: H; accent: string 
           const on = cur === n.key
           const bar = (w: number, h: number, c: string, order?: number, key?: number) => <span key={key} style={{ display: 'block', width: w, height: h, borderRadius: 2, background: c, order }} />
           return (
-            <button key={n.key} role="radio" aria-checked={on} onClick={() => pick(n.key, n.name)} className={`text-left ${big ? 'rounded-xl p-2.5' : 'flex-1 rounded-[10px] p-2'} ${on ? 'bg-red-50' : 'bg-white hover:border-ink-400'}`} style={{ border: `2px solid ${on ? 'var(--red-600)' : 'var(--ink-400)'}` }}>
+            <button key={n.key} role="radio" aria-checked={on} onClick={() => pick(n.key, n.name)} className={`text-left ${big ? 'rounded-xl p-2.5' : 'flex-1 rounded-[10px] p-2'} ${on ? 'bg-orange-50' : 'bg-white hover:border-ink-400'}`} style={{ border: `2px solid ${on ? 'var(--orange-600)' : 'var(--ink-400)'}` }}>
               <div className={`bg-white border border-ink-150 rounded-md flex items-center ${big ? 'h-16 px-2 gap-1.5' : 'h-[34px] px-1.5 gap-1'}`} style={{ justifyContent: n.justify }}>
                 {bar(big ? 38 : 22, big ? 10 : 7, 'var(--ink-800)', n.logoOrder)}
                 <span className={`flex order-2 ${big ? 'gap-1' : 'gap-0.5'}`}>{Array.from({ length: big ? 4 : 3 }, (_, i) => bar(big ? 14 : 8, big ? 6 : 4, 'var(--ink-300)', undefined, i))}</span>
                 {big && bar(20, 6, 'var(--ink-300)', 3)}
               </div>
               {big
-                ? <div className="flex items-center gap-2 mt-2"><span className="w-3.5 h-3.5 rounded-full grid place-items-center" style={{ border: `2px solid ${on ? 'var(--red-600)' : 'var(--ink-300)'}` }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: on ? 'var(--red-600)' : 'transparent' }} /></span><span className="font-semibold text-body">{n.name}</span></div>
+                ? <div className="flex items-center gap-2 mt-2"><span className="w-3.5 h-3.5 rounded-full grid place-items-center" style={{ border: `2px solid ${on ? 'var(--orange-600)' : 'var(--ink-400)'}` }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: on ? 'var(--orange-600)' : 'transparent' }} /></span><span className="font-semibold text-body">{n.name}</span></div>
                 : <div className="text-caption font-semibold mt-1.5 text-center">{n.name}</div>}
             </button>
           )
@@ -126,8 +126,8 @@ function NavigationForm({ look, hd }: { look: Look; hd: H }) {
   if (look === 'a') return (
     <div className="flex flex-col gap-5">
       <div><div className="font-bold text-heading">Navigation Layout</div><div className="text-meta text-ink-500">เลือกรูปแบบการวางโลโก้และเมนู — เปลี่ยนแล้วพรีวิวด้านบนอัปเดตทันที</div></div>
-      <LayoutPicker look="a" hd={hd} accent="var(--red-600)" />
-      <div className="flex flex-wrap gap-x-7 gap-y-3 py-3.5 border-y border-ink-100 text-body"><Toggles look="a" hd={hd} color="var(--red-600)" /></div>
+      <LayoutPicker look="a" hd={hd} accent="var(--orange-600)" />
+      <div className="flex flex-wrap gap-x-7 gap-y-3 py-3.5 border-y border-ink-100 text-body"><Toggles look="a" hd={hd} color="var(--orange-600)" /></div>
       <div>
         <div className="font-bold text-heading mb-2.5">สี <span className="text-caption text-ink-500 font-normal">· ค่าเริ่มต้นสืบทอดจาก System Design → เปลี่ยนที่นั่นจะเปลี่ยนทุกหน้า</span></div>
         <div className="grid grid-cols-2 gap-2.5 max-w-[760px]"><ColorRow look="a" hd={hd} which="bg" /><ColorRow look="a" hd={hd} which="fg" /></div>
@@ -140,7 +140,7 @@ function NavigationForm({ look, hd }: { look: Look; hd: H }) {
       <div><div className={lab}>{look === 'b' ? 'LAYOUT' : 'Navigation Layout'}</div><LayoutPicker look={look} hd={hd} accent="var(--orange-600)" /></div>
       <div><div className={lab}>{look === 'b' ? 'ตัวอักษร' : 'ตัวอักษรเมนู'}</div><FontRow hd={hd} withCase={look === 'c'} /></div>
       <div><div className={lab}>สี</div><div className="flex flex-col gap-1.5"><ColorRow look={look} hd={hd} which="bg" /><ColorRow look={look} hd={hd} which="fg" /></div></div>
-      <div className="flex flex-col gap-2.5 text-body pt-2 border-t border-ink-100"><Toggles look={look} hd={hd} color={look === 'b' ? 'var(--ink-900)' : 'var(--red-600)'} row /></div>
+      <div className="flex flex-col gap-2.5 text-body pt-2 border-t border-ink-100"><Toggles look={look} hd={hd} color={look === 'b' ? 'var(--ink-900)' : 'var(--orange-600)'} row /></div>
     </div>
   )
 }
@@ -154,14 +154,14 @@ function Alternatives({ look, hd }: { look: 'b' | 'c'; hd: H }) {
         <MascotImg src="mascot-idea.png" size={28} pos="center 20%" className="border border-ink-150" />
         <span className="font-bold">ลองแบบอื่นด้วยผู้ช่วย Ket</span>
         <span className="text-meta text-ink-500">· {look === 'b' ? 'ใช้โลโก้/เมนู/สีจาก Token เดิม เปลี่ยนแค่การจัดวาง' : 'โลโก้/เมนู/สี Token เดิม เปลี่ยนแค่การจัดวาง'}</span>
-        <button onClick={() => showToast('บทตั้งไว้ของ prototype มี 3 แบบตาม mockup — ยังไม่มีแบบอื่นให้สุ่ม')} className="ml-auto text-meta text-red-600 font-semibold"><i className="fas fa-sync-alt text-[10px]" /> สุ่มใหม่</button>
+        <button onClick={() => showToast('บทตั้งไว้ของ prototype มี 3 แบบตาม mockup — ยังไม่มีแบบอื่นให้สุ่ม')} className="ml-auto text-meta text-ink-700 font-semibold hover:text-ink-900"><i className="fas fa-sync-alt text-[10px]" /> สุ่มใหม่</button>
       </div>
       <div className="grid grid-cols-3 gap-3">
         {HEADER_PRESETS.map(p => {
           const bg = tokenHex(hd.draft, p.style.bg) ?? '#fff', fg = tokenHex(hd.draft, p.style.fg) ?? '#222'
           const trying = hd.trial === p.key
           return (
-            <div key={p.key} className={`border rounded-xl overflow-hidden ${trying ? 'border-red-600 ring-2 ring-red-100' : 'border-ink-150'}`}>
+            <div key={p.key} className={`border rounded-xl overflow-hidden ${trying ? 'border-orange-600 ring-2 ring-orange-100' : 'border-ink-150'}`}>
               <div className="flex items-center px-3.5 gap-2.5" style={{ height: look === 'b' ? 58 : 54, background: bg, justifyContent: p.data.layout === 'stacked' ? 'center' : 'space-between', flexDirection: p.data.layout === 'stacked' ? 'column' : 'row' }}>
                 <span className="font-bold text-caption" style={{ fontFamily: 'Georgia,serif', color: fg }}>GIRLY CLOSET</span>
                 <span className="flex gap-1.5">{Array.from({ length: look === 'b' ? 4 : 3 }, (_, i) => <span key={i} className="w-4 h-[5px] rounded-sm opacity-50" style={{ background: fg }} />)}</span>
@@ -170,7 +170,7 @@ function Alternatives({ look, hd }: { look: 'b' | 'c'; hd: H }) {
                 <div className="flex-1 min-w-0"><div className="font-semibold">{p.name}</div><div className="text-caption text-ink-500 leading-snug">{p.desc}</div></div>
                 {look === 'b'
                   ? <button onClick={() => hd.applyPreset(p.key)} className="border border-ink-400 rounded-[7px] px-2.5 py-1 font-semibold text-caption whitespace-nowrap hover:border-ink-900">ใช้แบบนี้</button>
-                  : <button onClick={() => { hd.setPeek(false); hd.setTrial(trying ? null : p.key) }} aria-pressed={trying} className={`rounded-[7px] px-2.5 py-1 font-semibold text-caption whitespace-nowrap border ${trying ? 'bg-red-600 border-red-600 text-white' : 'border-ink-400 hover:border-ink-900'}`}>{trying ? 'กำลังลอง' : 'ลองดู'}</button>}
+                  : <button onClick={() => { hd.setPeek(false); hd.setTrial(trying ? null : p.key) }} aria-pressed={trying} className={`rounded-[7px] px-2.5 py-1 font-semibold text-caption whitespace-nowrap border ${trying ? 'bg-orange-50 border-orange-600 text-orange-700' : 'border-ink-400 hover:border-ink-900'}`}>{trying ? 'กำลังลอง' : 'ลองดู'}</button>}
               </div>
             </div>
           )
@@ -184,12 +184,12 @@ function TrialBar({ hd }: { hd: H }) {
   if (!hd.preset) return null
   return (
     <div role="status" className="flex items-center gap-2.5 bg-ink-900 text-white rounded-xl px-3.5 py-2.5 text-body">
-      <i className="fas fa-magic text-orange-500" />
+      <i className="fas fa-magic text-ai" aria-hidden />
       <span className="flex-1 min-w-0">กำลังลองแบบ <b>{hd.preset.name}</b> · ชั่วคราว ยังไม่ลงฉบับร่าง</span>
       <span className="flex gap-0.5 bg-white/10 rounded-full p-[3px] text-caption font-semibold">
         {([[true, 'แบบเดิม'], [false, 'แบบที่ลอง']] as const).map(([v, l]) => <button key={l} aria-pressed={hd.peek === v} onClick={() => hd.setPeek(v)} className={`px-2.5 py-1 rounded-full ${hd.peek === v ? 'bg-white text-ink-900' : 'text-white/70'}`}>{l}</button>)}
       </span>
-      <button onClick={() => hd.applyPreset(hd.preset!.key)} className="h-8 px-3 rounded-lg bg-red-600 font-semibold">ใช้แบบนี้</button>
+      <button onClick={() => hd.applyPreset(hd.preset!.key)} className="h-8 px-3 rounded-lg bg-white text-ink-900 font-semibold">ใช้แบบนี้</button>
       <button onClick={() => hd.setTrial(null)} className="h-8 px-2.5 rounded-lg text-white/75 hover:text-white">ยกเลิก</button>
     </div>
   )
@@ -209,7 +209,7 @@ export function HeaderV4(_: { collapsed?: boolean }) {
     if (t) setPanel('hdr-c', t[0]); else showToast('โซน “ค้นหา & ตะกร้า” ยังไม่มีแท็บตั้งค่าใน mockup 3c')
   }
   return (
-    <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
+    <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-ink-50">
       <div className="h-14 bg-white border-b border-ink-150 flex items-center px-6 gap-3 flex-none">
         <h1 className="font-bold text-title">Header</h1><span className="text-ink-500">/</span><span className="text-ink-600">ใช้กับทุกหน้า</span>
         <span className="ml-2"><DeviceToggle variant="square" /></span>
@@ -220,16 +220,16 @@ export function HeaderV4(_: { collapsed?: boolean }) {
       <div className="flex-1 flex min-h-0">
         <div tabIndex={0} aria-label="พื้นที่ preview Header" className="outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600 flex-1 min-w-0 overflow-auto px-6 pt-[22px] pb-28 flex flex-col gap-4">
           <div className="bg-white rounded-[14px] shadow-md border border-black/5 overflow-hidden">
-            <div ref={fit.ref}><HeaderPreview site={hd.shown} width={fit.w} strip={90} hot={{ active: cur[2], color: 'var(--red-600)', look: 'c', onZone }} /></div>
+            <div ref={fit.ref}><HeaderPreview site={hd.shown} width={fit.w} strip={90} hot={{ active: cur[2], color: 'var(--orange-600)', look: 'c', onZone }} /></div>
           </div>
           <TrialBar hd={hd} />
           <Alternatives look="c" hd={hd} />
         </div>
         <div className="w-[340px] bg-white border-l border-ink-150 flex-none flex flex-col min-h-0">
           <div role="tablist" className="flex border-b border-ink-150 px-1.5 font-medium text-ink-500 text-body flex-none">
-            {TABS_C.map(([k, l]) => <button key={k} role="tab" aria-selected={tab === k} onClick={() => setPanel('hdr-c', k)} className={`flex-auto pt-3.5 pb-3 px-1.5 whitespace-nowrap ${tab === k ? 'text-ink-900 font-semibold border-b-2 border-red-600 -mb-px' : 'hover:text-ink-900'}`}>{l}</button>)}
+            {TABS_C.map(([k, l]) => <button key={k} role="tab" aria-selected={tab === k} onClick={() => setPanel('hdr-c', k)} className={`flex-auto pt-3.5 pb-3 px-1.5 whitespace-nowrap ${tab === k ? 'text-ink-900 font-semibold border-b-2 border-orange-600 -mb-px' : 'hover:text-ink-900'}`}>{l}</button>)}
           </div>
-          <div className="flex-1 overflow-auto p-4 flex flex-col">
+          <div tabIndex={0} aria-label="แผงตั้งค่า Header" className="flex-1 overflow-auto p-4 flex flex-col outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600">
             {tab === 'nav' ? <NavigationForm look="c" hd={hd} /> : <Empty name={cur[1]} onBack={() => setPanel('hdr-c', 'nav')} backLabel="ไปที่ Navigation (ส่วนที่ mockup ออกแบบไว้)" />}
           </div>
         </div>

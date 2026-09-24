@@ -35,6 +35,7 @@
   --color-legacy: #1a1a1a;
   --color-legacy-active: #E85440;
   --color-cream: #FAF6F2;
+  --color-ai: #D73226;             /* ผู้ช่วย Ket — CI red→orange (measured #D73226) · white text 4.8:1 */
 }
 
 /* ระบบตัวอักษร (มาตรฐานของ V4 · 6 ขั้น ไม่มีครึ่ง px) — ใช้ text-display / title / heading / body / meta / caption
@@ -70,6 +71,7 @@ button { cursor: pointer; }
 
 /* dotted canvas backgrounds from the mockup */
 .canvas-dots-ink { background: var(--ink-100) radial-gradient(var(--ink-200) 1px, transparent 1px) 0 0/16px 16px; }
+.canvas-dots-cool { background: var(--ink-50) radial-gradient(rgba(19,21,27,.07) 1px, transparent 1px) 0 0/18px 18px; }
 .canvas-dots-cream { background: #FAF6F2 radial-gradient(rgba(19,21,27,.08) 1px, transparent 1px) 0 0/18px 18px; }
 
 /* floating items at the bottom of a canvas step up while the designer dock is open, so it never covers them */

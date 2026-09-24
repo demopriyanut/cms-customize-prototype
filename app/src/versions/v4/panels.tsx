@@ -29,7 +29,7 @@ export function LayerList({ site, page, variant }: { site: SiteDoc; page: PageDo
     }
     if (variant === 'compact') return (
       <div key={s.id} {...common} onClick={() => select(s.id)} role="button" tabIndex={0} aria-pressed={sel} onKeyDown={e => e.key === 'Enter' && select(s.id)}
-        className={`w-full text-left flex items-center gap-2 px-2.5 py-2 rounded-[10px] cursor-pointer ${sel ? 'bg-orange-50 text-orange-700 font-semibold' : s.origin === 'ai' ? 'bg-orange-50/60 text-orange-700 font-medium' : 'text-ink-800 font-medium hover:bg-ink-50'} ${s.hidden ? 'opacity-50' : ''}`}>
+        className={`w-full text-left flex items-center gap-2 px-2.5 py-2 rounded-[10px] cursor-pointer ${sel ? 'bg-orange-50 text-orange-700 font-semibold' : s.origin === 'ai' ? 'bg-red-50 text-red-700 font-medium' : 'text-ink-800 font-medium hover:bg-ink-50'} ${s.hidden ? 'opacity-50' : ''}`}>
         {locked ? <i className="fas fa-lock w-3.5 text-center text-[11px] text-ink-400" /> : <i onPointerDown={e => drag.start(e, s.id, s.name)} title="ลากเพื่อย้าย" className="fas fa-grip-vertical w-3.5 text-center text-meta text-ink-300 cursor-grab touch-none" />}
         <i className={`${SECTION_ICON[s.type]} w-3.5 text-center text-[12px] opacity-80`} />
         <span className="flex-1 text-body truncate">{s.name}</span>
@@ -39,7 +39,7 @@ export function LayerList({ site, page, variant }: { site: SiteDoc; page: PageDo
     )
     return (
       <div key={s.id} {...common} onClick={() => select(s.id)} role="button" tabIndex={0} aria-pressed={sel} onKeyDown={e => e.key === 'Enter' && select(s.id)}
-        className={`w-full text-left flex items-center gap-2.5 px-2.5 py-2.5 rounded-[10px] border cursor-pointer ${sel ? 'border-red-300 bg-red-50' : s.origin === 'ai' ? 'border-orange-500 border-dashed bg-orange-50' : locked ? 'border-ink-150 bg-ink-50' : 'border-ink-150 bg-white hover:border-ink-300'} ${s.hidden ? 'opacity-50' : ''}`}>
+        className={`w-full text-left flex items-center gap-2.5 px-2.5 py-2.5 rounded-[10px] border cursor-pointer ${sel ? 'border-orange-600 bg-orange-50' : s.origin === 'ai' ? 'border-ai border-dashed bg-red-50' : locked ? 'border-ink-150 bg-ink-50' : 'border-ink-150 bg-white hover:border-ink-300'} ${s.hidden ? 'opacity-50' : ''}`}>
         {locked ? <i className="fas fa-lock text-ink-400 text-[11px] w-[11px]" title={common['data-reason']} /> : <i onPointerDown={e => drag.start(e, s.id, s.name)} title="ลากเพื่อย้าย" className="fas fa-grip-vertical text-ink-300 text-meta cursor-grab touch-none w-[11px]" />}
         <span className="w-10 h-7 rounded flex-none border border-ink-150" style={{ background: THUMB[s.type] }} />
         <span className="flex-1 min-w-0"><span className="block font-semibold text-body truncate">{s.name}</span><span className="block text-meta text-ink-500 truncate">{s.meta}</span></span>
@@ -144,7 +144,7 @@ export function PropertiesPanel({ site, pageId }: { site: SiteDoc; pageId: strin
   const readOnly = useStore(x => x.compare) === 'before'
   if (!s) return <div className="flex-1 grid place-items-center text-ink-500 text-body p-6 text-center">เลือก Section บนหน้าเว็บ<br />หรือในรายการ เพื่อดูคุณสมบัติ</div>
   if (s.role === 'global') return (
-    <div className="flex-1 overflow-auto p-5 flex flex-col gap-4 text-body">
+    <div tabIndex={0} aria-label="แผงคุณสมบัติ" className="flex-1 overflow-auto outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600 p-5 flex flex-col gap-4 text-body">
       <Head s={s} />
       <div className="rounded-xl bg-ink-50 border border-ink-150 p-3 leading-relaxed"><i className="fas fa-lock text-ink-500 mr-1" /><b>{s.name} ใช้ร่วมทุกหน้า</b><br />แก้ที่หน้า {s.name} เพื่อให้ทุกหน้าเปลี่ยนพร้อมกัน — ในหน้านี้ย้ายหรือลบไม่ได้</div>
       {version && <button onClick={() => go.to(version.id, s.type === 'header' ? 'header' : 'footer')} className="h-9 rounded-lg bg-ink-900 text-white font-semibold"><i className="fas fa-external-link-alt text-[12px] mr-1.5" />ไปแก้ที่ {s.name}</button>}
@@ -153,7 +153,7 @@ export function PropertiesPanel({ site, pageId }: { site: SiteDoc; pageId: strin
   )
   const textFields = Object.entries(s.data).filter(([k]) => FIELD_LABEL[k])
   return (
-    <div className="flex-1 overflow-auto p-5 flex flex-col gap-5 text-body">
+    <div tabIndex={0} aria-label="แผงคุณสมบัติ" className="flex-1 overflow-auto outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600 p-5 flex flex-col gap-5 text-body">
       <Head s={s} />
       {s.role === 'system' && <div className="rounded-xl p-2.5 leading-relaxed" style={{ background: ROLE_STYLE.system.bg, color: ROLE_STYLE.system.fg }}><i className="fas fa-lock mr-1" />{s.type === 'cart' ? 'หน้าธุรกรรม — แก้ได้เฉพาะค่า: ข้อความ · ซ่อนฟิลด์ · สีปุ่ม' : 'บล็อกของระบบ — ปรับค่าได้ ย้ายไม่ได้ · ข้อมูลสินค้ามาจากคลังสินค้า'}</div>}
       {s.type === 'products' && <div className="rounded-xl p-2.5 bg-info-100 text-info-700 leading-relaxed"><i className="fas fa-sync-alt mr-1" />สินค้าดึงสดจากคลังสินค้า — แก้การแสดงผลได้ แต่ข้อมูลมาจากระบบ</div>}
@@ -197,7 +197,7 @@ export function PropertiesPanel({ site, pageId }: { site: SiteDoc; pageId: strin
         <div className="flex gap-1.5">
           <button disabled={readOnly} onClick={() => st().duplicate(s.id)} className="flex-1 h-8 rounded-lg border border-ink-400 hover:bg-ink-50"><i className="far fa-clone mr-1" />ทำซ้ำ</button>
           <button disabled={readOnly} onClick={() => st().toggleHidden(s.id)} className="flex-1 h-8 rounded-lg border border-ink-400 hover:bg-ink-50"><i className={`far ${s.hidden ? 'fa-eye' : 'fa-eye-slash'} mr-1`} />{s.hidden ? 'แสดง' : 'ซ่อน'}</button>
-          <button disabled={readOnly} onClick={() => st().remove(s.id)} className="flex-1 h-8 rounded-lg border border-ink-400 hover:bg-red-50 hover:text-red-700"><i className="far fa-trash-alt mr-1" />ลบ</button>
+          <button disabled={readOnly} onClick={() => st().remove(s.id)} className="flex-1 h-8 rounded-lg border border-ink-400 text-red-700 font-semibold hover:bg-red-50"><i className="far fa-trash-alt mr-1" aria-hidden />ลบ</button>
         </div>
       </>}
       {readOnly && <div className="text-meta text-ink-500">กำลังดู “ก่อน” (ฉบับเผยแพร่) — สลับเป็น “หลัง” เพื่อแก้</div>}
@@ -217,23 +217,25 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 
 /* inherited from the site tokens vs overridden at this spot (B1) */
 function TokenRow({ label, site, bg, onChange, disabled, inheritText = 'สืบทอด · ค่ากลาง' }: { label: string; site: SiteDoc; bg: SectionStyle['bg']; onChange?: (bg: SectionStyle['bg']) => void; disabled?: boolean; inheritText?: string }) {
+  /* one meaning system-wide (same as Header / Footer): ฟ้า 🔗 = สืบทอด · อำพัน ⛓ = ตั้งทับเฉพาะจุดนี้ (Token อื่น หรือสีดิบ) */
   const hex = tokenHex(site, bg)
   const state = !bg ? 'inherit' : 'token' in bg ? 'token' : 'raw'
+  const over = state !== 'inherit'
   return (
     <Group title={label}>
-      <div className="flex items-center gap-2 rounded-lg border border-ink-200 px-2.5 py-2">
-        <span className="w-5 h-5 rounded border border-ink-200 flex-none" style={{ background: hex ?? 'repeating-linear-gradient(45deg,#fff 0 4px,#eef0f4 4px 8px)' }} />
+      <div className={`flex items-center gap-2 rounded-lg border px-2.5 py-2 ${over ? 'border-warning-500 bg-warning-50' : 'border-ink-150 bg-white'}`}>
+        <span className="w-5 h-5 rounded border border-ink-400 flex-none" style={{ background: hex ?? 'repeating-linear-gradient(45deg,#fff 0 4px,#eef0f4 4px 8px)' }} />
         <span className="flex-1 min-w-0">
-          <span className="flex items-center gap-1.5 text-body"><span className={`w-2 h-2 rounded-full ${state === 'inherit' ? 'bg-orange-500' : state === 'token' ? 'bg-info-500' : 'bg-red-600'}`} />{state === 'inherit' ? inheritText : state === 'token' ? `ใช้ Token · ${(bg as { token: string }).token}` : 'ตั้งทับเฉพาะจุดนี้ · สีดิบ'}</span>
+          <span className={`flex items-center gap-1.5 text-body ${over ? 'text-warning-700' : 'text-info-700'}`}><i className={`fas ${over ? 'fa-unlink' : 'fa-link'} text-[10px]`} aria-hidden />{state === 'inherit' ? inheritText : state === 'token' ? `ตั้งทับเฉพาะจุดนี้ · Token ${(bg as { token: string }).token}` : 'ตั้งทับเฉพาะจุดนี้ · สีดิบ (ไม่ผูก Token)'}</span>
           <span className="block text-meta text-ink-500 font-display">{hex ?? '—'}</span>
         </span>
-        {state !== 'inherit' && onChange && !disabled && <button onClick={() => onChange(undefined)} className="text-meta font-semibold text-ink-600 hover:text-ink-900">ใช้ค่ากลาง</button>}
+        {over && onChange && !disabled && <button onClick={() => onChange(undefined)} className="text-meta font-semibold text-ink-700 border border-ink-400 bg-white rounded-md px-2 py-0.5 hover:text-ink-900"><i className="fas fa-undo text-[9px]" aria-hidden /> ใช้ค่ากลาง</button>}
       </div>
       {onChange && !disabled && (
         <div className="flex flex-wrap gap-1.5 items-center">
-          {site.tokens.map(t => <button key={t.name} title={`Token · ${t.name} ${t.hex}`} onClick={() => onChange({ token: t.name })} className={`w-6 h-6 rounded-md border ${bg && 'token' in bg && bg.token === t.name ? 'ring-2 ring-offset-1 ring-ink-900 border-white' : 'border-ink-400'}`} style={{ background: t.hex }} />)}
-          <label title="สีดิบ (ไม่แนะนำ — ด่านตรวจจะเตือน)" className="w-6 h-6 rounded-md border border-dashed border-ink-400 grid place-items-center text-ink-500 cursor-pointer relative overflow-hidden text-caption"><i className="fas fa-eye-dropper" /><input type="color" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => onChange({ hex: e.target.value.toUpperCase() })} /></label>
-          <span className="text-meta text-ink-500">จุดส้ม = สืบทอด · ฟ้า = Token · แดง = สีดิบ</span>
+          {site.tokens.map(t => <button key={t.name} title={`Token · ${t.name} ${t.hex}`} aria-label={`ใช้ Token ${t.name}`} aria-pressed={!!bg && 'token' in bg && bg.token === t.name} onClick={() => onChange({ token: t.name })} className={`w-6 h-6 rounded-md border ${bg && 'token' in bg && bg.token === t.name ? 'ring-2 ring-offset-1 ring-orange-600 border-white' : 'border-ink-400'}`} style={{ background: t.hex }} />)}
+          <label title="สีดิบ (ไม่แนะนำ — ด่านตรวจจะเตือน)" className="w-6 h-6 rounded-md border border-dashed border-ink-500 grid place-items-center text-ink-500 cursor-pointer relative overflow-hidden text-caption"><i className="fas fa-eye-dropper" aria-hidden /><input type="color" aria-label="เลือกสีเอง" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => onChange({ hex: e.target.value.toUpperCase() })} /></label>
+          <span className="text-meta text-ink-500">ฟ้า = สืบทอด · อำพัน = ตั้งทับ</span>
         </div>
       )}
     </Group>
@@ -245,12 +247,12 @@ export function HistoryPanel() {
   const log = useStore(s => s.log); const restore = useStore(s => s.restore)
   const fmt = (t: number) => new Date(t).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
   return (
-    <div className="flex-1 overflow-auto p-4 flex flex-col gap-1.5 text-body">
+    <div tabIndex={0} aria-label="ประวัติการแก้" className="flex-1 overflow-auto outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600 p-4 flex flex-col gap-1.5 text-body">
       <div className="text-meta text-ink-500 px-1 pb-1">ทุกการแก้บันทึกลงฉบับร่าง · ย้อนกลับไปจุดไหนก็ได้ · เว็บจริงเปลี่ยนเมื่อกดเผยแพร่เท่านั้น</div>
       {log.length === 0 && <div className="text-ink-500 text-center py-8">ยังไม่มีการแก้ในรอบนี้</div>}
       {log.map((e, i) => (
         <div key={e.id} className={`flex gap-2.5 items-start p-2 rounded-lg ${e.kind === 'publish' ? 'bg-success-50' : 'hover:bg-ink-50'}`}>
-          <span className={`w-6 h-6 rounded-full grid place-items-center flex-none text-caption ${e.kind === 'publish' ? 'bg-success-600 text-white' : e.actor === 'ผู้ช่วย Ket' ? 'bg-orange-100 text-orange-700' : 'bg-ink-100 text-ink-600'}`}><i className={e.kind === 'publish' ? 'fas fa-paper-plane' : e.actor === 'ผู้ช่วย Ket' ? 'fas fa-magic' : 'fas fa-user'} /></span>
+          <span className={`w-6 h-6 rounded-full grid place-items-center flex-none text-caption ${e.kind === 'publish' ? 'bg-success-600 text-white' : e.actor === 'ผู้ช่วย Ket' ? 'bg-red-50 text-red-700' : 'bg-ink-100 text-ink-600'}`}><i className={e.kind === 'publish' ? 'fas fa-paper-plane' : e.actor === 'ผู้ช่วย Ket' ? 'fas fa-magic' : 'fas fa-user'} /></span>
           <div className="flex-1 min-w-0"><div className="font-semibold truncate">{e.label}</div><div className="text-meta text-ink-500">{e.actor} · {fmt(e.at)}{i === 0 && e.kind !== 'publish' ? ' · ล่าสุด' : ''}</div></div>
           {i > 0 && e.kind !== 'publish' && <button onClick={() => restore(e.id)} className="text-meta font-semibold border border-ink-400 rounded-md px-2 py-0.5 hover:bg-white whitespace-nowrap">ย้อนมาจุดนี้</button>}
         </div>
@@ -298,7 +300,7 @@ export function PublishDialog() {
         <div className="px-5 py-3 border-t border-ink-100">
           <div className="text-body font-semibold text-ink-600 mb-1.5">ด่านตรวจ</div>
           {checks.map(c => (
-            <div key={c.label} className="flex items-start gap-2 text-body py-1"><i className={`mt-0.5 ${c.ok ? 'fas fa-check-circle text-success-600' : 'fas fa-exclamation-circle text-red-600'}`} /><span className="flex-1"><b className="font-medium">{c.label}</b><span className="block text-body text-ink-500">{c.note}</span></span></div>
+            <div key={c.label} className="flex items-start gap-2 text-body py-1"><i className={`mt-0.5 ${c.ok ? 'fas fa-check-circle text-success-600' : 'fas fa-exclamation-circle text-red-700'}`} /><span className="flex-1"><b className="font-medium">{c.label}</b><span className="block text-body text-ink-500">{c.note}</span></span></div>
           ))}
           {blocked && <button onClick={fixRaw} className="mt-1.5 h-8 px-3 rounded-lg border border-ink-400 text-body font-semibold hover:bg-ink-50"><i className="fas fa-magic mr-1" />แก้ตามที่แนะนำ · เปลี่ยนเป็น Token ที่ใกล้ที่สุด</button>}
         </div>

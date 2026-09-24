@@ -72,7 +72,7 @@ function PageGroups({ withEdit }: { withEdit: boolean }) {
 /* ---------- V4 (โคลนจาก V3) · 3f ---------- */
 export function EntryV4(_: { collapsed?: boolean }) {
   return (
-    <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-cream text-body">
+    <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-ink-50 text-body">
       <Topbar>
         <span className="flex items-center gap-1.5 text-meta text-ink-500"><span className="w-2 h-2 rounded-full bg-warning-500" />2 หน้ามีฉบับร่างรอเผยแพร่</span>
         <ViewSite />
@@ -94,7 +94,7 @@ export function EntryV4(_: { collapsed?: boolean }) {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2.5"><h2 className="font-bold text-heading">เลือกหน้าที่จะแต่ง</h2><div className="h-8 w-[240px] border border-ink-200 rounded-lg bg-white flex items-center px-2.5 gap-2 text-ink-500 ml-1.5 text-meta"><i className="fas fa-search" />ค้นหาหน้า…</div><div className="flex-1" /><span className="text-meta text-ink-500">ป้าย <span className="font-semibold px-1.5 py-0.5 rounded-[5px] bg-warning-100 text-warning-700">ฉบับร่าง</span> = แก้แล้วยังไม่เผยแพร่</span></div>
+        <div className="flex items-center gap-2.5"><h2 className="font-bold text-heading">เลือกหน้าที่จะแต่ง</h2><div className="h-8 w-[240px] border border-ink-500 rounded-lg bg-white flex items-center px-2.5 gap-2 text-ink-500 ml-1.5 text-meta"><i className="fas fa-search" />ค้นหาหน้า…</div><div className="flex-1" /><span className="text-meta text-ink-500">ป้าย <span className="font-semibold px-1.5 py-0.5 rounded-[5px] bg-warning-100 text-warning-700">ฉบับร่าง</span> = แก้แล้วยังไม่เผยแพร่</span></div>
         <PageGroups withEdit />
       </div>
     </div>

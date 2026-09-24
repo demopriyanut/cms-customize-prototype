@@ -272,7 +272,7 @@ export const ROLE_STYLE = {
   slot: { color: 'var(--info-500)', bg: 'var(--info-100)', fg: 'var(--info-700)', label: 'ช่องที่เปิดให้แทรก' },
   system: { color: 'var(--warning-500)', bg: 'var(--warning-100)', fg: 'var(--warning-700)', label: 'บล็อกของระบบ · แก้ค่าได้' },
   global: { color: 'var(--ink-500)', bg: 'var(--ink-150)', fg: 'var(--ink-700)', label: 'ใช้ร่วมทุกหน้า' },
-  ai: { color: 'var(--orange-600)', bg: 'var(--orange-100)', fg: 'var(--orange-700)', label: 'เพิ่มโดยผู้ช่วย' },
+  ai: { color: '#D73226', bg: 'var(--red-50)', fg: 'var(--red-700)', label: 'เพิ่มโดยผู้ช่วย' },   // ผู้ช่วย Ket = CI red→orange, not the orange used for selection
 }
 
 /* library (D4 left rail: คลัง Section / คลัง Element) — pick first, then choose where to drop */

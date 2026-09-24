@@ -83,7 +83,7 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
   const isHome = page.id === 'home'
   const fit = useFitWidth(device)
   return (
-    <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
+    <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-ink-50">
       <div className="h-14 bg-white border-b border-ink-150 flex items-center px-4 gap-2.5 flex-none">
         <h1 className="sr-only">แต่งหน้าเว็บ · {page.name}</h1>
         <PagePicker page={page} onClick={back} />
@@ -96,9 +96,9 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
       </div>
       <div className="flex-1 flex min-h-0">
         <div className="flex-1 relative min-w-0 flex flex-col">
-          <div ref={fit.ref} tabIndex={0} role="region" aria-label="หน้าเว็บ (canvas) · เลือก Section จากรายการ Sections ได้ด้วยคีย์บอร์ด" className="flex-1 overflow-auto flex flex-col items-center px-8 pt-[84px] pb-28 canvas-dots-cream outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600">
+          <div ref={fit.ref} tabIndex={0} role="region" aria-label="หน้าเว็บ (canvas) · เลือก Section จากรายการ Sections ได้ด้วยคีย์บอร์ด" className="flex-1 overflow-auto flex flex-col items-center px-8 pt-[84px] pb-28 canvas-dots-cool outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600">
             <PageRuleBanner page={page} className="mb-4 max-w-full" style={{ width: fit.w }} />
-            <div className="rounded-[10px] bg-white overflow-hidden flex-none" style={{ boxShadow: '0 24px 60px -20px rgba(94,22,24,.25),var(--shadow-lg)' }}><Canvas site={site} page={page} device={device} previewWidth={fit.w} selBar="float" /></div>
+            <div className="rounded-[10px] bg-white overflow-hidden flex-none" style={{ boxShadow: '0 24px 60px -20px rgba(94,22,24,.25),var(--shadow-lg)' }}><Canvas site={site} page={page} device={device} previewWidth={fit.w} selBar="float" accent="var(--orange-600)" /></div>
           </div>
           <div className="absolute left-1/2 top-4 -translate-x-1/2 flex items-center gap-1 bg-white rounded-full p-[5px] shadow-lg border border-black/5">
             <DeviceToggle variant="pill" />
@@ -119,19 +119,19 @@ export function PageEditorV4(_: { collapsed?: boolean }) {
           <PanelTabs id="c" def="ai" items={[['sections', <>Sections <span className="font-display text-ink-500">{(page.sections ?? []).length + 2}</span></>], ['props', 'คุณสมบัติ'], ['ai', <><MascotImg size={18} className="border border-ink-150" />ผู้ช่วย Ket</>]]} />
           {tab === 'ai' ? (
             <>
-              <div className="flex-1 overflow-auto p-5 flex flex-col gap-4 text-body leading-[1.6]">
+              <div tabIndex={0} aria-label="บทสนทนากับผู้ช่วย Ket" className="flex-1 overflow-auto p-5 flex flex-col gap-4 text-body leading-[1.6] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600">
                 {isHome ? <>
                   <div className="self-end max-w-[88%] bg-ink-900 text-white rounded-[16px_16px_4px_16px] px-3.5 py-2.5">เปลี่ยนแบนเนอร์เป็นโทน Autumn แล้วเพิ่มบล็อกสินค้าแนะนำใต้แบนเนอร์</div>
-                  <div className="flex flex-col gap-2"><div>ผมเตรียมให้ 2 จุด — ไม่แตะ Header/Footer (ใช้ร่วมทุกหน้า) กดยอมรับทีละจุดได้ครับ</div><DiffCard accept="var(--red-600)" compact /></div>
+                  <div className="flex flex-col gap-2"><div>ผมเตรียมให้ 2 จุด — ไม่แตะ Header/Footer (ใช้ร่วมทุกหน้า) กดยอมรับทีละจุดได้ครับ</div><DiffCard accept="var(--ink-900)" compact /></div>
                 </> : <AssistantNote page={page} />}
               </div>
               <div className="px-5 pt-4 pb-5 border-t border-ink-150">
                 <TierChips labels={['T0 บล็อกเดิม', 'T1 HTML/CSS', 'T2']} />
-                <div className="border border-ink-200 rounded-xl px-3 py-2.5 flex items-center gap-2 text-ink-500">สั่งต่อ…<span className="ml-auto w-7 h-7 rounded-lg bg-red-600 text-white grid place-items-center"><i className="fas fa-arrow-up text-[11px]" /></span></div>
+                <div className="border border-ink-200 rounded-xl px-3 py-2.5 flex items-center gap-2 text-ink-500">สั่งต่อ…<span className="ml-auto w-7 h-7 rounded-lg text-white grid place-items-center" style={{ backgroundColor: 'var(--red-600)', backgroundImage: 'var(--ket-grad)' }}><i className="fas fa-arrow-up text-[11px]" /></span></div>
               </div>
             </>
           ) : tab === 'sections' ? (
-            <div className="flex-1 overflow-auto p-4 flex flex-col gap-3">
+            <div tabIndex={0} aria-label="รายการ Sections" className="flex-1 overflow-auto p-4 flex flex-col gap-3 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600">
               <AddButton className={`h-9 border rounded-lg flex items-center justify-center gap-2 font-semibold ${pageCanInsert(page) ? 'border-ink-200 hover:bg-ink-50' : 'border-ink-150 text-ink-400'}`}><i className="fas fa-plus text-[11px]" />เพิ่ม Section จากคลัง</AddButton>
               <LayerList site={site} page={page} variant="card" />
             </div>
@@ -159,7 +159,7 @@ function PanelTabs({ id, items, def }: { id: string; items: [string, React.React
     <div role="tablist" className="flex border-b border-ink-150 px-2 font-medium text-ink-500 text-body flex-none">
       {items.map(([k, label]) => (
         <button key={k} role="tab" aria-selected={k === cur} onClick={() => setPanel(id, k)}
-          className={`pt-3.5 pb-3 px-2.5 flex gap-1.5 items-center ${k === cur ? 'text-ink-900 font-semibold border-b-2 border-red-600 -mb-px' : 'hover:text-ink-900'}`}>{label}</button>
+          className={`pt-3.5 pb-3 px-2.5 flex gap-1.5 items-center ${k === cur ? 'text-ink-900 font-semibold border-b-2 border-orange-600 -mb-px' : 'hover:text-ink-900'}`}>{label}</button>
       ))}
     </div>
   )

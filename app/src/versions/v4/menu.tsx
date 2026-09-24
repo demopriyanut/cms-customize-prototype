@@ -224,7 +224,7 @@ function MenuBar({ m, look }: { m: M; look: Look }) {
                 <span key={x.id} data-mchip={x.id} {...dnd.props(x, 0)} onClick={() => m.api.select(x.id)} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && m.api.select(x.id)}
                   title={dim ? 'ซ่อนบน Desktop' : 'ลากเพื่อเรียง · ลากซ้อนกลางชิปอื่น = เมนูย่อย'}
                   className={`inline-flex items-center gap-1.5 px-3 py-[7px] rounded-[10px] text-caption font-semibold uppercase tracking-[.02em] cursor-grab select-none ${m.flash === x.id ? 'animate-pulse' : ''} ${dim ? 'opacity-45' : ''}`}
-                  style={{ background: on ? 'var(--ink-900)' : 'rgba(255,255,255,.7)', color: on ? '#fff' : '#222', border: `1.5px solid ${on ? 'var(--ink-900)' : m.flash === x.id ? 'var(--red-600)' : 'transparent'}`, ...dnd.mark(x.id) }}>
+                  style={{ background: on ? 'var(--ink-900)' : 'rgba(255,255,255,.7)', color: on ? '#fff' : '#222', border: `1.5px solid ${on ? 'var(--ink-900)' : m.flash === x.id ? 'var(--orange-600)' : 'transparent'}`, ...dnd.mark(x.id) }}>
                   <i className="fas fa-grip-vertical text-[9px] opacity-50" />{x.iconOnly ? <i className="fas fa-search" /> : menuLabel(x)}{hasSub(x) && <i className="fas fa-caret-down text-[10px] opacity-60" />}
                 </span>
               )
@@ -249,11 +249,11 @@ function SubPanel({ m, item, editable }: { m: M; item: MenuItem; editable: boole
   if (!n) return (
     <div className="w-[220px] bg-white border border-ink-150 shadow-xl rounded-b-xl p-2.5 flex flex-col gap-1 text-meta">
       {item.children.map(c => <button key={c.id} onClick={() => m.api.select(c.id)} className={`text-left px-2 py-1 rounded-md ${m.sel?.id === c.id ? 'bg-ink-900 text-white' : 'hover:bg-ink-50'}`}>{menuLabel(c)}</button>)}
-      <div className="text-caption text-ink-500 border-t border-ink-100 pt-1.5 mt-0.5"><i className="fas fa-caret-down text-orange-600 mr-1" />Dropdown · {menuLabel(item)}</div>
+      <div className="text-caption text-ink-500 border-t border-ink-100 pt-1.5 mt-0.5"><i className="fas fa-caret-down text-ink-500 mr-1" aria-hidden />Dropdown · {menuLabel(item)}</div>
     </div>
   )
   const inline = (key: string, value: string, onSave: (v: string) => void, cls: string) => edit === key && editable
-    ? <input autoFocus defaultValue={value} onBlur={e => { setEdit(null); onSave(e.target.value) }} onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); if (e.key === 'Escape') setEdit(null) }} className={`${cls} border border-orange-500 rounded px-1 bg-white outline-none w-full`} />
+    ? <input autoFocus defaultValue={value} onBlur={e => { setEdit(null); onSave(e.target.value) }} onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); if (e.key === 'Escape') setEdit(null) }} className={`${cls} border border-orange-600 rounded px-1 bg-white outline-none w-full`} />
     : <span onDoubleClick={() => editable && setEdit(key)} title={editable ? 'ดับเบิลคลิกเพื่อแก้' : undefined} className={`${cls} ${editable ? 'cursor-text' : ''}`}>{value}</span>
   return (
     <div className="w-[520px] bg-white border border-ink-150 shadow-xl rounded-b-[14px] px-4 pt-3.5 pb-3 grid gap-3.5 text-meta" style={{ gridTemplateColumns: MENU_LAYOUTS.find(l => l.key === item.layout)!.cols.map(c => `${c}fr`).join(' ') }}>
@@ -262,12 +262,12 @@ function SubPanel({ m, item, editable }: { m: M; item: MenuItem; editable: boole
           {inline(`h${ci}`, c.head, v => m.api.setHead(ci, v), 'block font-bold mb-1.5 text-caption text-ink-500 tracking-[.06em] uppercase')}
           <div className="flex flex-col gap-1">
             {c.links.map((l, li) => <div key={li} className="truncate">{inline(`l${ci}-${li}`, l.name, v => m.api.editLink(ci, li, { name: v }), 'block truncate')}</div>)}
-            {editable && <button onClick={() => { m.api.addLink(ci, { name: 'ลิงก์ใหม่', url: '' }); setEdit(`l${ci}-${c.links.length}`) }} className="text-left text-red-600"><i className="fas fa-plus text-[9px]" /> เพิ่ม</button>}
+            {editable && <button onClick={() => { m.api.addLink(ci, { name: 'ลิงก์ใหม่', url: '' }); setEdit(`l${ci}-${c.links.length}`) }} className="text-left text-ink-900 font-semibold hover:underline"><i className="fas fa-plus text-[9px]" /> เพิ่ม</button>}
           </div>
         </div>
       ))}
       <div className="h-[92px] rounded-lg grid place-items-center text-white/75" style={{ background: 'linear-gradient(160deg,#d9b493,#5e3b28)' }}><i className="far fa-image text-xl" /></div>
-      <div className="col-span-full text-caption text-ink-500 border-t border-ink-100 pt-2 flex gap-1.5 items-center"><i className="fas fa-th text-red-600" />Mega menu · {menuLabel(item)}{editable ? ' — ดับเบิลคลิกเพื่อแก้ชื่อ' : ' — แก้ที่ Menu Collection ด้านล่าง'}</div>
+      <div className="col-span-full text-caption text-ink-500 border-t border-ink-100 pt-2 flex gap-1.5 items-center"><i className="fas fa-th text-ink-500" aria-hidden />Mega menu · {menuLabel(item)}{editable ? ' — ดับเบิลคลิกเพื่อแก้ชื่อ' : ' — แก้ที่ Menu Collection ด้านล่าง'}</div>
     </div>
   )
 }
@@ -305,7 +305,7 @@ function Tree({ m, look }: { m: M; look: 'a' | 'c' }) {
     return (
       <div key={x.id}>
         <div {...dnd.props(x, depth)} onClick={() => m.api.select(x.id)} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && m.api.select(x.id)} aria-current={on}
-          className={`group flex items-center gap-2 px-2.5 rounded-[9px] border cursor-pointer ${look === 'a' ? 'py-2' : 'py-[7px]'} ${on ? 'bg-red-50 border-red-300' : 'border-transparent hover:bg-ink-50'} ${off ? 'opacity-50' : ''} ${m.flash === x.id ? 'animate-pulse' : ''}`}
+          className={`group flex items-center gap-2 px-2.5 rounded-[9px] border cursor-pointer ${look === 'a' ? 'py-2' : 'py-[7px]'} ${on ? 'bg-orange-50 border-orange-600' : 'border-transparent hover:bg-ink-50'} ${off ? 'opacity-50' : ''} ${m.flash === x.id ? 'animate-pulse' : ''}`}
           style={{ marginLeft: depth * 26, ...dnd.mark(x.id) }}>
           <i className="fas fa-grip-vertical text-ink-300 text-[11px] cursor-grab" />
           <i className={`${x.layout.startsWith('col') ? 'fas fa-columns' : MENU_KIND_ICON[x.kind] ?? 'fas fa-link'} w-3.5 text-center text-ink-500 text-[11px]`} />
@@ -355,7 +355,7 @@ function Names({ m, it }: { m: M; it: MenuItem }) {
   return (
     <div className="grid grid-cols-4 gap-2">
       {LANGS.map(l => (
-        <label key={l} className="border border-ink-400 rounded-lg px-2.5 flex gap-2 items-center focus-within:border-red-300 focus-within:ring-2 focus-within:ring-red-100 bg-white">
+        <label key={l} className="border border-ink-400 rounded-lg px-2.5 flex gap-2 items-center focus-within:border-orange-600 focus-within:ring-2 focus-within:ring-orange-100 bg-white">
           <span className="text-caption font-bold text-ink-500">{l}</span>
           <input key={it.id + l + (it.i18n[l] ?? '')} defaultValue={it.i18n[l] ?? ''} placeholder="—" aria-label={`ชื่อเมนู ${l}`} onBlur={e => m.api.rename(it.id, l, e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} className="flex-1 min-w-0 h-9 bg-transparent outline-none text-body" />
         </label>
@@ -380,7 +380,7 @@ function PickLink({ label, onPick, cats }: { label: string; onPick: (l: MenuLink
   const [open, setOpen] = useState(false)
   return (
     <span className="relative">
-      <button onClick={() => setOpen(!open)} aria-expanded={open} className="text-meta text-red-600 font-semibold"><i className="fas fa-plus text-[10px]" /> {label}</button>
+      <button onClick={() => setOpen(!open)} aria-expanded={open} className="text-meta text-ink-900 font-semibold hover:underline"><i className="fas fa-plus text-[10px]" /> {label}</button>
       {open && (
         <div className="absolute right-0 top-6 z-30 w-[240px] bg-white border border-ink-150 rounded-xl shadow-xl p-1.5 flex flex-col">
           {cats !== false && <div className="text-caption font-semibold text-ink-500 px-2 pt-1 pb-1">หมวดหมู่สินค้า</div>}
@@ -413,7 +413,7 @@ function Collection({ m, it }: { m: M; it: MenuItem }) {
                 <input key={l.url + li} defaultValue={l.url} placeholder="URL" aria-label="URL" onBlur={e => m.api.editLink(ci, li, { url: e.target.value })} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} className="flex-1 text-caption text-ink-500 bg-transparent outline-none min-w-0 focus:bg-ink-50 rounded px-0.5" />
                 <button aria-label={`ย้าย ${l.name} ขึ้น`} disabled={li === 0} onClick={() => m.api.moveLink(ci, li, ci, li - 1)} className="text-ink-500 hover:text-ink-900 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:hidden"><i className="fas fa-arrow-up text-[10px]" /></button>
                 <button aria-label={`ย้าย ${l.name} ลง`} disabled={li === c.links.length - 1} onClick={() => m.api.moveLink(ci, li, ci, li + 1)} className="text-ink-500 hover:text-ink-900 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:hidden"><i className="fas fa-arrow-down text-[10px]" /></button>
-                <button aria-label="ลบลิงก์" onClick={() => m.api.removeLink(ci, li)} className="text-ink-500 hover:text-red-600 opacity-0 group-hover:opacity-100 focus:opacity-100"><i className="fas fa-times text-[10px]" /></button>
+                <button aria-label="ลบลิงก์" onClick={() => m.api.removeLink(ci, li)} className="text-ink-500 hover:text-red-700 opacity-0 group-hover:opacity-100 focus:opacity-100"><i className="fas fa-times text-[10px]" /></button>
               </span>
             </div>
           ))}
@@ -449,7 +449,7 @@ function DetailHead({ m, it, look }: { m: M; it: MenuItem; look: 'a' | 'c' }) {
       <i className={`${MENU_KIND_ICON[it.kind] ?? 'fas fa-link'} text-ink-500`} />
       <h2 className="font-bold text-heading uppercase truncate">{menuLabel(it)}</h2>
       <span className="text-caption px-1.5 py-0.5 rounded-[5px] bg-ink-100 text-ink-600 whitespace-nowrap">{look === 'c' ? (layoutName(it) ? `Menu Type · ${layoutName(it)}` : MENU_KIND_LABEL[it.kind]) : MENU_KIND_LABEL[it.kind]}</span>
-      <button onClick={() => m.api.remove(it.id)} className="ml-auto text-red-600 text-meta flex gap-1.5 items-center whitespace-nowrap hover:text-red-700"><i className="far fa-trash-alt" />{look === 'a' ? 'ลบเมนู' : 'ลบ'}</button>
+      <button onClick={() => m.api.remove(it.id)} className="ml-auto text-red-700 font-semibold text-meta flex gap-1.5 items-center whitespace-nowrap hover:underline"><i className="far fa-trash-alt" aria-hidden />{look === 'a' ? 'ลบเมนู' : 'ลบ'}</button>
     </div>
   )
 }
@@ -463,7 +463,7 @@ export function MenuV4(_: { collapsed?: boolean }) {
   const n = it?.layout.startsWith('col') ? Number(it.layout.slice(3)) : 0
   const thin = it && n ? it.cols.slice(0, n).findIndex(c => c.head.toUpperCase() === 'SALE' && c.links.length === 1) : -1
   return (
-    <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-cream">
+    <div className="text-body flex-1 flex flex-col min-w-0 min-h-0 bg-ink-50">
       <div className="h-14 bg-white border-b border-ink-150 flex items-center px-6 gap-3 flex-none">
         <h1 className="font-bold text-title">Menu</h1><span className="text-ink-500">/</span><span className="text-ink-600">Menu display · แถบเมนูบน Header</span>
         <div className="flex-1" />
@@ -473,7 +473,7 @@ export function MenuV4(_: { collapsed?: boolean }) {
       </div>
       <div tabIndex={0} aria-label="พื้นที่ Menu" className="outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-600 flex-1 overflow-auto px-6 pt-5 pb-28 flex flex-col gap-4">
         <div className="bg-white rounded-[14px] shadow-md border border-black/5">
-          <div className="flex items-center gap-2 text-caption text-ink-500 px-3 py-2 border-b border-ink-100"><span className="font-semibold text-ink-700">พรีวิว Header จริง</span>· ลากชิปเพื่อเรียง · ลากซ้อนบนชิปอื่น = ทำเมนูย่อย · คลิกเพื่อแก้<span className="ml-auto flex gap-1.5 items-center text-ink-600"><i className="fas fa-magic text-red-600" />วางเมนูใหม่ที่ปุ่ม +</span></div>
+          <div className="flex items-center gap-2 text-caption text-ink-500 px-3 py-2 border-b border-ink-100"><span className="font-semibold text-ink-700">พรีวิว Header จริง</span>· ลากชิปเพื่อเรียง · ลากซ้อนบนชิปอื่น = ทำเมนูย่อย · คลิกเพื่อแก้<span className="ml-auto flex gap-1.5 items-center text-ink-600"><i className="fas fa-magic text-ai" aria-hidden />วางเมนูใหม่ที่ปุ่ม +</span></div>
           <div className="rounded-b-[14px] overflow-visible"><MenuBar m={m} look="c" /></div>
         </div>
         <div className="flex gap-4 items-start">
@@ -491,7 +491,7 @@ export function MenuV4(_: { collapsed?: boolean }) {
                       {MENU_LAYOUTS.map(t => {
                         const on = it.layout === t.key
                         return (
-                          <button key={t.key} role="radio" aria-checked={on} onClick={() => m.api.setLayout(it.id, t.key)} className={`flex-1 rounded-[10px] p-2 text-center ${on ? 'bg-red-50' : 'bg-white hover:border-ink-400'}`} style={{ border: `2px solid ${on ? 'var(--red-600)' : 'var(--ink-400)'}` }}>
+                          <button key={t.key} role="radio" aria-checked={on} onClick={() => m.api.setLayout(it.id, t.key)} className={`flex-1 rounded-[10px] p-2 text-center ${on ? 'bg-orange-50' : 'bg-white hover:border-ink-500'}`} style={{ border: `2px solid ${on ? 'var(--orange-600)' : 'var(--ink-400)'}` }}>
                             <div className="h-8 bg-white border border-ink-150 rounded-[5px] p-1 grid gap-[3px]" style={{ gridTemplateColumns: t.cols.map(c => `${c}fr`).join(' ') }}>{t.cols.map((_, i) => <span key={i} className="rounded-sm" style={{ background: t.key !== 'normal' && i === t.cols.length - 1 ? 'var(--orange-100)' : 'var(--ink-200)' }} />)}</div>
                             <div className="text-caption font-semibold mt-1.5">{t.name}</div><div className="text-caption text-ink-500">{t.desc}</div>
                           </button>

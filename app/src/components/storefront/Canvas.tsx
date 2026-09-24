@@ -14,6 +14,9 @@ import { useDrag, type Gap } from '@/components/editor/drag'
    - library placement mode shows "วางที่นี่" slots only where dropping is allowed
    ===================================================================== */
 
+/* labels with white text on the selection colour use the darker step so they pass 4.5:1 (edges keep the CI orange) */
+const tagBg = (c: string) => c === 'var(--orange-600)' ? 'var(--orange-700)' : c
+
 export const REAL_W: Record<Device, number> = { desktop: 1240, tablet: 820, mobile: 390 }
 
 /* selBar: 'bar' = full-width bar with drag handle + labelled actions (V1–V3) · 'float' = chip + small dark icon toolbar at the top-right (mockup 3a · V4) */
@@ -139,7 +142,7 @@ function Block({ s, zone, index, ctx }: { s: Section; zone: Zone | null; index: 
     <div data-block="" data-id={s.id} data-zone={zone?.id ?? 'site'} data-index={index} data-role={s.role}
       data-reason={s.role === 'global' ? `${s.name} ใช้ร่วมทุกหน้า แก้ที่ตั้งค่ากลาง` : s.role === 'system' ? 'บล็อกหลักของระบบ ย้าย/แทรกทับไม่ได้' : ''}
       onClick={e => { e.stopPropagation(); if (!placing) select(s.id) }}
-      style={{ position: s.type === 'header' && s.data.sticky === 'yes' && !ctx.overlays ? 'sticky' : 'relative', top: 0, zIndex: s.type === 'header' && !ctx.overlays ? 10 : undefined, outline, outlineOffset: px(-2, z), cursor: placing ? 'default' : 'pointer', opacity: hiddenHere && ctx.overlays ? 0.35 : 1, background: s.origin === 'ai' && ctx.overlays ? 'var(--orange-50)' : undefined, filter: hiddenHere && ctx.overlays ? 'grayscale(1)' : undefined }}>
+      style={{ position: s.type === 'header' && s.data.sticky === 'yes' && !ctx.overlays ? 'sticky' : 'relative', top: 0, zIndex: s.type === 'header' && !ctx.overlays ? 10 : undefined, outline, outlineOffset: px(-2, z), cursor: placing ? 'default' : 'pointer', opacity: hiddenHere && ctx.overlays ? 0.35 : 1, background: s.origin === 'ai' && ctx.overlays ? 'var(--red-50)' : undefined, filter: hiddenHere && ctx.overlays ? 'grayscale(1)' : undefined }}>
       {ctx.overlays && (sel ? (ctx.selBar === 'float' ? <SelFloat s={s} ctx={ctx} /> : <SelBar s={s} ctx={ctx} />) : s.type !== 'marquee' || s.role !== 'free' ? <Chip s={s} z={z} /> : null)}
       {hiddenHere && ctx.overlays && <span style={{ position: 'absolute', right: px(8, z), top: px(6, z), zIndex: 5, fontSize: px(11, z), fontFamily: 'var(--font-heading)', background: 'var(--ink-900)', color: '#fff', borderRadius: px(5, z), padding: `${px(2, z)} ${px(6, z)}` }}><i className="far fa-eye-slash" /> {s.hidden ? 'ซ่อนอยู่' : 'ซ่อนบนจอนี้'}</span>}
       <Body s={s} ctx={ctx} bg={bg} pad={pad} />
@@ -212,7 +215,7 @@ function Txt({ s, field, style, as = 'div' }: { s: Section; field: string; style
       onKeyDown={e => { if (on && (e.key === 'Enter' && !e.shiftKey)) { e.preventDefault(); (e.target as HTMLElement).blur() } if (on && e.key === 'Escape') { (e.target as HTMLElement).textContent = s.data[field]; (e.target as HTMLElement).blur() } }}
       onBlur={e => { if (!on) return; useStore.getState().setEditing(null); useStore.getState().setField(s.id, field, (e.target as HTMLElement).textContent ?? '') }}
       title={editable ? 'ดับเบิลคลิกเพื่อแก้ข้อความ' : undefined}
-      style={{ outline: on ? '2px solid var(--orange-500)' : undefined, outlineOffset: 2, cursor: editable ? 'text' : undefined, ...style }}>
+      style={{ outline: on ? '2px solid var(--orange-600)' : undefined, outlineOffset: 2, cursor: editable ? 'text' : undefined, ...style }}>
       {s.data[field]}
     </Tag>
   )
@@ -357,7 +360,7 @@ function HeaderBody({ s, site, device, zoom, hot }: { s: Section; site: SiteDoc;
           outlineOffset: zone === 'topbar' ? px(-4, zoom) : soft ? 0 : px(6, zoom), borderRadius: soft ? px(10, zoom) : undefined,
           ...(soft ? { background: 'rgba(255,255,255,.55)', padding: `${px(8, zoom)} ${px(12, zoom)}`, margin: `${px(-8, zoom)} ${px(-12, zoom)}` } : {}), ...style }}>
         <span className="hz-tag" style={{ ...tagStyle, zIndex: 3, whiteSpace: 'nowrap', fontFamily: 'var(--font-heading)', fontSize: px(11, zoom), fontWeight: 700, letterSpacing: 0, textTransform: 'none', lineHeight: 1.4,
-          background: on ? hot.color : 'var(--ink-900)', color: '#fff', padding: `${px(2, zoom)} ${px(7, zoom)}`, display: 'inline-flex', gap: px(5, zoom), alignItems: 'center' }}>
+          background: on ? tagBg(hot.color) : 'var(--ink-900)', color: '#fff', padding: `${px(2, zoom)} ${px(7, zoom)}`, display: 'inline-flex', gap: px(5, zoom), alignItems: 'center' }}>
           {label}{on && hot.look === 'b' && <i className="fas fa-cog" style={{ fontSize: px(9, zoom) }} />}{on && hot.look !== 'a' && <i className="fas fa-magic" style={{ fontSize: px(9, zoom) }} />}
         </span>
         {children}
@@ -486,7 +489,7 @@ function FooterBody({ s, site, device, zoom, lang = 'TH', hot, edit }: { s: Sect
           window.addEventListener('pointermove', move); window.addEventListener('pointerup', up)
         }
         const tag = hot && (
-          <span style={{ position: 'absolute', left: 28, top: 6 / zoom, zIndex: 3, fontSize: px(11, zoom), fontWeight: 700, color: '#fff', background: selRow ? hot.color : 'var(--ink-600)', padding: `${px(2, zoom)} ${px(7, zoom)}`, borderRadius: px(5, zoom), fontFamily: 'var(--font-heading)', whiteSpace: 'nowrap', pointerEvents: 'none' }}>
+          <span style={{ position: 'absolute', left: 28, top: 6 / zoom, zIndex: 3, fontSize: px(11, zoom), fontWeight: 700, color: '#fff', background: selRow ? tagBg(hot.color) : 'var(--ink-600)', padding: `${px(2, zoom)} ${px(7, zoom)}`, borderRadius: px(5, zoom), fontFamily: 'var(--font-heading)', whiteSpace: 'nowrap', pointerEvents: 'none' }}>
             แถว {ri + 1}{selRow ? ` · ${r.cols.length} คอลัมน์` : hot.look === 'b' && r.bar ? ` · ${colSummary(r.cols[0])}` : ''}{off ? ' · ซ่อนอยู่' : ''}
           </span>
         )
@@ -561,13 +564,13 @@ function SelFloat({ s, ctx }: { s: Section; ctx: Ctx }) {
       style={{ width: px(24, z), height: px(24, z), display: 'grid', placeItems: 'center', borderRadius: px(6, z), color: '#fff', backgroundColor: grad ? 'var(--red-600)' : undefined, backgroundImage: grad ? 'var(--ket-grad)' : undefined }}><i className={icon} style={{ fontSize: px(10, z) }} /></button>
   )
   const item = (icon: string, label: string, onClick: () => void, danger?: boolean) => (
-    <button key={label} onClick={e => { e.stopPropagation(); setMore(false); onClick() }} style={{ display: 'flex', gap: px(8, z), alignItems: 'center', width: '100%', padding: `${px(6, z)} ${px(10, z)}`, borderRadius: px(6, z), fontSize: px(12, z), color: danger ? 'var(--red-600)' : 'var(--ink-800)', textAlign: 'left' }}><i className={icon} style={{ width: px(14, z) }} />{label}</button>
+    <button key={label} onClick={e => { e.stopPropagation(); setMore(false); onClick() }} style={{ display: 'flex', gap: px(8, z), alignItems: 'center', width: '100%', padding: `${px(6, z)} ${px(10, z)}`, borderRadius: px(6, z), fontSize: px(12, z), color: danger ? 'var(--red-700)' : 'var(--ink-800)', textAlign: 'left' }}><i className={icon} style={{ width: px(14, z) }} />{label}</button>
   )
   return (
     <>
       <div style={{ position: 'absolute', left: px(8, z), top: px(top, z), zIndex: 6, display: 'flex', gap: px(4, z), alignItems: 'center', fontSize: px(11, z), fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
         <span title={free ? 'ลากเพื่อย้าย' : undefined} onPointerDown={free ? e => ctx.drag.start(e, s.id, s.name) : undefined}
-          style={{ background: color, color: '#fff', padding: `${px(2, z)} ${px(7, z)}`, borderRadius: px(5, z), cursor: free ? 'grab' : 'default', touchAction: 'none', display: 'inline-flex', gap: px(5, z), alignItems: 'center' }}>
+          style={{ background: tagBg(color), color: '#fff', padding: `${px(2, z)} ${px(7, z)}`, borderRadius: px(5, z), cursor: free ? 'grab' : 'default', touchAction: 'none', display: 'inline-flex', gap: px(5, z), alignItems: 'center' }}>
           {free ? <i className="fas fa-grip-vertical" style={{ fontSize: px(9, z), opacity: .7 }} /> : <i className="fas fa-lock" style={{ fontSize: px(8, z) }} />}{s.origin === 'ai' ? `+ ${s.name}` : s.name}
         </span>
         <span style={{ background: rs.bg, color: rs.fg, padding: `${px(2, z)} ${px(6, z)}`, borderRadius: px(5, z) }}>{s.origin === 'ai' ? 'ฉบับร่าง · T0' : rs.label}</span>

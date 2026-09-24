@@ -31,7 +31,7 @@ export function Tabs({ id, items, def }: { id: string; items: [string, ReactNode
     <div role="tablist" className="flex border-b border-ink-150 px-2 font-medium text-ink-500 text-heading flex-none">
       {items.map(([k, label]) => (
         <button key={k} role="tab" aria-selected={k === cur} onClick={() => setPanel(id, k)}
-          className={`pt-4 pb-3.5 px-3 flex gap-1.5 items-center ${k === cur ? 'text-ink-900 font-semibold border-b-2 border-red-600 -mb-px' : 'hover:text-ink-900'}`}>{label}</button>
+          className={`pt-4 pb-3.5 px-3 flex gap-1.5 items-center ${k === cur ? 'text-ink-900 font-semibold border-b-2 border-orange-600 -mb-px' : 'hover:text-ink-900'}`}>{label}</button>
       ))}
     </div>
   )
