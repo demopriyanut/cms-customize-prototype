@@ -20,10 +20,14 @@
 
 | ไฟล์ | แก้อะไร |
 |---|---|
-| — | — |
+| `app/src/data/schema.ts` | ค่าตั้ง Header (layout · top bar · ฟอนต์/ขนาดเมนู · sticky · มือถือ ☰ · โปร่งใส) · `style.fg` สีตัวอักษร · `ColorRef` · 3 แบบจากผู้ช่วย (`HEADER_PRESETS`) · `NAV_ITEMS` · Header เปลี่ยนเป็นสืบทอดสีพื้นจาก Token พื้นผิว |
+| `app/src/data/store.ts` | action ใหม่ `setGlobal` (แก้ Header/Footer ผ่าน commit) · `diffSites` นับการแก้ Header/Footer · **store version 2 → 3 = ฉบับร่างในเบราว์เซอร์ทุกคนรีเซ็ตเป็นแบบ mockup** |
+| `app/src/components/storefront/Canvas.tsx` | แยกตัววาด Header (`HeaderBody`) ใช้ร่วมหน้าแต่งหน้าเว็บ + หน้า Header · `HeaderPreview` + hot-zone · Header มีค้นหา/ผู้ใช้/ตะกร้าตาม mockup · Sticky ตอนพรีวิว |
+| `app/src/index.css` | สี `warning-50` / `info-50` · สไตล์ hover ของ hot-zone |
 
 ## บันทึก (ใหม่อยู่บน)
 
 | วันที่ | ทำอะไร | commit | ค้าง / ส่งต่อ |
 |---|---|---|---|
+| 2026-09-24 | Header ครบ 3 เวอร์ชัน (1h · 1i · 3c) ตามขั้นตอน 3v: คลิกโซน → ไปที่ตั้งค่า · Layout 3 แบบ · สีสืบทอด/ตั้งทับ + คืน Token · toggle 3 ตัว · ฟอนต์/ขนาดเมนู · ลองแบบอื่น (V3 ลองชั่วคราว เทียบแล้วเลือก / V2 ใช้ทันที) · มือถือ · undo · เผยแพร่รวมการแก้ Header | (commit นี้) | ต่อ Footer |
 | 2026-09-24 | ตรวจเทียบ mockup ครบ 50 ช่อง · จดรายการตกหล่นลง `STATUS.md` · ตั้งไฟล์ job นี้ + กติกา job ต่อ branch ใน `CLAUDE.md` | c3c9ef8 | เริ่ม Header ต่อ |

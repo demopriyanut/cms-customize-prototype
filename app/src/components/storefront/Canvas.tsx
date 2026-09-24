@@ -1,5 +1,5 @@
 import { useRef, type CSSProperties, type ReactNode } from 'react'
-import { PRODUCTS, ROLE_STYLE, tokenHex, type Section, type SiteDoc, type Zone, type PageDoc } from '@/data/schema'
+import { HEADER_INHERIT, NAV_ITEMS, PRODUCTS, ROLE_STYLE, tokenByName, tokenHex, type Section, type SiteDoc, type Zone, type PageDoc } from '@/data/schema'
 import { orderedBlocks, useStore, type Device, type DropTarget } from '@/data/store'
 import { useGo, useRoute } from '@/components/shell/nav'
 import { useDrag, type Gap } from '@/components/editor/drag'
@@ -138,7 +138,7 @@ function Block({ s, zone, index, ctx }: { s: Section; zone: Zone | null; index: 
     <div data-block="" data-id={s.id} data-zone={zone?.id ?? 'site'} data-index={index} data-role={s.role}
       data-reason={s.role === 'global' ? `${s.name} ใช้ร่วมทุกหน้า แก้ที่ตั้งค่ากลาง` : s.role === 'system' ? 'บล็อกหลักของระบบ ย้าย/แทรกทับไม่ได้' : ''}
       onClick={e => { e.stopPropagation(); if (!placing) select(s.id) }}
-      style={{ position: 'relative', outline, outlineOffset: px(-2, z), cursor: placing ? 'default' : 'pointer', opacity: hiddenHere && ctx.overlays ? 0.35 : 1, background: s.origin === 'ai' && ctx.overlays ? 'var(--orange-50)' : undefined, filter: hiddenHere && ctx.overlays ? 'grayscale(1)' : undefined }}>
+      style={{ position: s.type === 'header' && s.data.sticky === 'yes' && !ctx.overlays ? 'sticky' : 'relative', top: 0, zIndex: s.type === 'header' && !ctx.overlays ? 10 : undefined, outline, outlineOffset: px(-2, z), cursor: placing ? 'default' : 'pointer', opacity: hiddenHere && ctx.overlays ? 0.35 : 1, background: s.origin === 'ai' && ctx.overlays ? 'var(--orange-50)' : undefined, filter: hiddenHere && ctx.overlays ? 'grayscale(1)' : undefined }}>
       {ctx.overlays && (sel ? <SelBar s={s} ctx={ctx} /> : s.type !== 'marquee' || s.role !== 'free' ? <Chip s={s} z={z} /> : null)}
       {hiddenHere && ctx.overlays && <span style={{ position: 'absolute', right: px(8, z), top: px(6, z), zIndex: 5, fontSize: px(11, z), fontFamily: 'var(--font-heading)', background: 'var(--ink-900)', color: '#fff', borderRadius: px(5, z), padding: `${px(2, z)} ${px(6, z)}` }}><i className="far fa-eye-slash" /> {s.hidden ? 'ซ่อนอยู่' : 'ซ่อนบนจอนี้'}</span>}
       <Body s={s} ctx={ctx} bg={bg} pad={pad} />
@@ -221,22 +221,7 @@ function Body({ s, ctx, bg, pad }: { s: Section; ctx: Ctx; bg: string | null; pa
   const m = ctx.device === 'mobile'
   const t = ctx.device === 'tablet'
   switch (s.type) {
-    case 'header': return (
-      <div>
-        <div style={{ background: '#6b5343', color: '#fff', fontSize: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: m ? '8px 16px' : '10px 24px' }}>
-          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}><i className="fab fa-facebook-square" /><i className="fab fa-line" />{!m && <><i className="fas fa-envelope" /><i className="fas fa-phone-alt" /><span>{s.data.phone}</span></>}</div>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}><i className="fas fa-user" style={{ fontSize: 15 }} />{!m && <>User Account <i className="fas fa-caret-down" /></>}</div>
-        </div>
-        <div style={{ background: bg ?? '#dfe7f3', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: m ? '14px 16px' : '16px 28px', gap: 20 }}>
-          {m && <i className="fas fa-bars" style={{ fontSize: 22 }} />}
-          <div style={{ fontFamily: 'Georgia,serif', fontSize: m ? 22 : 30, letterSpacing: '.06em', fontWeight: 700 }}>{s.data.logo}</div>
-          {m ? <i className="fas fa-shopping-bag" style={{ fontSize: 20 }} />
-            : <div style={{ display: 'flex', gap: t ? 16 : 22, fontSize: t ? 13 : 16, textTransform: 'uppercase', letterSpacing: '.02em', color: '#333', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                <span>Home</span><span>Collection ▾</span><span>Product ▾</span><span>Promotion ▾</span><span>Blog</span><span>Contact ▾</span><span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><i className="fas fa-shopping-bag" />(0)</span>
-              </div>}
-        </div>
-      </div>
-    )
+    case 'header': return <HeaderBody s={s} site={ctx.site} device={ctx.device} zoom={ctx.zoom} />
     case 'marquee': return (
       <div style={{ padding: `${16 * pad}px 0`, background: bg ?? undefined, fontSize: m ? 16 : 20, letterSpacing: '.28em', whiteSpace: 'nowrap', overflow: 'hidden', color: '#111', fontWeight: 500, display: 'flex', gap: '1em' }}>
         {Array.from({ length: 5 }, (_, i) => i === 0 ? <span key={i}>• <Txt s={s} field="text" as="span" /></span> : <span key={i}>• {s.data.text}</span>)}
@@ -337,3 +322,113 @@ function Body({ s, ctx, bg, pad }: { s: Section; ctx: Ctx; bg: string | null; pa
   }
 }
 
+
+/* =====================================================================
+   Header — one renderer for the storefront canvas and the Header screens (1h / 1i / 3c).
+   Reads the site-level settings: Layout · Top bar · ตัวอักษรเมนู · สี (inherit Token vs override) ·
+   มือถือยุบเป็น ☰ · โปร่งใสทับแบนเนอร์ · Sticky (applies in พรีวิว, where the page scrolls).
+   Hot-zones (Header screens only): TOP BAR / โลโก้ / Navigation / ค้นหา & ตะกร้า — click = jump to its settings.
+   ===================================================================== */
+export type HZone = 'topbar' | 'logo' | 'nav' | 'actions'
+export const HZONE_LABEL: Record<HZone, string> = { topbar: 'TOP BAR', logo: 'โลโก้', nav: 'Navigation', actions: 'ค้นหา & ตะกร้า' }
+export interface HotZones { active: HZone | null; onZone: (z: HZone) => void; color: string; look: 'a' | 'b' | 'c' }
+
+/* mockup menu size "12 px" is read off previews drawn at ~¾ of the real storefront → ×4/3 at real width */
+const menuPx = (v: string | undefined) => Number(v || 12) * 4 / 3
+
+function HeaderBody({ s, site, device, zoom, hot }: { s: Section; site: SiteDoc; device: Device; zoom: number; hot?: HotZones }) {
+  const d = s.data
+  const m = device === 'mobile', t = device === 'tablet'
+  const bg = tokenHex(site, s.style?.bg) ?? tokenByName(site, HEADER_INHERIT.bg)
+  const fg = tokenHex(site, s.style?.fg) ?? tokenByName(site, HEADER_INHERIT.fg)
+  const transparent = d.transparent === 'yes'
+  const collapse = m && d.mobileMenu !== 'no'
+  const layout = d.layout || 'standard'
+  const fs = menuPx(d.menuSize) * (t ? 0.85 : m ? 0.9 : 1)
+  const font = d.menuFont === 'Poppins' ? "'Poppins',sans-serif" : "'Prompt',sans-serif"
+
+  const Z = ({ zone, children, style, tagSide = 'left', tagTop }: { zone: HZone; children: ReactNode; style?: CSSProperties; tagSide?: 'left' | 'right'; tagTop?: boolean }) => {
+    if (!hot) return <div style={style}>{children}</div>
+    const on = hot.active === zone
+    const soft = on && hot.look !== 'a' && zone !== 'topbar'
+    const label = !on ? HZONE_LABEL[zone] : hot.look === 'a' ? `${HZONE_LABEL[zone].toUpperCase()} · กำลังแก้` : hot.look === 'c' ? `${HZONE_LABEL[zone]} · กำลังแก้` : HZONE_LABEL[zone]
+    const tagStyle: CSSProperties = tagTop
+      ? { position: 'absolute', left: px(8, zoom), top: 0, borderRadius: `0 0 ${px(5, zoom)} ${px(5, zoom)}` }
+      : { position: 'absolute', [tagSide]: px(-6, zoom), top: px(-28, zoom), borderRadius: px(6, zoom) }
+    return (
+      <div data-hz={zone} data-hz-on={on ? '' : undefined} data-hz-look={hot.look} role="button" tabIndex={0} aria-pressed={on} aria-label={`ตั้งค่า ${HZONE_LABEL[zone]}`}
+        onClick={e => { e.stopPropagation(); hot.onZone(zone) }} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hot.onZone(zone) } }}
+        style={{ position: 'relative', cursor: 'pointer',
+          outline: on ? `${px(2, zoom)} solid ${hot.color}` : `${px(1, zoom)} dashed ${zone === 'topbar' ? 'rgba(255,255,255,.55)' : 'rgba(19,21,27,.35)'}`,
+          outlineOffset: zone === 'topbar' ? px(-4, zoom) : soft ? 0 : px(6, zoom), borderRadius: soft ? px(10, zoom) : undefined,
+          ...(soft ? { background: 'rgba(255,255,255,.55)', padding: `${px(8, zoom)} ${px(12, zoom)}`, margin: `${px(-8, zoom)} ${px(-12, zoom)}` } : {}), ...style }}>
+        <span className="hz-tag" style={{ ...tagStyle, zIndex: 3, whiteSpace: 'nowrap', fontFamily: 'var(--font-heading)', fontSize: px(11, zoom), fontWeight: 700, letterSpacing: 0, textTransform: 'none', lineHeight: 1.4,
+          background: on ? hot.color : 'var(--ink-900)', color: '#fff', padding: `${px(2, zoom)} ${px(7, zoom)}`, display: 'inline-flex', gap: px(5, zoom), alignItems: 'center' }}>
+          {label}{on && hot.look === 'b' && <i className="fas fa-cog" style={{ fontSize: px(9, zoom) }} />}{on && hot.look !== 'a' && <i className="fas fa-magic" style={{ fontSize: px(9, zoom) }} />}
+        </span>
+        {children}
+      </div>
+    )
+  }
+
+  const topbar = d.topbar === 'no'
+    ? (hot ? <Z zone="topbar" tagTop style={{ background: 'var(--ink-100)', color: 'var(--ink-500)', fontSize: 15, padding: '8px 24px 8px 120px', fontFamily: 'var(--font-heading)' }}><i className="far fa-eye-slash" /> Top bar ซ่อนอยู่</Z> : null)
+    : <Z zone="topbar" tagTop style={{ background: '#6b5343', color: '#fff', fontSize: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: m ? '8px 16px' : '10px 24px' }}>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginLeft: hot ? 104 : 0 }}><i className="fab fa-facebook-square" /><i className="fab fa-line" />{!m && <><i className="fas fa-envelope" /><i className="fas fa-phone" /><span>{d.phone}</span></>}</div>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}><i className="fas fa-user" style={{ fontSize: 15 }} />{!m && <>User Account <i className="fas fa-caret-down" /></>}</div>
+      </Z>
+
+  const logo = <Z zone="logo" tagSide={m ? 'right' : 'left'} style={{ fontFamily: 'Georgia,serif', fontSize: m ? 22 : 30, letterSpacing: '.06em', fontWeight: 700, color: fg, whiteSpace: 'nowrap' }}>{d.logo}</Z>
+  const navList = (
+    <div style={{ display: 'flex', gap: t ? 16 : 22, fontSize: fs, fontFamily: font, textTransform: d.menuUpper === 'no' ? 'none' : 'uppercase', letterSpacing: '.02em', color: fg, alignItems: 'center', flexWrap: m ? 'nowrap' : 'wrap', whiteSpace: 'nowrap' }}>
+      {NAV_ITEMS.map(n => <span key={n}>{n}</span>)}
+    </div>
+  )
+  const nav = collapse ? <Z zone="nav"><i className="fas fa-bars" style={{ fontSize: 22, color: fg }} /></Z> : <Z zone="nav">{navList}</Z>
+  const actions = (
+    <Z zone="actions" tagSide="right" style={{ display: 'flex', gap: m ? 14 : 16, fontSize: m ? 19 : 18, color: fg, alignItems: 'center', whiteSpace: 'nowrap' }}>
+      <i className="fas fa-search" />{!m && <i className="far fa-user" />}<span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><i className="fas fa-shopping-bag" />{!m && '(0)'}</span>
+    </Z>
+  )
+
+  const padY = hot ? 38 / zoom : 16          // hot-zone mode leaves room (on screen) for the zone tags above logo / menu
+  const padB = hot ? 22 / zoom : 16
+  const barPad = m ? `${hot ? padY : 14}px 16px ${hot ? padB : 14}px` : `${padY}px 28px ${padB}px`
+  let bar: ReactNode
+  if (m) bar = (
+    <div style={{ padding: barPad }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>{collapse && nav}{logo}{actions}</div>
+      {!collapse && <div style={{ marginTop: hot ? 38 / zoom : 12, overflowX: 'auto' }}>{nav}</div>}
+    </div>
+  )
+  else if (layout === 'center') bar = <div style={{ padding: barPad, display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 20 }}><div style={{ justifySelf: 'start' }}>{nav}</div>{logo}<div style={{ justifySelf: 'end' }}>{actions}</div></div>
+  else if (layout === 'left') bar = <div style={{ padding: barPad, display: 'flex', alignItems: 'center', gap: 40 }}>{logo}{nav}<div style={{ marginLeft: 'auto' }}>{actions}</div></div>
+  else if (layout === 'stacked') bar = <div style={{ padding: barPad, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: hot ? 40 / zoom : 14, position: 'relative' }}>{logo}{nav}<div style={{ position: 'absolute', right: 28, top: padY + 8 }}>{actions}</div></div>
+  else bar = <div style={{ padding: barPad, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 20 }}>{logo}{nav}{actions}</div>
+
+  return (
+    <div style={{ position: 'relative' }}>
+      {topbar}
+      <div style={transparent ? { position: 'absolute', left: 0, right: 0, top: '100%', zIndex: 3 } : { background: bg }}>{bar}</div>
+    </div>
+  )
+}
+
+/* Header screens: the real header at the chosen device width, zoomed to fit, with clickable zones.
+   strip = a hint of the banner underneath (mockup 1i / 3c, px on screen) — "โปร่งใสทับแบนเนอร์" lays the bar over it */
+export function HeaderPreview({ site, width, hot, strip = 0 }: { site: SiteDoc; width: number; hot?: HotZones; strip?: number }) {
+  const device = useStore(s => s.device)
+  const real = REAL_W[device]
+  const w = device === 'mobile' ? Math.min(390, width) : device === 'tablet' ? Math.min(width, 640) : width
+  const zoom = w / real
+  const transparent = site.header.data.transparent === 'yes'
+  const h = Math.max(strip, transparent ? 120 : 0)
+  return (
+    <div style={{ width: w, margin: '0 auto' }}>
+      <div style={{ width: real, zoom, fontFamily: "'Prompt',sans-serif", color: '#222', position: 'relative', background: '#fff' } as CSSProperties}>
+        <HeaderBody s={site.header} site={site} device={device} zoom={zoom} hot={hot} />
+        {h > 0 && <div style={{ height: h / zoom, background: 'linear-gradient(160deg,#d9b493,#5e3b28)', opacity: transparent ? 1 : 0.32 }} />}
+      </div>
+    </div>
+  )
+}

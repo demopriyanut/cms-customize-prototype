@@ -76,6 +76,7 @@ interface Store {
   place: (to: DropTarget) => void
   setField: (id: string, field: string, value: string) => void
   setStyle: (id: string, patch: Partial<SectionStyle>, label: string) => void
+  setGlobal: (which: 'header' | 'footer', patch: { data?: Record<string, string>; style?: Partial<SectionStyle> }, label: string, actor?: Actor) => boolean
   createPage: () => string
   undo: () => void
   redo: () => void
@@ -217,6 +218,14 @@ export const useStore = create<Store>()(persist((set, get) => {
     setStyle: (id, patch, label) => {
       commit(label, d => { const s = findSection(d, get().pageId, id); if (!s || s.role === 'global') return false; s.style = { ...s.style, ...patch } })
     },
+    /* Header / Footer are site-level (ใช้ร่วมทุกหน้า): edited only from their own screens */
+    setGlobal: (which, patch, label, actor = 'คุณ') => commit(label, d => {
+      const s = d[which]
+      const nextData = { ...s.data, ...patch.data }
+      const nextStyle = { ...s.style, ...patch.style }
+      if (JSON.stringify(nextData) === JSON.stringify(s.data) && JSON.stringify(nextStyle) === JSON.stringify(s.style ?? {})) return false
+      s.data = nextData; s.style = nextStyle
+    }, actor),
     createPage: () => {
       const n = get().draft.pages.filter(p => p.id.startsWith('new-')).length + 1
       const id = 'new-' + uid()
@@ -273,7 +282,7 @@ export const useStore = create<Store>()(persist((set, get) => {
   }
 }, {
   name: 'ketshopweb-cms-customize-prototype',
-  version: 2,
+  version: 3,
   migrate: () => ({ published: clone(INITIAL_SITE), draft: clone(INITIAL_SITE), diff: { hero: null, prod: null }, log: [] }) as unknown as Store,
   partialize: s => ({ published: s.published, draft: s.draft, diff: s.diff, log: s.log.map(e => ({ ...e })) }),
 }))
@@ -289,6 +298,8 @@ export function usePage() {
 export interface Change { pageName: string; label: string; kind: 'add' | 'edit' | 'remove' | 'move' }
 export function diffSites(pub: SiteDoc, draft: SiteDoc): Change[] {
   const out: Change[] = []
+  for (const k of ['header', 'footer'] as const)
+    if (JSON.stringify(pub[k]) !== JSON.stringify(draft[k])) out.push({ pageName: 'ทุกหน้า', label: `แก้ ${draft[k].name} (ใช้ร่วมทุกหน้า)`, kind: 'edit' })
   for (const dp of draft.pages) {
     const pp = pub.pages.find(p => p.id === dp.id)
     if (!pp) { out.push({ pageName: dp.name, label: 'สร้างหน้าใหม่', kind: 'add' }); continue }

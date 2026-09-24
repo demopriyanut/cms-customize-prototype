@@ -7,6 +7,7 @@ import { Dock } from '@/components/shell/Dock'
 import { useGo, useRoute, useUi } from '@/components/shell/nav'
 import { EntryA, EntryB, EntryC } from '@/screens/entry'
 import { PageEditorA, PageEditorB, PageEditorC } from '@/screens/page-editor'
+import { HeaderA, HeaderB, HeaderC } from '@/screens/header'
 
 /* hash routes when run locally; in-memory routes inside the Artifact frame (it only passes plain #anchors) */
 const Router = import.meta.env.VITE_ROUTER === 'memory' ? MemoryRouter : HashRouter
@@ -53,6 +54,7 @@ function VersionShell() {
 function Screen({ v, s, collapsed }: { v: VersionId; s: ScreenId; collapsed: boolean }) {
   if (s === 'entry') return v === 'v1' ? <EntryA /> : v === 'v2' ? <EntryB /> : <EntryC />
   if (s === 'page') return v === 'v1' ? <PageEditorA /> : v === 'v2' ? <PageEditorB collapsed={collapsed} /> : <PageEditorC />
+  if (s === 'header') return v === 'v1' ? <HeaderA /> : v === 'v2' ? <HeaderB /> : <HeaderC />
   return null
 }
 

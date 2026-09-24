@@ -17,8 +17,10 @@ export type SectionType =
 /* role on the canvas — what the user may do with it (D3 legend) */
 export type Role = 'free' | 'system' | 'global'
 
+export type ColorRef = { token: string } | { hex: string }
 export interface SectionStyle {
-  bg?: { token: string } | { hex: string }   // undefined = inherit (no own background)
+  bg?: ColorRef                    // undefined = inherit (no own background · Header: Token พื้นผิว)
+  fg?: ColorRef                    // text colour (Header menu) · undefined = inherit Token ตัวอักษร
   spacing?: 'S' | 'M' | 'L'
   hideOn?: Device[]
 }
@@ -117,10 +119,33 @@ const Z_L2: Zone[] = [
   { id: 'bottom', label: 'ช่องล่าง', insert: false, closedNote: 'เปิดเฉพาะบางร้าน' },
 ]
 
+/* Header settings — values as shown in mockup 1h / 1i / 3c (Navigation tab):
+   Layout มาตรฐาน · ตัวอักษรเมนู Prompt 12 px · Sticky on · Top bar on · มือถือยุบเป็น ☰ on · โปร่งใสทับแบนเนอร์ off
+   colours: พื้นหลัง inherits Token พื้นผิว (#DFE7F3) · ตัวอักษรเมนู overridden #333333 */
+const HEADER_DATA: Record<string, string> = {
+  phone: '02-345-6789', logo: 'GIRLY CLOSET',
+  layout: 'standard', menuFont: 'Prompt', menuSize: '12', menuUpper: 'yes',
+  sticky: 'yes', topbar: 'yes', mobileMenu: 'yes', transparent: 'no',
+}
+export const HEADER_INHERIT = { bg: 'พื้นผิว', fg: 'ตัวอักษร' }
+export const NAV_ITEMS = ['Home', 'Collection ▾', 'Product ▾', 'Promotion ▾', 'Blog', 'Contact ▾']
+export const NAV_LAYOUTS = [
+  { key: 'standard', name: 'มาตรฐาน', justify: 'space-between', logoOrder: 1 },
+  { key: 'center', name: 'โลโก้กลาง', justify: 'center', logoOrder: 2 },
+  { key: 'left', name: 'เมนูซ้าย', justify: 'flex-start', logoOrder: 3 },
+] as const
+export const MENU_FONTS = ['Prompt', 'Poppins']   // the two faces of the Ketshopweb DS
+/* "ลองแบบอื่นด้วยผู้ช่วย Ket" — the 3 alternatives from mockup 1i / 3c (logo / menu / tokens kept, arrangement changes) */
+export const HEADER_PRESETS: { key: string; name: string; desc: string; data: Record<string, string>; style: SectionStyle }[] = [
+  { key: 'minimal', name: 'Minimal', desc: 'โลโก้ซ้าย · เมนูตัวเล็ก · ไม่มี top bar', data: { layout: 'standard', topbar: 'no', menuSize: '11' }, style: { bg: { hex: '#FFFFFF' }, fg: { hex: '#222222' } } },
+  { key: 'editorial', name: 'Editorial', desc: 'โลโก้กลาง · เมนูใต้โลโก้', data: { layout: 'stacked' }, style: { bg: { hex: '#FAF8F5' }, fg: { hex: '#222222' } } },
+  { key: 'dark', name: 'Dark contrast', desc: 'พื้นเข้มจาก Token Surface Dark', data: { layout: 'standard' }, style: { bg: { token: 'พื้นเข้ม (Footer)' }, fg: { hex: '#FFFFFF' } } },
+]
+
 export const INITIAL_SITE: SiteDoc = {
   name: 'GIRLY CLOSET',
   tokens: TOKENS,
-  header: { id: 'site-header', type: 'header', role: 'global', zone: 'site', name: 'Header', meta: 'ใช้ร่วมทุกหน้า', data: { phone: '02-345-6789', logo: 'GIRLY CLOSET' }, style: { bg: { token: 'พื้นผิว' } } },
+  header: { id: 'site-header', type: 'header', role: 'global', zone: 'site', name: 'Header', meta: 'ใช้ร่วมทุกหน้า', data: HEADER_DATA, style: { fg: { hex: '#333333' } } },
   footer: { id: 'site-footer', type: 'footer', role: 'global', zone: 'site', name: 'Footer', meta: 'ใช้ร่วมทุกหน้า', data: {
     brand: 'GIRLY CLOSET', about: 'เสื้อผ้าแฟชั่นผู้หญิง ส่งไวทั่วไทย', contact: '02-345-6789 · hello@girlycloset.co' }, style: { bg: { token: 'พื้นเข้ม (Footer)' } } },
   pages: [
@@ -197,5 +222,6 @@ export const AI_PROPOSAL = {
   ],
 }
 
-export const tokenHex = (site: SiteDoc, bg: SectionStyle['bg']) =>
-  !bg ? null : 'token' in bg ? (site.tokens.find(t => t.name === bg.token)?.hex ?? null) : bg.hex
+export const tokenHex = (site: SiteDoc, c: ColorRef | undefined) =>
+  !c ? null : 'token' in c ? (site.tokens.find(t => t.name === c.token)?.hex ?? null) : c.hex
+export const tokenByName = (site: SiteDoc, name: string) => site.tokens.find(t => t.name === name)?.hex ?? '#000000'

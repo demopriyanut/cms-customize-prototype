@@ -30,9 +30,9 @@ export const REF: Record<VersionId, Record<ScreenId, string>> = {
 
 /* screens built so far (per version) */
 export const READY: Record<VersionId, ScreenId[]> = {
-  v1: ['entry', 'page'],
-  v2: ['entry', 'page'],
-  v3: ['entry', 'page'],
+  v1: ['entry', 'page', 'header'],
+  v2: ['entry', 'page', 'header'],
+  v3: ['entry', 'page', 'header'],
 }
 export const isReady = (v: VersionId, s: ScreenId) => READY[v].includes(s)
 
