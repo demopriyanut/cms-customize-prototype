@@ -67,5 +67,5 @@ export const MANAGE_GROUPS: { label: string; items: [string, string, string?][] 
   { label: 'ขาย · Sales', items: [['E-commerce', 'fas fa-receipt', '▾'], ['Marketing', 'fas fa-bullhorn', '▾'], ['Delivery Manager', 'fas fa-shipping-fast', '▾']] },
   { label: 'สินค้า & ลูกค้า', items: [['Product Manager', 'fas fa-box-open', '▾'], ['Warehouse', 'fas fa-boxes', '▾'], ['Users', 'fas fa-user-friends', '▾']] },
   { label: 'ระบบ · System', items: [['Media', 'far fa-images', '⇄'], ['Email', 'far fa-envelope'], ['Extension', 'fas fa-plug'], ['History Logs', 'fas fa-history']] },
-  { label: 'ตั้งค่าร้าน · Setting', items: [['ทั่วไป', 'fas fa-sliders-h'], ['การขาย · ขนส่ง · ชำระเงิน', 'far fa-credit-card'], ['การแจ้งเตือน', 'fas fa-bell'], ['PDPA · นโยบาย', 'fas fa-shield-alt', '⇄']] },
+  { label: 'ตั้งค่าร้าน · Setting', items: [['ทั่วไป', 'fas fa-sliders-h'], ['การขาย · ขนส่ง · ชำระเงิน', 'far fa-credit-card'], ['การแจ้งเตือน', 'fas fa-bell'], ['Cookie · PDPA banner', 'fas fa-shield-alt', '⇄']] },
 ]
