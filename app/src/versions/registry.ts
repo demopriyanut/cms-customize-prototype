@@ -57,15 +57,15 @@ export function refOf(v: VersionId, s: ScreenId): string {
 }
 
 export const FRONT_GROUPS: { label: string; items: [string, string, string?][] }[] = [
-  { label: 'ออกแบบ · Design', items: [['Page Layouts', 'fas fa-th-large'], ['Header', 'fas fa-heading'], ['Footer', 'fas fa-shoe-prints'], ['Menu', 'fas fa-stream'], ['System Design', 'fas fa-palette', 'ใหม่'], ['เทมเพลต', 'far fa-clone', 'ย้าย']] },
+  { label: 'ออกแบบ · Design', items: [['Page Layouts', 'fas fa-th-large'], ['Header', 'fas fa-heading'], ['Footer', 'fas fa-shoe-prints'], ['Menu', 'fas fa-stream'], ['Button', 'far fa-hand-pointer'], ['System Design', 'fas fa-palette', 'ใหม่'], ['เทมเพลต', 'far fa-clone', 'ย้าย'], ['Privilege CRM', 'fas fa-mobile-alt'], ['Email Template', 'fas fa-envelope-open-text']] },
   { label: 'เนื้อหา · Content', items: [['Product Display', 'fas fa-store'], ['Blog Manager', 'fas fa-pen-nib'], ['Coupon Display', 'fas fa-ticket-alt'], ['Event Popup', 'far fa-window-restore'], ['Sidebar', 'fas fa-columns'], ['Media', 'far fa-images', '⇄']] },
   { label: 'เว็บไซต์ & SEO', items: [['SEO', 'fas fa-search-location', 'ย้าย'], ['Conversion Tools', 'fas fa-chart-pie', 'ย้าย'], ['Google Map', 'fas fa-map-marked-alt', 'ย้าย'], ['Cookie · PDPA banner', 'fas fa-cookie-bite', '⇄'], ['Language', 'fas fa-globe-asia']] },
-  { label: 'ขั้นสูง · Advanced', items: [['Button', 'far fa-hand-pointer'], ['Advance CSS', 'fas fa-code'], ['Maintenance', 'fas fa-tools']] },
+  { label: 'ขั้นสูง · Advanced', items: [['Advance CSS', 'fas fa-code'], ['Maintenance', 'fas fa-tools']] },
 ]
 export const MANAGE_GROUPS: { label: string; items: [string, string, string?][] }[] = [
   { label: 'ภาพรวม · Overview', items: [['Overview', 'fas fa-tachometer-alt'], ['Dashboard', 'fas fa-chart-line', '▾']] },
-  { label: 'ขาย · Sales', items: [['E-commerce', 'fas fa-receipt', '▾'], ['Marketing', 'fas fa-bullhorn', '▾'], ['Delivery Manager', 'fas fa-shipping-fast', '▾']] },
+  { label: 'ขาย · Sales', items: [['E-commerce', 'fas fa-receipt', '▾'], ['Marketing', 'fas fa-bullhorn', '▾'], ['Payment', 'fas fa-dollar-sign', '▾'], ['Delivery Manager', 'fas fa-shipping-fast', '▾']] },
   { label: 'สินค้า & ลูกค้า', items: [['Product Manager', 'fas fa-box-open', '▾'], ['Warehouse', 'fas fa-boxes', '▾'], ['Users', 'fas fa-user-friends', '▾']] },
   { label: 'ระบบ · System', items: [['Media', 'far fa-images', '⇄'], ['Email', 'far fa-envelope'], ['Extension', 'fas fa-plug'], ['History Logs', 'fas fa-history']] },
-  { label: 'ตั้งค่าร้าน · Setting', items: [['ทั่วไป', 'fas fa-sliders-h'], ['การขาย · ขนส่ง · ชำระเงิน', 'far fa-credit-card'], ['การแจ้งเตือน', 'fas fa-bell'], ['Cookie · PDPA banner', 'fas fa-shield-alt', '⇄']] },
+  { label: 'ตั้งค่าร้าน · Setting', items: [['การแจ้งเตือน', 'fas fa-bell'], ['Cookie · PDPA banner', 'fas fa-shield-alt', '⇄']] },
 ]
